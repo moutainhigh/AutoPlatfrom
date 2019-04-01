@@ -1,0 +1,148 @@
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.CarModelDAO">
+
+	<resultMap id="carModelResultMap" type="carModel">
+		<id property="modelId" column="modelId"></id>
+		<result property="modelName" column="modelName"></result>
+		<result property="brandId" column="brandId"></result>
+		<result property="modelDes" column="modelDes"></result>
+		<result property="modelStatus" column="modelStatus"></result>
+		<association property="brand" javaType="com.gs.bean.CarBrand">
+			<id property="brandId" column="brandId"/>
+			<result property="brandName" column="brandName"/>
+		</association>
+	</resultMap>
+
+	<insert id="insert"  parameterType="carModel">
+		insert into t_car_model (modelId,modelName,modelDes,brandId,modelStatus) values (UUID(),#{modelName},#{modelDes},#{brandId},'Y')
+	</insert>
+
+	<insert id="batchInsert"  parameterType="list">
+		<![CDATA[
+
+		]]>
+	</insert>
+
+	<delete id="delete" parameterType="carModel">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<update id="update" parameterType="carModel">
+		<![CDATA[
+			update t_car_model set modelName=#{modelName},modelDes=#{modelDes},brandId=#{brandId},modelStatus= "Y" where modelId = #{modelId}
+		]]>
+	</update>
+
+	<update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryAll" resultMap="carModelResultMap">
+		select * from t_car_model where modelStatus = 'Y'
+	</select>
+
+	<select id="queryByStatus" resultMap="carModelResultMap">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="query" resultType="carModel">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryById" resultType="carModel">
+		<![CDATA[
+			select * from t_car_model where modelId = #{id}
+		]]>
+	</select>
+
+	<select id="queryByBrandId" parameterType="string" resultMap="carModelResultMap">
+		<![CDATA[
+			select * from t_car_model where brandId = #{brandId}
+		]]>
+	</select>
+
+	<select id="queryByPager" resultMap="carModelResultMap">
+		<![CDATA[
+			select brand.brandName,brand.brandId,model.modelId,model.modelName,model.modelDes,model.modelStatus
+			from t_car_brand brand ,t_car_model model where brand.brandId = model.brandId
+		]]>
+		order by brand.brandName ASC limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="count" resultType="int">
+		<![CDATA[
+			select count(*) from t_car_model m ,t_car_brand b where m.brandId = b.brandId
+		]]>
+	</select>
+
+	<select id="searchByPager" resultMap="carModelResultMap">
+		<![CDATA[
+	  		select brand.brandName,model.modelId,model.modelName,model.modelDes,model.modelStatus
+			from t_car_brand brand ,t_car_model model where brand.brandId = model.brandId
+		]]>
+		<if test="brandId != null and brandId != ''">
+			and brand.brandId = #{brandId}
+		</if>
+		order by brand.brandName ASC limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="searchCount" resultType="int">
+		<![CDATA[
+			select count(*) from t_car_model m ,t_car_brand b where m.brandId = b.brandId
+		]]>
+		<if test="brandId != null and brandId != ''">
+			and b.brandId = #{brandId}
+		</if>
+	</select>
+
+	<update id="inactive" parameterType="string">
+		<![CDATA[
+			update t_car_model set modelStatus = "N" where modelId = #{modelId}
+		]]>
+	</update>
+
+	<update id="active" parameterType="string">
+		<![CDATA[
+			update t_car_model set modelStatus = "Y" where modelId = #{modelId}
+		]]>
+	</update>
+
+	<select id="queryByModelStatusPager" resultMap="carModelResultMap">
+		<![CDATA[
+			select brand.brandName,model.modelId,model.modelName,model.modelDes,model.modelStatus
+			from t_car_brand brand ,t_car_model model where brand.brandId = model.brandId and
+			model.modelStatus = #{status}
+		]]>
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="statusCount" resultType="int">
+		<![CDATA[
+			select count(*) from t_car_model m ,t_car_brand b where m.brandId = b.brandId and
+			m.modelStatus = #{status}
+		]]>
+	</select>
+</mapper>

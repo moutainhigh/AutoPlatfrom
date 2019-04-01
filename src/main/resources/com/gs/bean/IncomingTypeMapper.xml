@@ -1,0 +1,182 @@
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.IncomingTypeDAO">
+
+	<resultMap id="incomingTypeResultMap" type="incomingType">
+		<id column="inTypeId" property="inTypeId"></id>
+		<result column="inTypeName" property="inTypeName"></result>
+		<result column="inTypeDes" property="inTypeDes"></result>
+		<result column="inTypeStatus" property="inTypeStatus"></result>
+		<result column="inTypeCreatedTime" property="inTypeCreatedTime"></result>
+		<result column="companyId" property="companyId"></result>
+		<association property="company" javaType="com.gs.bean.Company">
+			<id column="companyId" property="companyId"/>
+			<result column="companyName" property="companyName"/>
+		</association>
+	</resultMap>
+
+	<insert id="insert"  parameterType="incomingType">
+		<![CDATA[
+			insert into t_incoming_type(inTypeId, inTypeName,inTypeStatus,inTypeCreatedTime,companyId)
+			values(uuid(), #{inTypeName},'Y',now(),#{companyId})
+		]]>
+	</insert>
+
+	<insert id="batchInsert"  parameterType="list">
+		<![CDATA[
+
+		]]>
+	</insert>
+
+	<delete id="delete" parameterType="incomingType">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<update id="update" parameterType="incomingType">
+		<![CDATA[
+		update t_incoming_type set inTypeName = #{inTypeName},inTypeStatus = 'Y',companyId = #{companyId} where inTypeId = #{inTypeId}
+		]]>
+	</update>
+
+	<update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryAll" resultMap="incomingTypeResultMap">
+		<![CDATA[
+			select * from t_incoming_type where inTypeStatus = 'Y'
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and companyId = #{companyId}
+		</if>
+	</select>
+
+	<select id="queryByStatus" resultMap="incomingTypeResultMap" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryPagerStatus" resultType="list" resultMap="incomingTypeResultMap">
+		<![CDATA[
+			select  it.*,c.companyId,c.companyName from t_incoming_type it left join t_company c on it.companyId = c.companyId where it.inTypeStatus = #{status}
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and it.companyId = #{user.companyId}
+		</if>
+
+		order by it.companyId desc, it.inTypeStatus desc, it.inTypeCreatedTime desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="countStatus" resultType="int">
+		<![CDATA[
+			select count(*) from t_incoming_type where inTypeStatus = #{status}
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and companyId = #{user.companyId}
+		</if>
+	</select>
+
+	<select id="queryByPagerCondition" resultType="list" resultMap="incomingTypeResultMap">
+		<![CDATA[
+			select  it.*,c.companyId,c.companyName from t_incoming_type it left join t_company c on it.companyId = c.companyId where 1 = 1
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and it.companyId = #{companyId}
+
+		</if>
+		<if test="inTypeName != null and inTypeName != ''">
+			and it.inTypeName like concat('%',#{inTypeName},'%')
+		</if>
+
+		order by it.companyId desc, it.inTypeStatus desc, it.inTypeCreatedTime desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="countCondition" resultType="int">
+		<![CDATA[
+			select count(*) from t_incoming_type where 1=1
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and companyId = #{companyId}
+		</if>
+		<if test="inTypeName != null and inTypeName != ''">
+			and inTypeName like concat('%',#{inTypeName},'%')
+		</if>
+	</select>
+
+	<select id="query" parameterType="incomingType" resultType="incomingType">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryById" parameterType="string" resultType="incomingType">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByName"  resultType="incomingType">
+		<![CDATA[
+			  select * from t_incoming_type  where inTypeName = #{inTypeName}
+
+		]]>
+	</select>
+
+	<select id="queryByPager" resultType="list" resultMap="incomingTypeResultMap">
+		<![CDATA[
+			select  it.*,c.companyId,c.companyName from t_incoming_type it left join t_company c on it.companyId = c.companyId where 1 = 1
+
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and it.companyId = #{user.companyId}
+			or it.inTypeName = '维修保养收入' or it.inTypeName = '配件收入'
+		</if>
+		order by it.companyId desc, it.inTypeStatus desc, it.inTypeCreatedTime desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="count" resultType="int">
+		<![CDATA[
+			select count(*) from t_incoming_type where 1 = 1
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and companyId = #{companyId}
+			or inTypeName = '维修保养收入'
+			or inTypeName = '配件收入'
+		</if>
+	</select>
+
+	<update id="inactive" parameterType="string">
+		<![CDATA[
+			update t_incoming_type set inTypeStatus = 'N' where inTypeId = #{inTypeId}
+		]]>
+	</update>
+
+	<update id="active" parameterType="string">
+		<![CDATA[
+			update t_incoming_type set inTypeStatus = 'Y' where inTypeId = #{inTypeId}
+		]]>
+	</update>
+
+</mapper>

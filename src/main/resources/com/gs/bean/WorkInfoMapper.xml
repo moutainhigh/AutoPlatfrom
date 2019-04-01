@@ -1,0 +1,351 @@
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.WorkInfoDAO">
+	<resultMap id="workInfoResultMap" type="workInfo">
+		<id property="workId" column="workId"></id>
+		<result property="recordId" column="recordId"></result>
+		<result property="userId" column="userId"></result>
+		<result property="workAssignTime" column="workAssignTime"></result>
+		<result property="workCreatedTime" column="workCreatedTime"></result>
+		<result property="workStatus" column="workStatus"></result>
+		<result property="coont" column="coont"></result>
+
+		<association property="user" javaType="com.gs.bean.User">
+			<id property="userId" column="userId"/>
+			<id property="userName" column="user_name"/>
+		</association>
+
+		<association property="company" javaType="com.gs.bean.Company">
+			<id property="companyId" column="companyId"/>
+			<id property="companyName" column="companyName"/>
+		</association>
+
+		<association property="maintainRecord" javaType="com.gs.bean.MaintainRecord">
+			<id property="recordId" column="recordId"/>
+			<id property="endTime" column="endTime"/>
+			<association property="checkin" javaType="com.gs.bean.Checkin">
+				<id property="checkinId" column="checkinId" />
+				<id property="maintainOrFix" column="maintainOrFix" />
+				<id property="userName" column="userName" />
+			</association>
+		</association>
+
+	</resultMap>
+
+	<insert id="insert"  parameterType="workInfo">
+		<![CDATA[
+			INSERT INTO t_work_info
+				(workId, recordId, workCreatedTime, workStatus)
+			VALUES
+				(uuid(), #{recordId}, now(), 'Y')
+		]]>
+	</insert>
+
+	<insert id="batchInsert"  parameterType="list">
+		<![CDATA[
+
+		]]>
+	</insert>
+
+	<delete id="delete" parameterType="workInfo">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<update id="update" parameterType="workInfo">
+		<![CDATA[
+			UPDATE t_work_info SET workAssignTime = now(), userId = #{userId} WHERE workId = #{workId}
+		]]>
+	</update>
+
+	<update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryAll" resultMap="workInfoResultMap">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByStatus" resultMap="workInfoResultMap" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="query" parameterType="workInfo" resultType="workInfo">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByRocordIdUserId" parameterType="string" resultType="workInfo">
+		<![CDATA[
+		select * from t_work_info where recordId = #{recordId}
+	]]>
+	</select>
+
+	<select id="queryById" parameterType="string" resultType="workInfo">
+		<![CDATA[
+			SELECT * FROM t_work_info WHERE workId = #{workId}
+		]]>
+	</select>
+
+	<select id="countWorkUserId_Y" resultType="int">
+		<![CDATA[
+			select count(*) from t_work_info wi
+			INNER JOIN t_maintain_record mr ON mr.recordId = wi.recordId
+			INNER JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+			INNER JOIN t_user u ON u.userId = wi.userId
+			INNER JOIN t_company c ON c.companyId = mr.companyId
+			where  u.userId = #{userId} AND wi.workStatus = 'Y'
+		]]>
+	</select>
+
+	<select id="queryWorkUserId_Y" resultMap="workInfoResultMap">
+		<![CDATA[
+			SELECT wi.*, ch.userName, mr.endTime, ch.maintainOrFix, c.companyName, u.userName AS user_name from
+			t_work_info wi
+			INNER JOIN t_maintain_record mr ON mr.recordId = wi.recordId
+			INNER JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+			INNER JOIN t_user u ON u.userId = wi.userId
+			INNER JOIN t_company c ON c.companyId = mr.companyId
+			where u.userId = #{userId} AND wi.workStatus = 'Y'
+		]]>
+		order by wi.workCreatedTime Desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="queryByPager_Y" resultType="list" resultMap="workInfoResultMap">
+		<![CDATA[
+			SELECT wi.*, ch.userName, mr.endTime, ch.maintainOrFix, c.companyName, u.userName AS user_name FROM t_work_info wi
+			LEFT JOIN t_maintain_record mr ON mr.recordId = wi.recordId
+			LEFT JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+			LEFT JOIN t_user u ON u.userId = wi.userId
+			LEFT JOIN t_company c ON c.companyId = mr.companyId WHERE wi.workStatus = 'Y'
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and mr.companyId = #{user.companyId}
+		</if>
+		ORDER BY wi.workCreatedTime Desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+	<select id="count_Y" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM t_work_info wi
+			LEFT JOIN t_maintain_record mr ON mr.recordId = wi.recordId
+			LEFT JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+			LEFT JOIN t_user u on u.userId = wi.userId
+			LEFT JOIN t_company c ON c.companyId = mr.companyId WHERE wi.workStatus = 'Y'
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and mr.companyId = #{companyId}
+		</if>
+	</select>
+
+
+
+
+
+	<select id="countWorkUserId" resultType="int">
+		<![CDATA[
+			select count(*) from t_work_info wi
+			INNER JOIN t_maintain_record mr ON mr.recordId = wi.recordId
+			INNER JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+			INNER JOIN t_user u ON u.userId = wi.userId
+			INNER JOIN t_company c ON c.companyId = mr.companyId
+			where  u.userId = #{userId}
+		]]>
+	</select>
+
+	<select id="queryWorkUserId" resultMap="workInfoResultMap">
+		<![CDATA[
+			SELECT wi.*, ch.userName, mr.endTime, ch.maintainOrFix, c.companyName, u.userName AS user_name from
+			t_work_info wi
+			INNER JOIN t_maintain_record mr ON mr.recordId = wi.recordId
+			INNER JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+			INNER JOIN t_user u ON u.userId = wi.userId
+			INNER JOIN t_company c ON c.companyId = mr.companyId
+			where u.userId = #{userId}
+		]]>
+		order by wi.workCreatedTime Desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="queryByPager" resultType="list" resultMap="workInfoResultMap">
+		<![CDATA[
+			SELECT wi.*, ch.userName, mr.endTime, ch.maintainOrFix, c.companyName, u.userName AS user_name FROM t_work_info wi
+			LEFT JOIN t_maintain_record mr ON mr.recordId = wi.recordId
+			LEFT JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+			LEFT JOIN t_user u ON u.userId = wi.userId
+			LEFT JOIN t_company c ON c.companyId = mr.companyId
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and mr.companyId = #{user.companyId}
+		</if>
+		ORDER BY wi.workCreatedTime Desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+	<select id="count" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM t_work_info wi
+			LEFT JOIN t_maintain_record mr ON mr.recordId = wi.recordId
+			LEFT JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+			LEFT JOIN t_user u on u.userId = wi.userId
+			LEFT JOIN t_company c ON c.companyId = mr.companyId
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and mr.companyId = #{companyId}
+		</if>
+	</select>
+
+
+
+
+
+
+
+
+
+
+	<select id="countWorkUserId_N" resultType="int">
+		<![CDATA[
+			select count(*) from t_work_info wi
+			INNER JOIN t_maintain_record mr ON mr.recordId = wi.recordId
+			INNER JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+			INNER JOIN t_user u ON u.userId = wi.userId
+			INNER JOIN t_company c ON c.companyId = mr.companyId
+			where  u.userId = #{userId} AND wi.workStatus = 'N'
+		]]>
+	</select>
+
+	<select id="queryWorkUserId_N" resultMap="workInfoResultMap">
+		<![CDATA[
+			SELECT wi.*, ch.userName, mr.endTime, ch.maintainOrFix, c.companyName, u.userName AS user_name from
+			t_work_info wi
+			INNER JOIN t_maintain_record mr ON mr.recordId = wi.recordId
+			INNER JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+			INNER JOIN t_user u ON u.userId = wi.userId
+			INNER JOIN t_company c ON c.companyId = mr.companyId
+			where u.userId = #{userId} AND wi.workStatus = 'N'
+		]]>
+		order by wi.workCreatedTime Desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="queryByPager_N" resultType="list" resultMap="workInfoResultMap">
+		<![CDATA[
+			SELECT wi.*, ch.userName, mr.endTime, ch.maintainOrFix, c.companyName, u.userName AS user_name FROM t_work_info wi
+			LEFT JOIN t_maintain_record mr ON mr.recordId = wi.recordId
+			LEFT JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+			LEFT JOIN t_user u ON u.userId = wi.userId
+			LEFT JOIN t_company c ON c.companyId = mr.companyId WHERE wi.workStatus = 'N'
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and mr.companyId = #{user.companyId}
+		</if>
+		ORDER BY wi.workCreatedTime Desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+	<select id="count_N" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM t_work_info wi
+			LEFT JOIN t_maintain_record mr ON mr.recordId = wi.recordId
+			LEFT JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+			LEFT JOIN t_user u on u.userId = wi.userId
+			LEFT JOIN t_company c ON c.companyId = mr.companyId WHERE wi.workStatus = 'N'
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and mr.companyId = #{companyId}
+		</if>
+	</select>
+
+
+
+
+
+
+
+
+
+	<select id="queryByDefault"  resultMap="workInfoResultMap">
+		<![CDATA[
+           select count(wi.workId) as coont ,wi.workCreatedTime from t_work_info wi,t_maintain_record mr,t_checkin c
+             WHERE DATE_FORMAT(wi.workCreatedTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' ) and  wi.workStatus = 'Y'
+           and wi.recordId = mr.recordId and mr.checkinId = c.checkinId
+		]]>
+		<if test="maintainOrFix =='保养'">
+			and c.maintainOrFix = '保养'
+		</if>
+		<if test="maintainOrFix =='维修'">
+			and c.maintainOrFix = '维修'
+		</if>
+		<if test="companyId != null and companyId != ''">
+			and mr.companyId = #{companyId}
+		</if>
+		GROUP BY day(wi.workCreatedTime)
+	</select>
+
+	<select id="queryByCondition"  resultType="list" resultMap="workInfoResultMap">
+		<![CDATA[
+           select count(wi.workId) as coont ,wi.workCreatedTime from t_work_info wi,t_maintain_record mr,t_checkin c
+            where wi.workCreatedTime >= #{startTime} and wi.workCreatedTime <= #{endTime} and  wi.workStatus = 'Y'
+           and wi.recordId = mr.recordId and mr.checkinId = c.checkinId
+		]]>
+		<if test="maintainOrFix =='保养'">
+			and c.maintainOrFix = '保养'
+		</if>
+		<if test="maintainOrFix =='维修'">
+			and c.maintainOrFix = '维修'
+		</if>
+		<if test="companyId != null and companyId != ''">
+			and mr.companyId = #{companyId}
+		</if>
+		<if test="type =='year'">
+			GROUP BY year(wi.workCreatedTime)
+		</if>
+		<if test="type =='quarter'">
+			GROUP BY quarter(wi.workCreatedTime)
+		</if>
+		<if test="type =='month'">
+			GROUP BY month(wi.workCreatedTime)
+		</if>
+		<if test="type =='week'">
+			GROUP BY week(wi.workCreatedTime)
+		</if>
+		<if test="type =='day'">
+			GROUP BY day(wi.workCreatedTime)
+		</if>
+	</select>
+
+	<update id="inactive" parameterType="string">
+		<![CDATA[
+			UPDATE t_work_info set workStatus = 'N' where workId = #{workId}
+		]]>
+	</update>
+
+	<update id="active" parameterType="string">
+		<![CDATA[
+			UPDATE t_work_info set workStatus = 'Y' where workId = #{workId}
+		]]>
+	</update>
+
+</mapper>

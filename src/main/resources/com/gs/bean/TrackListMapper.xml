@@ -1,0 +1,141 @@
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.TrackListDAO">
+
+	<resultMap id="trackListResultMap" type="trackList">
+		<id column="trackId" property="trackId"/>
+		<result column="userId" property="userId"/>
+		<result column="trackContent" property="trackContent"/>
+		<result column="serviceEvaluate" property="serviceEvaluate"/>
+		<result column="trackUser" property="trackUser"/>
+		<result column="trackCreatedTime" property="trackCreatedTime"/>
+		<result column="companyId" property="companyId"/>
+		<!--维修保养记录表-->
+		<association property="maintainRecord" javaType="com.gs.bean.MaintainRecord">
+			<id column="checkinId" property="checkinId"/>
+			<result column="trackStatus" property="trackStatus"/>
+		</association>
+
+		<!--checkIn表-->
+		<association property="checkin" javaType="com.gs.bean.Checkin">
+			<id column="customerId" property="userId"/>
+			<result column="customerName" property="userName"/>
+			<result column="customerPhone" property="userPhone"/>
+		</association>
+
+		<!--User表-->
+		<association property="admin" javaType="com.gs.bean.User">
+			<id column="adminId" property="userId"/>
+			<result column="adminName" property="userName"/>
+		</association>
+	</resultMap>
+
+
+
+	<insert id="insert"  parameterType="trackList">
+		<![CDATA[
+		insert into t_track_list (trackId,userId,trackContent,serviceEvaluate,trackUser,trackCreatedTime,companyId)
+		values(UUID(),#{userId},#{trackContent},#{serviceEvaluate},#{trackUser},NOW(),#{companyId});
+		]]>
+	</insert>
+
+	<insert id="batchInsert"  parameterType="list">
+		<![CDATA[
+
+		]]>
+	</insert>
+
+	<delete id="delete" parameterType="trackList">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<update id="update" parameterType="trackList">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryAll" resultMap="trackListResultMap">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByStatus" resultMap="trackListResultMap" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="query" parameterType="trackList" resultType="trackList">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryById" parameterType="string" resultType="trackList">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByPager" resultType="list" resultMap="trackListResultMap" >
+		<![CDATA[
+		select l.userId as customerId,c.userPhone as customerPhone, l.trackUser as adminId, l.*, u.userName as adminName, c.userName as customerName
+		from t_checkin c, t_user u, t_track_list l, t_maintain_record r
+		where l.trackUser=u.userId and c.userId = l.userId and r.checkinId=c.checkinId
+		and r.recordStatus ='Y'
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and l.companyId = #{user.companyId}
+		</if>
+		order by c.companyId desc, c.checkinStatus desc, l.trackCreatedTime desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="count" resultType="int">
+		<![CDATA[
+		select count(*) from t_checkin c, t_user u, t_track_list l, t_maintain_record r
+		where l.trackUser=u.userId and c.userId = l.userId and r.checkinId=c.checkinId and
+		c.checkinStatus ='Y' and r.recordStatus ='Y' and r.trackStatus = 'N'
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and l.companyId = #{companyId}
+		</if>
+	</select>
+
+	<update id="inactive" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<update id="active" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</update>
+
+</mapper>

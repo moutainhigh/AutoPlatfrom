@@ -1,0 +1,336 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.AccessoriesSaleDAO">
+
+    <resultMap id="accessoriesSaleResultMap" type="com.gs.bean.AccessoriesSale">
+        <id property="accSaleId" column="accSaleId"/>
+        <result property="accId" column="accId"/>
+        <result property="accSaledTime" column="accSaledTime"/>
+        <result property="accSaleCount" column="accSaleCount"/>
+        <result property="accSalePrice" column="accSalePrice"/>
+        <result property="accSaleTotal" column="accSaleTotal"/>
+        <result property="accSaleDiscount" column="accSaleDiscount"/>
+        <result property="accSaleMoney" column="accSaleMoney"/>
+        <result property="accSaleCreatedTime" column="accSaleCreatedTime"/>
+        <result property="companyId" column="companyId"/>
+        <result property="accSaleStatus" column="accSaleStatus"/>
+        <result property="userId" column="userId"/>
+        <result property="userName" column="userName"/>
+        <result property="userPhone" column="userPhone"/>
+
+        <association property="accessories" javaType="com.gs.bean.Accessories">
+            <id property="accId" column="accId"/>
+            <result property="accName" column="accName"/>
+            <result property="accCommodityCode" column="accCommodityCode"/>
+            <result property="accPrice" column="accPrice"/>
+            <result property="accSalePrice" column="accSalePrice"/>
+            <result property="accUnit" column="accUnit"/>
+            <result property="accTotal" column="accTotal"/>
+            <result property="accIdle" column="accIdle"/>
+            <result property="accTypeId" column="accTypeId"/>
+            <result property="companyId" column="companyId"/>
+            <result property="accStatus" column="accStatus"/>
+
+
+            <association property="accessoriesType" javaType="com.gs.bean.AccessoriesType">
+                <id property="accTypeId" column="accTypeId"/>
+                <result property="accTypeName" column="accTypeName"/>
+            </association>
+        </association>
+
+        <association property="user" javaType="com.gs.bean.User">
+            <id property="userId" column="userId"/>
+            <result property="userName" column="userName"/>
+            <result property="userPhone" column="userPhone"/>
+        </association>
+
+    </resultMap>
+
+    <insert id="insert" parameterType="accessoriesSale">
+		insert into
+		auto_platform.t_accessories_sale
+		(accSaleId, accId, accSaledTime, accSaleCount, accSalePrice, accSaleTotal, accSaleDiscount, accSaleMoney, accSaleCreatedTime, companyId, accSaleStatus, userId, userName, userPhone)
+		values
+		(#{accSaleId}, #{accId}, #{accSaledTime}, #{accSaleCount}, #{accSalePrice}, #{accSaleTotal}, #{accSaleDiscount}, #{accSaleMoney}, now(), #{companyId}, 'Y', #{userId}, #{userName}, #{userPhone})
+
+	</insert>
+
+    <insert id="batchInsert" parameterType="list">
+		<![CDATA[
+
+        ]]>
+	</insert>
+
+    <delete id="delete" parameterType="accessoriesSale">
+		<![CDATA[
+
+        ]]>
+	</delete>
+
+    <delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+        ]]>
+	</delete>
+
+    <delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+        ]]>
+	</delete>
+
+    <update id="update" parameterType="accessoriesSale">
+		<![CDATA[
+        update auto_platform.t_accessories_sale ase
+        set
+        accId = #{accId}, userId = #{userId}, userName = #{userName}, userPhone = #{userPhone}, accSaledTime = #{accSaledTime},
+        accSaleCount = #{accSaleCount}, accSalePrice = #{accSalePrice},accSaleTotal = #{accSaleTotal}, accSaleDiscount = #{accSaleDiscount},
+        accSaleMoney = #{accSaleMoney}, companyId = #{companyId}, accSaleStatus = #{accSaleStatus} where accSaleId = #{accSaleId}
+        ]]>
+	</update>
+
+    <update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+        ]]>
+	</update>
+
+    <select id="queryAll" resultMap="accessoriesSaleResultMap">
+		<![CDATA[
+		select * from auto_platform.t_accessories_sale;
+        ]]>
+	</select>
+
+    <select id="queryByStatus" resultType="list" resultMap="accessoriesSaleResultMap">
+
+    </select>
+
+    <select id="queryOnlySale" resultType="list" resultMap="accessoriesSaleResultMap">
+        <![CDATA[
+            SELECT
+                ase.*,
+                ace.accName,
+                ate.accTypeId,
+                ate.accTypeName,
+                usr.userName,
+                ace.accId,
+                ace.accUnit,
+                ace.accIdle,
+                ace.accTotal
+            FROM
+                (
+                    (
+                        (
+                            t_accessories_sale ase
+                            INNER JOIN t_accessories ace ON ase.accId = ace.accId
+                        )
+                        INNER JOIN t_accessories_type ate ON ace.accTypeId = ate.accTypeId
+                    )
+                    LEFT JOIN t_user usr ON ase.userId = usr.userId
+                )
+            WHERE
+                ase.accSaleStatus = 'Y'
+        ]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and ase.companyId = #{user.companyId}
+        </if>
+        order by ase.accSaledTime
+        limit
+          #{pager.beginIndex},#{pager.pageSize}
+    </select>
+
+    <select id="onlySaleCount" resultType="int">
+        SELECT
+        count(ase.accSaleId)
+        FROM
+        t_accessories_sale ase
+        WHERE
+        ase.accSaleStatus = 'Y'
+        <if test="user.companyId != null and user.companyId != ''">
+            and ase.companyId = #{user.companyId}
+        </if>
+    </select>
+
+    <select id="queryByName" resultType="list" resultMap="accessoriesSaleResultMap">
+        SELECT
+            ase.*,
+            ace.accName,
+            ate.accTypeId,
+            ate.accTypeName,
+            usr.userName,
+            ace.accId,
+            ace.accUnit,
+            ace.accIdle,
+            ace.accTotal
+        FROM
+        (
+            (
+                (
+                    t_accessories_sale ase
+                    INNER JOIN t_accessories ace ON ase.accId = ace.accId
+                )
+                INNER JOIN t_accessories_type ate ON ace.accTypeId = ate.accTypeId
+            )
+            LEFT JOIN t_user usr ON ase.userId = usr.userId
+        )
+        WHERE
+        <if test="name != null and name != '' ">
+            ase.userName like concat(concat('%',#{name}),'%')
+        </if>
+        <if test="user.companyId != null and user.companyId != ''">
+            and companyId = #{user.companyId}
+        </if>
+        order by ase.accSaledTime desc
+        limit
+        #{pager.beginIndex},#{pager.pageSize}
+    </select>
+
+    <select id="query" parameterType="accessoriesSale" resultType="accessoriesSale">
+		<![CDATA[
+
+        ]]>
+	</select>
+
+    <select id="queryById" parameterType="string" resultType="accessoriesSale">
+		<![CDATA[
+		select * from t_accessories_type where accSaleId = #{id}
+        ]]>
+        <if test="user.companyId != null and user.companyId != ''">
+			and companyId = #{user.companyId}
+		</if>
+	</select>
+
+    <select id="queryByPager" resultType="list" resultMap="accessoriesSaleResultMap">
+		<![CDATA[
+           SELECT
+                ase.*,
+                ace.accName,
+                ate.accTypeId,
+                ate.accTypeName,
+                usr.userName,
+                ace.accId,
+                ace.accUnit,
+                ace.accIdle,
+                ace.accTotal
+            FROM
+                (
+                    (
+                        t_accessories_sale ase
+                        INNER JOIN t_accessories ace ON ase.accId = ace.accId
+                    )
+                    INNER JOIN t_accessories_type ate ON ace.accTypeId = ate.accTypeId
+                )
+                LEFT JOIN t_user usr ON ase.userId = usr.userId where 1 = 1
+        ]]>
+        <if test="user.companyId != null and user.companyId != ''">
+          and ase.companyId = #{user.companyId}
+        </if>
+
+        order by ase.accSaledTime desc
+        limit
+          #{pager.beginIndex},#{pager.pageSize}
+    </select>
+
+    <select id="count" resultType="int">
+        select count(ase.accSaleId) from auto_platform.t_accessories_sale ase
+        <if test="companyId != null and companyId != ''">
+            where ase.companyId = #{companyId}
+        </if>
+    </select>
+
+    <update id="inactive" parameterType="string">
+		<![CDATA[
+        update t_accessories_sale ase set ase.accSaleStatus = 'N' where ase.accSaleId = #{id}
+        ]]>
+	</update>
+
+    <update id="active" parameterType="string">
+		<![CDATA[
+        update t_accessories_sale ase set ase.accSaleStatus = 'Y' where ase.accSaleId = #{id}
+        ]]>
+	</update>
+
+    <select id="queryByUserIdIsSameResult" resultType="int">
+        -- select count(*) from t_accessories_sale ase inner join t_user usr on ase.userId = usr.userId where usr.userId
+        = #{id}
+        select count(*) from t_accessories_sale ase where ase.userId = #{id} and ase.userName = #{userName}
+        <if test="user.companyId != null and user.companyId != ''">
+            and companyId = #{user.companyId}
+        </if>
+    </select>
+
+    <select id="queryBySaleTimeScopeByAccNamePager" resultType="list" resultMap="accessoriesSaleResultMap">
+        SELECT
+          ase.*,
+          acs.accId,
+          acs.accName,
+          acs.accUnit,
+          act.accTypeId,
+          act.accTypeName,
+          usr.userName
+        FROM
+        (
+            (
+                (
+                    t_accessories_sale ase
+                    INNER JOIN t_accessories acs ON ase.accId = acs.accId
+                )
+                INNER JOIN t_accessories_type act ON acs.accTypeId = act.accTypeId
+            )
+            LEFT JOIN t_user usr ON ase.userId = usr.userId
+        )
+        WHERE 1 = 1
+        <if test="saleTimeStart != null and saleTimeStart != ''">
+          and (ase.accSaledTime &lt;= #{saleTimeStart} and ase.accSaledTime &gt;= #{saleTimeEnd})
+        </if>
+
+        <if test="accName != null and accName != ''">
+          and acs.accName like concat(concat('%',#{accName}),'%')
+        </if>
+
+        <if test="userName != null and userName != ''">
+          and ase.userName like concat(concat('%',#{userName}),'%')
+        </if>
+
+        <if test="user.companyId != null and user.companyId != ''">
+          and ase.companyId = #{user.companyId}
+        </if>
+        order by ase.accSaledTime desc
+        limit
+          #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="bySaleTimeScopeCount" resultType="int">
+        SELECT
+        count(ase.accSaleId)
+        FROM
+        (
+            (
+                (
+                    t_accessories_sale ase
+                    INNER JOIN t_accessories acs ON ase.accId = acs.accId
+                )
+                INNER JOIN t_accessories_type act ON acs.accTypeId = act.accTypeId
+            )
+            LEFT JOIN t_user usr ON ase.userId = usr.userId
+        )
+        WHERE 1 = 1
+        <if test="saleTimeStart != null and saleTimeStart != ''">
+            and (ase.accSaledTime &lt;= #{saleTimeStart} and ase.accSaledTime &gt;= #{saleTimeEnd})
+        </if>
+
+        <if test="accName != null and accName != ''">
+            and (acs.accName like concat(concat('%',#{accName}),'%'))
+        </if>
+
+        <if test="userName != null and userName != ''">
+            and ase.userName like concat(concat('%',#{userName}),'%')
+        </if>
+        <if test="user.companyId != null and user.companyId != ''">
+            and ase.companyId = #{user.companyId}
+        </if>
+    </select>
+
+</mapper>

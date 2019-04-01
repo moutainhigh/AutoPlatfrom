@@ -1,0 +1,111 @@
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.MaterialListDAO">
+
+	<resultMap id="materialListResultMap" type="materialList">
+		<id column="materialId" property="materialId"/>
+		<result column="recordId" property="recordId"/>
+		<result column="accId" property="accId"/>
+		<result column="materialCount" property="materialCount"/>
+		<result column="materialCreatedTime" property="materialCreatedTime"/>
+		<result column="materialStatus" property="materialStatus"/>
+	</resultMap>
+
+	<insert id="insert"  parameterType="materialList">
+		<![CDATA[
+
+		]]>
+	</insert>
+
+	<insert id="batchInsert"  parameterType="list">
+		<selectKey resultType="int" keyProperty="materialId" order="AFTER">
+			select LAST_INSERT_ID()
+		</selectKey>
+		insert into t_material_list (materialId, recordId, accId, materialCount, materialCreatedTime, materialStatus)
+		values
+		<foreach collection="list" item="item" index="index" separator="," >
+			(uuid(), #{item.recordId}, #{item.accId}, #{item.materialCount}, now(), 'Y')
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="materialList">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<update id="update" parameterType="materialList">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryAll" resultMap="materialListResultMap">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByStatus" resultMap="materialListResultMap" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="query" parameterType="materialList" resultType="materialList">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryById" parameterType="string" resultType="materialList">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByPager" resultType="list" resultMap="materialListResultMap" parameterType="com.gs.common.bean.Pager">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="count" resultType="int">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<update id="inactive" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<update id="active" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</update>
+
+</mapper>

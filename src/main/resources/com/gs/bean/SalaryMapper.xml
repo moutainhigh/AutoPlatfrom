@@ -1,0 +1,219 @@
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.SalaryDAO">
+
+	<resultMap id="salaryResultMap" type="salary">
+		<id column="salaryId" property="salaryId"></id>
+		<result column="prizeSalary" property="prizeSalary"></result>
+		<result column="minusSalary" property="minusSalary"></result>
+		<result column="totalSalary" property="totalSalary"></result>
+		<result column="salaryDes" property="salaryDes"></result>
+		<result column="salaryTime" property="salaryTime"></result>
+		<result column="userId"  property="userId"></result>
+		<result column="salaryCreatedTime" property="salaryCreatedTime"></result>
+		<association property="user" javaType="com.gs.bean.User">
+			<id column="user_id" property="userId"/>
+			<result column="userName" property="userName"/>
+		</association>
+	</resultMap>
+
+	<insert id="insert"  parameterType="salary">
+		<![CDATA[
+			insert into t_salary values(uuid(),#{userId},#{prizeSalary},#{minusSalary},
+			#{totalSalary},#{salaryDes},#{salaryTime},now())
+		]]>
+	</insert>
+
+	<insert id="batchInsert"  parameterType="salary">
+		<![CDATA[
+		]]>
+	</insert>
+
+	<insert id="addInsert">
+		<selectKey resultType="int" keyProperty="salaryId" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into t_salary
+		values
+		<foreach collection="list" item="item" index="index" separator="," >
+			(uuid(),#{item.userId},#{item.prizeSalary},#{item.minusSalary},
+			#{item.totalSalary},#{item.salaryDes},#{item.salaryTime},now())
+		</foreach>
+	</insert>
+
+	<delete id="delete" parameterType="salary">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<update id="update" parameterType="salary">
+		<![CDATA[
+			update t_salary set userId = #{userId},prizeSalary = #{prizeSalary},
+			minusSalary = #{minusSalary},totalSalary = #{totalSalary},salaryDes = #{salaryDes},
+			salaryTime = #{salaryTime} where salaryId = #{salaryId}
+
+		]]>
+	</update>
+
+	<update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryAll" resultMap="salaryResultMap">
+		<![CDATA[
+			select s.*,u.userId as user_id,u.userName from t_salary s ,t_user u where s.userId = u.userId
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and u.companyId = #{companyId}
+		</if>
+		order by u.companyId Desc ,s.salaryCreatedTime
+	</select>
+
+	<select id="queryByStatus" resultMap="salaryResultMap" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="query" parameterType="salary" resultType="salary">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryById" parameterType="string" resultType="salary">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByUserId" resultMap="salaryResultMap">
+		<![CDATA[
+			select s.*,u.userId as user_id,u.userName from t_salary s ,t_user u where s.userId = u.userId and s.userId = #{userId}
+		]]>
+		order by s.salaryCreatedTime Desc limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="countByUserId" resultType="int">
+		<![CDATA[
+			select count(*) from t_salary where userId = #{userId}
+		]]>
+	</select>
+
+	<select id="queryByPager" resultType="list" resultMap="salaryResultMap" >
+		<![CDATA[
+			select s.*,u.userId as user_id,u.userName from t_salary s ,t_user u where s.userId = u.userId
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and u.companyId = #{user.companyId}
+		</if>
+		order by u.companyId Desc ,s.salaryCreatedTime desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="count" resultType="int">
+		<![CDATA[
+			select count(*) from t_salary s ,t_user u where s.userId = u.userId
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and u.companyId = #{companyId}
+		</if>
+	</select>
+
+	<select id="queryByPagerSearch" resultType="list" resultMap="salaryResultMap">
+
+			select s.*,u.userId as user_id,u.userName from t_salary s ,t_user u where s.userId = u.userId
+
+		<if test="salary.user.userName != null and salary.user.userName != 'null'">
+			and u.userName like concat('%',#{salary.user.userName},'%')
+		</if>
+		<if test="salary.salaryRange == 0">
+		</if>
+		<if test="salary.salaryRange == 1">
+			and s.totalSalary <![CDATA[ <=  2500]]>
+		</if>
+		<if test="salary.salaryRange == 2">
+			and s.totalSalary <![CDATA[ >= 2500 ]]>
+			and s.totalSalary <![CDATA[ <= 4500 ]]>
+		</if>
+		<if test="salary.salaryRange == 3">
+			and s.totalSalary <![CDATA[ >= 4500 ]]>
+			and s.totalSalary <![CDATA[ <= 6500 ]]>
+		</if>
+		<if test="salary.salaryRange == 4">
+			and s.totalSalary <![CDATA[ >= 6500 ]]>
+			and s.totalSalary <![CDATA[ <= 8500 ]]>
+		</if>
+		<if test="salary.salaryRange == 5">
+			and s.totalSalary <![CDATA[ >= 8500 ]]>
+		</if>
+		<if test="user.companyId != null and user.companyId != ''">
+			and u.companyId = #{user.companyId}
+		</if>
+		order by u.companyId Desc ,s.salaryCreatedTime desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="countSearch" resultType="int">
+
+			select count(*) from t_salary s ,t_user u where s.userId = u.userId
+
+
+		<if test="user.userName != null and user.userName != 'null'">
+			and u.userName like concat('%',#{user.userName},'%')
+		</if>
+		<if test="salary.salaryRange == 0">
+		</if>
+		<if test="salary.salaryRange == 1">
+			and s.totalSalary <![CDATA[ <= 2500 ]]>
+		</if>
+		<if test="salary.salaryRange == 2">
+			and s.totalSalary <![CDATA[ >= 2500 ]]>
+			and s.totalSalary <![CDATA[ <= 4500 ]]>
+		</if>
+		<if test="salary.salaryRange == 3">
+			and s.totalSalary <![CDATA[ >= 4500 ]]>
+			and s.totalSalary <![CDATA[ <= 6500 ]]>
+		</if>
+		<if test="salary.salaryRange == 4">
+			and s.totalSalary <![CDATA[ >= 6500 ]]>
+			and s.totalSalary <![CDATA[ <= 8500 ]]>
+		</if>
+		<if test="salary.salaryRange == 5">
+			and s.totalSalary <![CDATA[ >= 8500 ]]>
+		</if>
+		<if test="user.companyId != null and user.companyId != ''">
+			and u.companyId = #{user.companyId}
+		</if>
+	</select>
+
+	<update id="inactive" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<update id="active" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</update>
+
+</mapper>

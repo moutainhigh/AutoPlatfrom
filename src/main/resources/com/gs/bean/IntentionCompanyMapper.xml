@@ -1,0 +1,161 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.IntentionCompanyDAO">
+
+    <resultMap id="intentionCompanyResultMap" type="intentionCompany">
+
+    </resultMap>
+
+    <insert id="insert" parameterType="intentionCompany">
+		<![CDATA[
+			insert into t_intention_company(intentionId, name, email, phone, intentionStatus, createdTime, des)
+			  values(uuid(), #{name}, #{email}, #{phone}, #{intentionStatus}, now(), #{des})
+
+        ]]>
+	</insert>
+
+    <insert id="batchInsert" parameterType="list">
+		<![CDATA[
+
+        ]]>
+	</insert>
+
+    <delete id="delete" parameterType="intentionCompany">
+		<![CDATA[
+
+        ]]>
+	</delete>
+
+    <delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+        ]]>
+	</delete>
+
+    <delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+        ]]>
+	</delete>
+
+    <update id="update" parameterType="intentionCompany">
+		<![CDATA[
+
+        ]]>
+	</update>
+
+    <update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+        ]]>
+	</update>
+
+    <select id="queryAll" resultMap="intentionCompanyResultMap">
+		<![CDATA[
+
+        ]]>
+	</select>
+
+    <select id="queryByStatus" resultMap="intentionCompanyResultMap" parameterType="string">
+		<![CDATA[
+
+        ]]>
+	</select>
+
+    <select id="query" parameterType="intentionCompany" resultType="intentionCompany">
+		<![CDATA[
+
+        ]]>
+	</select>
+
+    <select id="queryById" parameterType="string" resultType="intentionCompany">
+		<![CDATA[
+			select * from t_intention_company where 1 = 1 and intentionId = #{id}
+        ]]>
+	</select>
+
+    <select id="queryByPager" resultType="list" resultMap="intentionCompanyResultMap">
+        <![CDATA[
+			select * from t_intention_company where 1 = 1
+		]]>
+		order by createdTime desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+    <select id="queryPagerByStatus" resultType="list" resultMap="intentionCompanyResultMap">
+        <![CDATA[
+
+			select * from t_intention_company where 1 = 1 and intentionStatus = #{status}
+		]]>
+		order by createdTime desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+    <select id="queryPagerByCondition" resultType="list" resultMap="intentionCompanyResultMap">
+        <![CDATA[
+			select * from t_intention_company where 1 = 1
+		]]>
+        <if test="intention.name != null and intention.name != ''">
+            and name like concat('%',#{intention.name},'%')
+        </if>
+        <if test="intention.phone != null and intention.phone != ''">
+            and phone like concat('%',#{intention.phone},'%')
+        </if>
+        <if test="intention.email != null and intention.email != ''">
+            and email like concat('%',#{intention.email},'%')
+        </if>
+        order by createdTime desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="count" resultType="int">
+		<![CDATA[
+			select count(*) from t_intention_company where 1 = 1 and intentionStatus = 'Y'
+        ]]>
+	</select>
+
+    <select id="countByStatus" resultType="int">
+		<![CDATA[
+			select count(*) from t_intention_company where 1 = 1 and intentionStatus = #{status}
+        ]]>
+	</select>
+
+    <select id="countByCondition" resultType="int">
+        <![CDATA[
+			select count(*) from t_intention_company where 1 = 1
+		]]>
+        <if test="intention.name != null and intention.name != ''">
+            and name like concat('%',#{intention.name},'%')
+        </if>
+        <if test="intention.phone != null and intention.phone != ''">
+            and phone like concat('%',#{intention.phone},'%')
+        </if>
+        <if test="intention.email != null and intention.email != ''">
+            and email like concat('%',#{intention.email},'%')
+        </if>
+
+    </select>
+
+    <update id="inactive" parameterType="string">
+		<![CDATA[
+			update t_intention_company set intentionStatus = 'N' where intentionId = #{id}
+        ]]>
+	</update>
+
+    <update id="active" parameterType="string">
+		<![CDATA[
+			update t_intention_company set intentionStatus = 'Y' where intentionId = #{id}
+        ]]>
+	</update>
+
+    <select id="queryByTop" resultType="list" resultMap="intentionCompanyResultMap">
+        <![CDATA[
+		  select * from t_intention_company where 1 = 1 and intentionStatus = 'Y'
+		]]>
+        order by createdTime desc
+        limit 0, #{top}
+    </select>
+
+</mapper>

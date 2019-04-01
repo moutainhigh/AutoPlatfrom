@@ -1,0 +1,82 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gs.dao.MaterialUseInfoDAO">
+    <resultMap id="materialUseInfoResultMap" type="materialUseInfo">
+        <id column="materialUseId" property="materialUseId"/>
+        <result column="recordId" property="recordId"/>
+        <result column="accId" property="accId"/>
+        <result column="accCount" property="accCount"/>
+        <result column="accPrice" property="accPrice"/>
+        <result column="accName" property="accName"/>
+        <result column="userName" property="userName"/>
+        <result column="userRequests" property="userRequests"/>
+        <result column="empName" property="empName"/>
+        <result column="maintainName" property="maintainName"/>
+        <result column="muCreatedTime" property="muCreatedTime"/>
+        <result column="muUseDate" property="muUseDate"/>
+    </resultMap>
+
+    <insert id="addByRecordIdMu">
+        <![CDATA[
+        insert into t_material_use
+        values
+        ]]>
+        <foreach collection="list" item="item" index="index" separator=",">
+            (uuid(),#{item.recordId},#{item.accId}, #{item.accCount}, now(), now())
+        </foreach>
+    </insert>
+
+    <select id="queryAll" resultMap="materialUseInfoResultMap">
+        <![CDATA[
+            select mu.*, c.checkinId, c.userName, c.userRequests, mf.maintainName, a.accName, a.accPrice
+            from t_material_use mu, t_checkin c, t_maintain_fix mf, t_accessories a,
+            t_maintain_record mr,t_maintain_detail md, t_maintain_fix_acc mfa
+            where mu.recordId = mr.recordId and mr.checkinId = c.checkinId
+            and md.recordId = mu.recordId and mu.recordId = md.recordId and
+            md.maintainId = mf.maintainId and mu.accId = a.accId and
+            md.maintainId = mfa.maintainId and a.accId = mfa.accId and
+            mr.recordId = #{recordId}
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and mr.companyId = #{user.companyId}
+        </if>
+    </select>
+
+    <select id="queryBySpeedStatus" resultMap="materialUseInfoResultMap">
+        <![CDATA[
+            select mu.*, c.checkinId, c.userName, c.userRequests, mf.maintainName, a.accName, a.accPrice
+            from t_material_use mu, t_checkin c, t_maintain_fix mf, t_accessories a,
+            t_maintain_record mr,t_maintain_detail md, t_maintain_fix_acc mfa
+            where mu.recordId = mr.recordId and mr.checkinId = c.checkinId
+            and md.recordId = mu.recordId and mu.recordId = md.recordId and
+            md.maintainId = mf.maintainId and mu.accId = a.accId and
+            md.maintainId = mfa.maintainId and a.accId = mfa.accId and
+            mr.recordId = #{recordId}
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and mr.companyId = #{user.companyId}
+        </if>
+        order by mu.muUseDate asc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="queryByIdAccCount" resultType="materialUseInfo">
+        <![CDATA[
+
+			select * from t_material_use where materialUseId = #{materialUseId}
+
+        ]]>
+    </select>
+
+    <select id="countBySpeedStatus" resultType="int">
+        <![CDATA[
+            select count(*) from t_material_use mu, t_maintain_record mr where mu.recordId = #{recordId}
+            and mr.recordId = mu.recordId
+        ]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and mr.companyId = #{user.companyId}
+        </if>
+    </select>
+
+</mapper>

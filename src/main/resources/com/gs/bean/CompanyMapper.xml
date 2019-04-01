@@ -1,0 +1,175 @@
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.CompanyDAO">
+
+	<resultMap id="companyResultMap" type="company">
+
+	</resultMap>
+
+	<insert id="insert"  parameterType="company">
+		<![CDATA[
+			insert into t_company (companyId,companyName,companyAddress,companyTel,companyPricipal,companyWebsite,companyLogo,companyOpenDate,companySize,companyLongitude,companyLatitude,companyDes,companyStatus,companyImg,companyPricipalPhone,createTime) values (#{companyId},#{companyName},#{companyAddress},#{companyTel},#{companyPricipal},#{companyWebsite},#{companyLogo},#{companyOpenDate},#{companySize},#{companyLongitude},#{companyLatitude},#{companyDes},'Y',#{companyImg},#{companyPricipalPhone},now())
+		]]>
+	</insert>
+
+	<insert id="batchInsert"  parameterType="list">
+		<![CDATA[
+
+		]]>
+	</insert>
+
+	<delete id="delete" parameterType="company">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<update id="update" parameterType="company">
+		<![CDATA[
+			update t_company set companyName = #{companyName} , companyAddress= #{companyAddress} ,companyTel= #{companyTel},
+			companyPricipal = #{companyPricipal},companyWebsite=#{companyWebsite},companyLogo=#{companyLogo},companyOpenDate=#{companyOpenDate},
+			companySize = #{companySize},companyLongitude=#{companyLongitude},companyLatitude=#{companyLatitude},companyDes=#{companyDes},companyStatus = 'Y',companyImg = #{companyImg}
+			where companyId = #{companyId}
+		]]>
+	</update>
+
+	<update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryAll" resultMap="companyResultMap">
+		<![CDATA[
+			select * from t_company where companyStatus = 'Y'
+		]]>
+	</select>
+
+	<select id="queryByStatus" resultMap="companyResultMap" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="query" resultType="company">
+		<![CDATA[
+			select * from t_company where 1 = 1
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and companyId = #{companyId}
+		</if>
+	</select>
+
+	<select id="queryById" parameterType="string" resultType="company">
+		<![CDATA[
+			select * from t_company where 1 = 1 and companyId = #{id}
+		]]>
+	</select>
+
+	<select id="queryByPager" resultMap="companyResultMap">
+		<![CDATA[
+			select * from t_company  where 1 = 1
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and companyId = #{user.companyId}
+		</if>
+		order by createTime desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="count" resultType="int">
+		<![CDATA[
+			select count(*) from t_company where 1 = 1
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and companyId = #{companyId}
+		</if>
+	</select>
+
+	<select id="searchByPager" resultMap="companyResultMap">
+		<![CDATA[
+			select * from t_company where 1 = 1
+		]]>
+		<if test="companyName!=null and companyName != ''">
+			and companyName like concat('%',#{companyName},'%')
+		</if>
+		<if test="userName!= null and userName != ''">
+			and companyPricipal like concat('%',#{userName},'%')
+		</if>
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="searchCount" resultType="int">
+		<![CDATA[
+			select count(*) from t_company where 1 = 1
+		]]>
+		<if test="companyName!=null and companyName != ''">
+			and companyName like concat('%',#{companyName},'%')
+		</if>
+		<if test="userName!= null and userName != ''">
+			and companyPricipal like concat('%',#{userName},'%')
+		</if>
+	</select>
+
+	<select id="statusCount" resultType="int">
+		<![CDATA[
+			select count(*) from t_company where companyStatus = #{status}
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and companyId = #{user.companyId}
+		</if>
+	</select>
+
+	<update id="inactive" parameterType="string">
+		<![CDATA[
+			update t_company set companyStatus = 'N' where companyId = #{companyId}
+		]]>
+	</update>
+
+	<update id="active" parameterType="string">
+		<![CDATA[
+			update t_company set companyStatus = 'Y' where companyId = #{companyId}
+		]]>
+	</update>
+
+	<select id="queryByStatusPager" resultMap="companyResultMap">
+		<![CDATA[
+			select * from t_company where companyStatus = #{status}
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and companyId = #{user.companyId}
+		</if>
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="queryByTop" resultMap="companyResultMap">
+		<![CDATA[
+			select * from t_company where 1 = 1
+		]]>
+		order by companyOpenDate desc
+		limit 0, #{top}
+	</select>
+
+	<select id="queryByTop2" resultMap="companyResultMap">
+		<![CDATA[
+			select * from t_company where 1 = 1
+		]]>
+		order by companyOpenDate desc
+		limit #{index}, #{top}
+	</select>
+
+</mapper>

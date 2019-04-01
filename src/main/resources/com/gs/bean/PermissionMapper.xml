@@ -1,0 +1,162 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.PermissionDAO">
+
+    <resultMap id="permissionResultMap" type="permission">
+        <id property="permissionId" column="permissionId"/>
+        <result property="permissionName" column="permissionName"/>
+        <result property="permissionZHName" column="permissionZHName"/>
+        <result property="permissionDes" column="permissionDes"/>
+		<result property="moduleId" column="moduleId" />
+        <result property="permissionStatus" column="permissionStatus"/>
+
+        <association property="module" javaType="com.gs.bean.Module">
+			<id property="moduleId" column="moduleId" />
+            <result property="moduleName" column="moduleName"/>
+        </association>
+    </resultMap>
+
+    <insert id="insert" parameterType="permission">
+		<![CDATA[
+			insert into t_permission(permissionId, permissionName, permissionZHName, permissionDes, moduleId, permissionStatus)
+			values(uuid(), #{permissionName}, #{permissionZHName}, #{permissionDes}, #{moduleId}, 'Y')
+        ]]>
+	</insert>
+
+    <insert id="batchInsert" parameterType="list">
+		<![CDATA[
+
+        ]]>
+	</insert>
+
+    <delete id="delete" parameterType="permission">
+		<![CDATA[
+
+        ]]>
+	</delete>
+
+    <delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+        ]]>
+	</delete>
+
+    <delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+        ]]>
+	</delete>
+
+    <update id="update" parameterType="permission">
+		<![CDATA[
+			update t_permission set permissionName = #{permissionName}, permissionZHName = #{permissionZHName}, permissionDes = #{permissionDes},
+			moduleId = #{moduleId}, permissionStatus = 'Y' where permissionId = #{permissionId};
+        ]]>
+	</update>
+
+    <update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+        ]]>
+	</update>
+
+    <select id="queryAll" resultMap="permissionResultMap">
+		<![CDATA[
+
+        ]]>
+	</select>
+
+	<select id="queryByPager" resultType="list" resultMap="permissionResultMap">
+		<![CDATA[
+			select  p.*, m.moduleId, m.moduleName from t_permission p, t_module m
+			where p.moduleId = m.moduleId
+		]]>
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+    <select id="queryByModuleId" parameterType="string" resultMap="permissionResultMap">
+		<![CDATA[
+			select * from t_permission where moduleId = #{moduleId}
+        ]]>
+	</select>
+
+	<select id="queryByModulePager" resultMap="permissionResultMap">
+		<![CDATA[
+			select  p.*, m.moduleId, m.moduleName from t_permission p, t_module m
+			where p.moduleId = m.moduleId and p.moduleId = #{moduleId}
+        ]]>
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+    <select id="queryByStatus" resultMap="permissionResultMap" parameterType="string">
+		<![CDATA[
+
+        ]]>
+	</select>
+
+	<select id="queryByStatusPager" resultMap="permissionResultMap">
+		<![CDATA[
+			select  p.*, m.moduleId, m.moduleName from t_permission p, t_module m
+			where p.moduleId = m.moduleId and permissionStatus = #{status}
+        ]]>
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+    <select id="query" parameterType="permission" resultType="permission">
+		<![CDATA[
+
+        ]]>
+	</select>
+
+    <select id="queryById" parameterType="string" resultType="permission">
+		<![CDATA[
+
+        ]]>
+	</select>
+
+    <select id="count" resultType="int">
+		<![CDATA[
+			select count(*) from t_permission
+        ]]>
+	</select>
+
+	<select id="countStatus" parameterType="String" resultType="int">
+		<![CDATA[
+			select count(*) from t_permission where permissionStatus = #{status}
+        ]]>
+
+	</select>
+
+	<select id="countModule" parameterType="String" resultType="int">
+		<![CDATA[
+			select count(*) from t_permission where moduleId = #{moduleId}
+        ]]>
+	</select>
+
+	<select id="queryPNIsExist" resultType="int">
+		<![CDATA[
+			select count(*) from t_permission where permissionName = #{permissionName}
+        ]]>
+	</select>
+
+	<select id="queryPZHNExist" resultType="int">
+		<![CDATA[
+			select count(*) from t_permission where permissionZHName = #{permissionZHName}
+        ]]>
+	</select>
+
+    <update id="inactive" parameterType="string">
+		<![CDATA[
+			update t_permission set permissionStatus = 'N' where permissionId = #{id}
+        ]]>
+	</update>
+
+    <update id="active" parameterType="string">
+		<![CDATA[
+			update t_permission set permissionStatus = 'Y' where permissionId = #{id}
+        ]]>
+	</update>
+
+</mapper>

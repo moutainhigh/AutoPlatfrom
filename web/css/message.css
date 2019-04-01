@@ -1,0 +1,36 @@
+*{
+    margin: 0px;
+    padding: 0px;
+}
+
+.max_div{
+    background-color: white;
+}
+.shell{
+    width: 90%;
+    margin: 0 auto;
+}
+
+.avatar{
+    width: 250px;
+    height: 250px;
+    margin: 0 auto;
+}
+
+.avatar img{
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    cursor:hand;
+}
+
+
+.pwd button{
+    margin-left: 30%;
+}
+
+.zi_em{
+    float: right;
+    font-size: 20px;
+    color: red;
+}

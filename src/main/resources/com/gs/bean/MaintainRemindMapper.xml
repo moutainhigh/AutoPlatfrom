@@ -1,0 +1,178 @@
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.MaintainRemindDAO">
+	<resultMap id="maintainRemindResultMap" type="maintainRemind">
+		<id property="remindId" column="remindId" />
+		<result property="userId" column="userId" />
+		<result property="lastMaintainTime" column="lastMaintainTime" />
+		<result property="lastMaintainMileage" column="lastMaintainMileage" />
+		<result property="remindMsg" column="remindMsg" />
+		<result property="remindTime" column="remindTime" />
+		<result property="remindType" column="remindType" />
+		<result property="remindCreatedTime" column="remindCreatedTime" />
+		<result column="companyId" property="companyId"/>
+		<result column="checkinId" property="checkinId"/>
+		<association property="checkin" javaType="com.gs.bean.Checkin">
+			<id property="checkinId" column="checkinId"></id>
+			<id property="userId" column="userId"/>
+			<id property="userName" column="userName"/>
+			<id property="userPhone" column="userPhone"/>
+			<id property="carMileage" column="carMileage"/>
+		</association>
+		<association property="maintainRecord" javaType="com.gs.bean.MaintainRecord">
+			<id property="checkinId" column="checkinId"/>
+			<id property="actualEndTime" column="actualEndTime"/>
+		</association>
+
+	</resultMap>
+
+	<insert id="insert"  parameterType="maintainRemind">
+		<![CDATA[
+		insert into t_maintain_remind
+		(remindId, userId, checkinId,lastMaintainTime, lastMaintainMileage, remindMsg, remindTime, remindType, companyId, remindCreatedTime)
+		VALUE (UUID(),#{userId},#{checkinId},#{lastMaintainTime},#{lastMaintainMileage},#{remindMsg},#{remindTime},#{remindType},#{companyId},NOW())
+		]]>
+	</insert>
+
+	<insert id="batchInsert"  parameterType="list">
+		<![CDATA[
+
+		]]>
+	</insert>
+
+	<delete id="delete" parameterType="maintainRemind">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<update id="update" parameterType="maintainRemind">
+		<![CDATA[
+		update t_maintain_remind set remindMsg= #{remindMsg},remindTime=#{remindTime},remindType=#{remindType}
+		where remindId = #{remindId}
+		]]>
+	</update>
+
+	<update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryAll" resultMap="maintainRemindResultMap">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByStatus" resultMap="maintainRemindResultMap" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="query" parameterType="maintainRemind" resultType="maintainRemind">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryById" parameterType="string" resultType="maintainRemind">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByPager" resultType="list" resultMap="maintainRemindResultMap">
+		<![CDATA[
+		   select * from t_maintain_remind rem, t_checkin c
+			where  c.checkinId = rem.checkinId
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and rem.companyId = #{user.companyId}
+		</if>
+		order by rem.companyId desc, rem.remindCreatedTime desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="count" resultType="int">
+		<![CDATA[
+		  select count(*) from t_maintain_remind rem, t_checkin c
+			where  c.checkinId = rem.checkinId
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and rem.companyId = #{companyId}
+		</if>
+	</select>
+
+	<update id="inactive" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<update id="active" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="countByCondition" resultType="int">
+		select count(*) from t_maintain_remind rem, t_checkin c
+		where  c.checkinId = rem.checkinId
+		<if test="user.companyId != null and user.companyId != ''">
+			and rem.companyId = #{user.companyId}
+		</if>
+		<if test="remind.checkin.userName != null and remind.checkin.userName != ''">
+			and c.userName like concat('%',#{remind.checkin.userName},'%')
+		</if>
+		<if test="remind.remindType != null and remind.remindType != ''">
+			and rem.remindType = #{remind.remindType}
+		</if>
+	</select>
+
+	<select id="queryPagerByCondition" resultType="list" resultMap="maintainRemindResultMap">
+	<![CDATA[
+		select * from t_maintain_remind rem, t_checkin c
+			where  c.checkinId = rem.checkinId
+
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and rem.companyId = #{user.companyId}
+		</if>
+		<if test="remind.checkin.userName != null and remind.checkin.userName != ''">
+			and c.userName like concat('%',#{remind.checkin.userName},'%')
+		</if>
+		<if test="remind.remindType != null and remind.remindType != '' and remind.remindType != 'all'">
+			and rem.remindType = #{remind.remindType}
+		</if>
+		order by c.companyId desc, rem.remindCreatedTime
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="queryByTop" resultType="list" resultMap="maintainRemindResultMap">
+		<![CDATA[
+		  select * from t_maintain_remind rem, t_maintain_record red, t_checkin c where rem.userId=c.userId and c.checkinId = red.checkinId and red.recordStatus = 'Y'
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and rem.companyId = #{user.companyId}
+		</if>
+		order by red.recordStatus desc, rem.remindCreatedTime desc
+		limit 0, #{top}
+	</select>
+
+</mapper>

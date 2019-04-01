@@ -1,0 +1,350 @@
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.AccessoriesDAO">
+
+	<resultMap id="accessoriesResultMap" type="accessories">
+		<id property="accId" column="accId"/>
+		<result property="accName" column="accName"/>
+		<result property="accCommodityCode" column="accCommodityCode"/>
+		<result property="accDes" column="accDes"/>
+		<result property="accPrice" column="accPrice"/>
+		<result property="accSalePrice" column="accSalePrice"/>
+		<result property="accUnit" column="accUnit"/>
+		<result property="accTotal" column="accTotal"/>
+		<result property="accIdle" column="accIdle"/>
+		<result property="accUsedTime" column="accUsedTime"/>
+		<result property="accBuyedTime" column="accBuyedTime"/>
+		<result property="accCreatedTime" column="accCreatedTime"/>
+		<result property="accStatus" column="accStatus"/>
+
+		<association property="supply" javaType="com.gs.bean.Supply">
+			<id property="supplyId" column="supplyId"/>
+			<id property="supplyName" column="supplyName"/>
+		</association>
+
+		<association property="accessoriesType" javaType="com.gs.bean.AccessoriesType">
+			<id property="accTypeId" column="accTypeId"/>
+			<id property="accTypeName" column="accTypeName"/>
+		</association>
+
+		<association property="company" javaType="com.gs.bean.Company">
+			<id property="companyId" column="companyId"/>
+			<id property="companyName" column="companyName"/>
+		</association>
+	</resultMap>
+
+	<insert id="insert" parameterType="accessories">
+		<![CDATA[
+			insert into t_accessories(accId, accName, accCommodityCode, accDes, accPrice, accSalePrice, accUnit, accTotal, accIdle, accUsedTime, accBuyedTime, supplyId, accCreatedTime, accTypeId, companyId, accStatus) value (#{accId}, #{accName}, #{accCommodityCode}, #{accDes}, #{accPrice}, #{accSalePrice}, #{accUnit}, #{accTotal}, #{accIdle}, #{accUsedTime}, #{accBuyedTime}, #{supplyId}, now(), #{accTypeId}, #{companyId}, 'Y')
+        ]]>
+	</insert>
+
+	<insert id="batchInsert" parameterType="list">
+		<![CDATA[
+
+        ]]>
+	</insert>
+
+	<delete id="delete" parameterType="accessories">
+		<![CDATA[
+
+        ]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+        ]]>
+	</delete>
+
+	<delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+        ]]>
+	</delete>
+
+	<update id="update" parameterType="accessories">
+		<![CDATA[
+			update t_accessories set accName = #{accName}, accCommodityCode = #{accCommodityCode}, accDes = #{accDes}, accPrice = #{accPrice}, accSalePrice = #{accSalePrice}, accUnit = #{accUnit}, accTotal = #{accTotal}, accIdle = #{accIdle}, accUsedTime = #{accUsedTime}, accBuyedTime = #{accBuyedTime}, supplyId = #{supplyId}, accTypeId = #{accTypeId}, companyId = #{companyId}, accStatus = #{accStatus} where accId = #{accId}
+        ]]>
+	</update>
+
+	<update id="updateIdle" parameterType="accessories">
+		<![CDATA[
+			update t_accessories set accIdle = #{lastCount} where accId = #{id}
+		]]>
+	</update>
+
+	<update id="updateAccUseTime" parameterType="string">
+		<![CDATA[
+			update t_accessories set accUsedTime = now() where accId = #{id}
+		]]>
+	</update>
+
+	<update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+        ]]>
+	</update>
+
+	<select id="queryAll" resultMap="accessoriesResultMap">
+		<![CDATA[
+			select * from t_accessories where 1 = 1
+        ]]>
+		<if test="companyId != null and companyId != ''">
+			and companyId = #{companyId}
+		</if>
+	</select>
+
+	<select id="queryByStatus" resultMap="accessoriesResultMap" parameterType="string">
+		<![CDATA[
+
+        ]]>
+	</select>
+
+	<select id="query" parameterType="accessories" resultType="accessories">
+		<![CDATA[
+
+        ]]>
+	</select>
+
+	<select id="queryById" resultType="accessories">
+		<![CDATA[
+			select * from t_accessories where accId = #{id}
+        ]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and companyId = #{user.companyId}
+		</if>
+	</select>
+
+	<select id="queryByIdPager" resultMap="accessoriesResultMap">
+		<![CDATA[
+			select * from t_accessories where accTypeId = #{id}
+        ]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and companyId = #{user.companyId}
+		</if>
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="queryByPager" resultMap="accessoriesResultMap">
+		<![CDATA[
+			SELECT
+			acc.*,
+			suy.supplyName,
+			cpy.companyName,
+			ate.accTypeName
+		FROM
+			(
+				(
+					(
+						(
+							t_accessories acc
+							INNER JOIN t_accessories_buy aby ON acc.accId = aby.accId
+						)
+						INNER JOIN t_accessories_type ate ON acc.accTypeId = ate.accTypeId
+					)
+					INNER JOIN t_supply suy ON acc.supplyId = suy.supplyId
+				)
+				INNER JOIN t_company cpy ON acc.companyId = cpy.companyId
+			)
+		WHERE
+			aby.accIsBuy = 'Y'
+        ]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and cpy.companyId = #{user.companyId}
+		</if>
+		order by acc.accBuyedTime desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="queryByStatusPager" resultMap="accessoriesResultMap">
+		<![CDATA[
+			select ac.*, s.supplyId, s.supplyName, at.accTypeId, at.accTypeName, cpy.companyId, cpy.companyName
+			from t_accessories ac, t_supply s, t_accessories_type at, t_company cpy
+			where s.supplyId = ac.supplyId and at.accTypeId = ac.accTypeId and cpy.companyId = ac.companyId and ac.accStatus = #{accStatus}
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and ac.companyId = #{user.companyId}
+		</if>
+		order by ac.companyId Desc, ac.accCreatedTime desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="queryByCondition" resultMap="accessoriesResultMap">
+		<![CDATA[
+ 			select ac.*, c.companyId, c.companyName, at.accTypeId, at.accTypeName, s.supplyId, s.supplyName
+ 			from t_accessories ac, t_company c, t_accessories_type at, t_supply s
+ 			where c.companyId = ac.companyId and at.accTypeId = ac.accTypeId and s.supplyId = ac.supplyId
+		]]>
+		<if test="accessories.accName != null and accessories.accName !=''">
+			and ac.accName like concat('%', #{accessories.accName},'%')
+		</if>
+		<if test="accessories.accCommodityCode != null and accessories.accCommodityCode !=''">
+			and ac.accCommodityCode like concat('%', #{accessories.accCommodityCode}, '%')
+		</if>
+		<if test="accessories.companyId != null and accessories.companyId != '' and accessories.companyId != 'null'">
+			and ac.companyId = #{accessories.companyId}
+		</if>
+		<if test="accessories.accTypeId != null and accessories.accTypeId != '' and accessories.accTypeId != 'null'">
+			and ac.accTypeId = #{accessories.accTypeId}
+		</if>
+		<if test="user.companyId != null and user.companyId != ''">
+			and ac.companyId = #{user.companyId}
+		</if>
+		order by ac.companyId desc, ac.accCreatedTime desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="queryByIdTotalAndIdle" resultType="accessories">
+		<![CDATA[
+			select * from t_accessories where accId = #{accId}
+		]]>
+	</select>
+
+	<select id="count" resultType="int">
+		<![CDATA[
+		SELECT
+			count(acc.accId)
+		FROM
+			(
+				(
+					(
+						(
+							t_accessories acc
+							INNER JOIN t_accessories_buy aby ON acc.accId = aby.accId
+						)
+						INNER JOIN t_accessories_type ate ON acc.accTypeId = ate.accTypeId
+					)
+					INNER JOIN t_supply suy ON acc.supplyId = suy.supplyId
+				)
+				INNER JOIN t_company cpy ON acc.companyId = cpy.companyId
+			)
+		WHERE
+			aby.accIsBuy = 'Y'
+        ]]>
+		<if test="companyId != null and companyId != ''">
+			and acc.companyId = #{companyId}
+		</if>
+	</select>
+	<select id="countByTypeId" resultType="int">
+		<![CDATA[
+			select count(*) from t_accessories where  accTypeId = #{accTypeId}
+        ]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and companyId = #{user.companyId}
+		</if>
+	</select>
+
+	<select id="countByStatus" parameterType="String" resultType="int">
+		<![CDATA[
+			select count(*) from t_accessories where accStatus = #{accStatus}
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and companyId = #{user.companyId}
+		</if>
+	</select>
+
+	<select id="countByCondition" resultType="int">
+		<![CDATA[
+			select count(*) from t_accessories where 1 = 1
+		]]>
+		<if test="accessories.accName != null and accessories.accName != ''">
+			and accName like concat('%',#{accessories.accName},'%')
+		</if>
+		<if test="accessories.accCommodityCode != null and accessories.accCommodityCode != ''">
+			and accCommodityCode like concat('%',#{accessories.accCommodityCode},'%')
+		</if>
+		<if test="accessories.companyId != null and accessories.companyId != '' and accessories.companyId != 'null'">
+			and companyId = #{accessories.companyId}
+		</if>
+		<if test="accessories.accTypeId != null and accessories.accTypeId != '' and accessories.accTypeId != 'null'">
+			and accTypeId = #{accessories.accTypeId}
+		</if>
+		<if test="user.companyId != null and user.companyId != ''">
+			and companyId = #{user.companyId}
+		</if>
+	</select>
+
+
+	<update id="inactive" parameterType="string">
+		<![CDATA[
+			update t_accessories set accStatus = 'N' where accId = #{accId}
+        ]]>
+	</update>
+
+	<update id="active" parameterType="string">
+		<![CDATA[
+			update t_accessories set accStatus = 'Y' where accId = #{accId}
+        ]]>
+	</update>
+
+	<update id="updateTotalAndIdle">
+		<![CDATA[
+			update t_accessories set
+		]]>
+		<foreach collection="list" item="item" index="index" separator="," >
+			accTotal = #{item.accTotal}, accIdle = #{item.accIdle}, accUsedTime = now() where accId = #{item.accId}
+		</foreach>
+	</update>
+
+	<select id="queryByConditionTotal"  resultType="list" resultMap="accessoriesResultMap">
+		<![CDATA[
+			select sum(a.accTotal) as accTotal,a.accCreatedTime from t_accessories a
+            where a.accCreatedTime >= #{startTime} and a.accCreatedTime <= #{endTime} and  a.accStatus = 'Y'
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and a.companyId = #{companyId}
+		</if>
+		<if test="accTypeId != null and accTypeId != ''">
+			and a.accTypeId = #{accTypeId}
+		</if>
+		<if test="type =='year'">
+			GROUP BY year(a.accCreatedTime)
+		</if>
+		<if test="type =='quarter'">
+			GROUP BY quarter(a.accCreatedTime)
+		</if>
+		<if test="type =='month'">
+			GROUP BY month(a.accCreatedTime)
+		</if>
+		<if test="type =='week'">
+			GROUP BY week(a.accCreatedTime)
+		</if>
+		<if test="type =='day'">
+			GROUP BY day(a.accCreatedTime)
+		</if>
+	</select>
+
+	<select id="queryByConditionIdle"  resultType="list" resultMap="accessoriesResultMap">
+		<![CDATA[
+			select sum(a.accIdle) as accIdle ,a.accBuyedTime from t_accessories a
+            where a.accBuyedTime >= #{startTime} and a.accBuyedTime <= #{endTime} and  a.accStatus = 'Y'
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and a.companyId = #{companyId}
+		</if>
+		<if test="accTypeId != null and accTypeId != ''">
+			and a.accTypeId = #{accTypeId}
+		</if>
+		<if test="type =='year'">
+			GROUP BY year(a.accBuyedTime)
+		</if>
+		<if test="type =='quarter'">
+			GROUP BY quarter(a.accBuyedTime)
+		</if>
+		<if test="type =='month'">
+			GROUP BY month(a.accBuyedTime)
+		</if>
+		<if test="type =='week'">
+			GROUP BY week(a.accBuyedTime)
+		</if>
+		<if test="type =='day'">
+			GROUP BY day(a.accBuyedTime)
+		</if>
+	</select>
+
+
+</mapper>

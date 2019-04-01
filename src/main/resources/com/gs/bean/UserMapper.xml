@@ -1,0 +1,640 @@
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.UserDAO">
+
+	<resultMap id="userResultMap" type="user">
+		<id property="userId" column="userId" />
+		<result property="userEmail" column="userEmail" />
+		<result property="userPhone" column="userPhone" />
+		<result property="userPwd" column="userPwd" />
+		<result property="userNickname" column="userNickname" />
+		<result property="userIdentity" column="userIdentity" />
+		<result property="userName" column="userName" />
+		<result property="userGender" column="userGender" />
+		<result property="userBirthday" column="userBirthday" />
+		<result property="userAddress" column="userAddress" />
+		<result property="qqOpenId" column="qqOpenId" />
+		<result property="weiboOpenId" column="weiboOpenId" />
+		<result property="wechatOpenId" column="wechatOpenId" />
+		<result property="userIcon" column="userIcon" />
+		<result property="userDes" column="userDes" />
+		<result property="companyId" column="companyId" />
+		<result property="userSalary" column="userSalary" />
+		<result property="userCreatedTime" column="userCreatedTime" />
+		<result property="userLoginedTime" column="userLoginedTime" />
+		<result property="userStatus" column="userStatus" />
+
+		<association property="company" javaType="com.gs.bean.Company">
+			<id property="companyId" column="companyId"/>
+			<id property="companyName" column="companyName"/>
+		</association>
+
+
+		<association property="role" javaType="com.gs.bean.Role">
+			<id property="roleId" column="roleId"/>
+			<id property="roleName" column="roleName"/>
+			<id property="roleDes" column="roleDes"/>
+		</association>
+
+		<association property="userRole" javaType="com.gs.bean.UserRole">
+			<id property="userRoleId" column="userRoleId"/>
+			<id property="userId" column="userId"/>
+			<id property="roleId" column="roleId"/>
+		</association>
+	</resultMap>
+
+	<insert id="insert"  parameterType="user">
+		<![CDATA[
+			INSERT INTO t_user
+				(userId, userName, userNickname, userIcon, userEmail, userPwd, userGender, userAddress, userPhone, userSalary, userIdentity, userCreatedTime, companyId, userStatus, qqOpenId, weiboOpenId, wechatOpenId, userDes, userBirthday, userLoginedTime)
+			VALUES
+				(#{userId}, #{userName}, #{userNickname}, #{userIcon}, #{userEmail}, #{userPwd}, #{userGender}, #{userAddress}, #{userPhone}, #{userSalary}, #{userIdentity}, now(), #{companyId}, #{userStatus}, #{qqOpenId}, #{weiboOpenId}, #{wechatOpenId}, #{userDes}, #{userBirthday}, #{userLoginedTime})
+		]]>
+	</insert>
+
+
+	<insert id="insertAdmin" parameterType="user">
+		<![CDATA[
+			insert into t_user(userId, userName, userEmail, userPhone, userPwd,
+								userIdentity, userBirthday, userAddress, companyId, userCreatedTime, userStatus, userGender)
+			value (#{userId}, #{userName}, #{userEmail}, #{userPhone}, #{userPwd}, #{userIdentity},
+			#{userBirthday}, #{userAddress}, #{companyId}, now(), 'Y', #{userGender});
+		]]>
+	</insert>
+
+	<insert id="batchInsert"  parameterType="list">
+		<![CDATA[
+
+		]]>
+	</insert>
+
+	<delete id="delete" parameterType="user">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<update id="update" parameterType="user">
+		<![CDATA[
+			UPDATE t_user SET
+				userEmail = #{userEmail}, userSalary = #{userSalary}, userPhone = #{userPhone}, userName = #{userName}, userIcon = #{userIcon}, userNickname = #{userNickname}, userDes = #{userDes}, userGender = #{userGender}, qqOpenId = #{qqOpenId}, weiboOpenId = #{weiboOpenId}, wechatOpenId = #{wechatOpenId}, userIdentity = #{userIdentity}, userBirthday = #{userBirthday} WHERE userId = #{userId}
+		]]>
+	</update>
+
+	<update id="updateMessage" parameterType="user">
+		<![CDATA[
+			UPDATE t_user SET
+				userEmail = #{userEmail}, userPhone = #{userPhone}, userName = #{userName}, userIcon = #{userIcon}, userNickname = #{userNickname}, userGender = #{userGender}, userAddress = #{userAddress}, qqOpenId = #{qqOpenId}, weiboOpenId = #{weiboOpenId}, wechatOpenId = #{wechatOpenId}, userIdentity = #{userIdentity}, userBirthday = #{userBirthday}, userDes = #{userDes} WHERE userId = #{userId}
+		]]>
+	</update>
+
+	<update id="updatePwd" parameterType="user">
+		<![CDATA[
+			UPDATE t_user SET
+				userPwd = #{user.userPwd} WHERE userId = #{user.userId}
+		]]>
+	</update>
+
+	<update id="updatePwdPhone" parameterType="user">
+		<![CDATA[
+			UPDATE t_user SET
+				userPwd = #{user.userPwd} WHERE  1 = 1
+		]]>
+		<if test="user.userPhone != null and user.userPhone != ''">
+			and userPhone = #{user.userPhone}
+		</if>
+		<if test="user.userEmail != null and user.userEmail != ''">
+			and userEmail = #{user.userEmail}
+		</if>
+	</update>
+
+	<update id="updateAdmin" parameterType="user">
+		<![CDATA[
+			UPDATE t_user SET
+				userName = #{userName}, userIcon = #{userIcon}, userNickname = #{userNickname},
+				userDes = #{userDes}, userGender = #{userGender}, userAddress = #{userAddress},
+				userStatus = 'Y', qqOpenId = #{qqOpenId}, weiboOpenId = #{weiboOpenId},
+				wechatOpenId = #{wechatOpenId}, userIdentity = #{userIdentity}, userDes = #{userDes},userEmail = #{userEmail}
+				WHERE userId = #{userId}
+		]]>
+	</update>
+
+
+	<update id="updateLoginTime" parameterType="string">
+		<![CDATA[
+			update t_user set userLoginedTime = now() where userId = #{userId}
+		]]>
+	</update>
+
+	<update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryAll" resultMap="userResultMap">
+		<![CDATA[
+			select * from t_role r WHERE r.roleName like concat('company', '%')
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and r.companyId = #{user.companyId}
+		</if>
+	</select>
+
+	<select id="queryByStatus" resultMap="userResultMap" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="query" parameterType="user" resultType="user">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryById" parameterType="string" resultType="user">
+		<![CDATA[
+			  SELECT * FROM t_user WHERE userId = #{userId}
+		]]>
+	</select>
+
+	<select id="queryByPhone" parameterType="string" resultType="user">
+		<![CDATA[
+			  SELECT * FROM t_user WHERE userPhone = #{userPhone}
+		]]>
+	</select>
+
+	<select id="queryPhone" parameterType="string" resultType="int">
+		<![CDATA[
+			  select count(userPhone) from t_user where userPhone = #{userPhone}
+		]]>
+	</select>
+
+	<select id="queryEmail" parameterType="string" resultType="int">
+		<![CDATA[
+			  select count(userEmail) from t_user where userEmail = #{userEmail}
+		]]>
+	</select>
+
+	<select id="queryIdentity" parameterType="string" resultType="int">
+		<![CDATA[
+			  select count(userIdentity) from t_user where userIdentity = #{userIdentity}
+		]]>
+	</select>
+
+
+	<select id="queryUser"  resultMap="userResultMap">
+		<![CDATA[
+			SELECT * FROM t_user u
+			INNER JOIN t_user_role ur ON ur.userId = u.userId
+			INNER JOIN t_role r ON r.roleId = ur.roleId
+			WHERE r.roleName like concat('companyArtificer') and u.companyId = #{companyId}
+		]]>
+	</select>
+
+
+	<select id="queryByUser"  resultMap="userResultMap">
+		<![CDATA[
+			  SELECT * FROM t_user u
+			  INNER JOIN t_user_role ur ON ur.userId = u.userId
+			INNER JOIN t_role r ON r.roleId = ur.roleId
+			WHERE r.roleName like concat('company', '%') and u.companyId = #{companyId} order by userCreatedTime Desc
+		]]>
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="queryLogin" parameterType="user" resultType="user">
+		<![CDATA[
+			select * from t_user where userPwd = #{userPwd} and (userEmail = #{userEmail} or userPhone = #{userPhone})
+		]]>
+	</select>
+
+	<select id="countStatus" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM t_user u
+			INNER JOIN t_user_role ur ON ur.userId = u.userId
+			INNER JOIN t_role r ON r.roleId = ur.roleId
+			WHERE r.roleName LIKE CONCAT('carOwner') AND u.userStatus = 'N'
+		]]>
+	</select>
+
+
+	<select id="queryCustomerPagerStatus" resultType="list" resultMap="userResultMap">
+		<![CDATA[
+			SELECT * FROM t_user u
+			INNER JOIN t_user_role ur ON ur.userId = u.userId
+			INNER JOIN t_role r ON r.roleId = ur.roleId
+			WHERE r.roleName = 'carOwner' AND u.userStatus = 'N'
+		]]>
+		ORDER BY userCreatedTime Desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+
+	<select id="countByUser" resultType="int" parameterType="string">
+		<![CDATA[
+			SELECT COUNT(*) FROM t_user u
+			INNER JOIN t_user_role ur ON ur.userId = u.userId
+			INNER JOIN t_role r ON r.roleId = ur.roleId
+			WHERE r.roleName like concat('company', '%') and u.companyId = #{companyId}
+		]]>
+	</select>
+	<select id="queryCustomerPager" resultType="list" resultMap="userResultMap">
+		<![CDATA[
+			SELECT * FROM t_user u
+			INNER JOIN t_user_role ur ON ur.userId = u.userId
+			INNER JOIN t_role r ON r.roleId = ur.roleId
+			WHERE r.roleName = 'carOwner' AND u.userStatus = 'Y'
+		]]>
+		ORDER BY userCreatedTime Desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="countCustomer" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM t_user u
+			INNER JOIN t_user_role ur ON ur.userId = u.userId
+			INNER JOIN t_role r ON r.roleId = ur.roleId
+			WHERE r.roleName LIKE CONCAT('carOwner')
+		]]>
+	</select>
+
+
+	<select id="selectCountCustomer" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM t_user u
+			INNER JOIN t_user_role ur ON ur.userId = u.userId
+			INNER JOIN t_role r ON r.roleId = ur.roleId
+			WHERE r.roleName LIKE CONCAT('carOwner')
+		]]>
+		<if test="userPhone != null and userPhone != ''">
+			AND u.userPhone like concat('%',trim(#{userPhone}),'%')
+		</if>
+		<if test="userName != null and userName != ''">
+			AND u.userName like concat('%',trim(#{userName}),'%')
+		</if>
+	</select>
+
+	<select id="selectCustomer" resultType="list" resultMap="userResultMap">
+		<![CDATA[
+			SELECT * FROM t_user u
+			INNER JOIN t_user_role ur ON ur.userId = u.userId
+			INNER JOIN t_role r ON r.roleId = ur.roleId
+			WHERE r.roleName = 'carOwner'
+		]]>
+		<if test="user.userPhone != null and user.userPhone != ''">
+			AND u.userPhone like concat('%',trim(#{user.userPhone}),'%')
+		</if>
+		<if test="user.userName != null and user.userName != ''">
+			AND u.userName like concat('%',trim(#{user.userName}),'%')
+		</if>
+		ORDER BY u.userStatus DESC, u.userCreatedTime DESC
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="queryCustomer" resultType="list" resultMap="userResultMap">
+		<![CDATA[
+			SELECT * FROM t_user u
+			INNER JOIN t_user_role ur ON ur.userId = u.userId
+			INNER JOIN t_role r ON r.roleId = ur.roleId
+			WHERE r.roleName = 'carOwner'
+		]]>
+		ORDER BY userCreatedTime Desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+
+	<select id="queryPeoplePager" resultType="list" resultMap="userResultMap">
+		<![CDATA[
+			SELECT u.*, c.companyId, c.companyName, r.roleDes,r.roleId FROM t_user u
+			LEFT JOIN t_company c ON u.companyId = c.companyId
+			LEFT JOIN t_user_role ur ON ur.userId = u.userId
+			LEFT JOIN t_role r ON r.roleId = ur.roleId
+			WHERE r.roleName like concat('company', '%') AND u.userStatus = 'Y' AND r.roleName != 'companyAdmin' AND u.userId != #{user.userId}
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and u.companyId = #{user.companyId}
+		</if>
+		ORDER BY userCreatedTime Desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+
+	<select id="countStatusEmp" parameterType="String" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM t_user u
+			LEFT JOIN t_company c ON u.companyId = c.companyId
+			LEFT JOIN t_user_role ur ON ur.userId = u.userId
+			LEFT JOIN t_role r ON r.roleId = ur.roleId
+			WHERE r.roleName like concat('company', '%') AND u.userStatus = 'N' AND r.roleName != 'companyAdmin' AND u.userId != #{userId}
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and u.companyId = #{companyId}
+		</if>
+	</select>
+
+
+	<select id="queryPeoplePagerStatus" resultType="list" resultMap="userResultMap">
+		<![CDATA[
+			SELECT u.*, c.companyId, c.companyName, r.roleDes,r.roleId FROM t_user u
+			LEFT JOIN t_company c ON u.companyId = c.companyId
+			LEFT JOIN t_user_role ur ON ur.userId = u.userId
+			LEFT JOIN t_role r ON r.roleId = ur.roleId
+			WHERE r.roleName like concat('company', '%') AND u.userStatus = 'N' AND r.roleName != 'companyAdmin' AND u.userId != #{user.userId}
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and u.companyId = #{user.companyId}
+		</if>
+		ORDER BY u.userCreatedTime Desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+
+	<select id="queryByCompanyRole" resultMap="userResultMap">
+		<![CDATA[
+			SELECT u.*, c.companyId, c.companyName, r.roleDes,r.roleId FROM t_user u
+			LEFT JOIN t_company c ON c.companyId = u.companyId
+			LEFT JOIN t_user_role ur ON ur.userId = u.userId
+			LEFT JOIN t_role r ON r.roleId = ur.roleId
+			WHERE r.roleName like concat('companyArtificer') AND u.userStatus = 'Y' AND u.companyId = #{user.companyId}
+		]]>
+	</select>
+
+	<select id="countAllEmp" parameterType="String" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM t_user u
+			LEFT JOIN t_company c ON u.companyId = c.companyId
+			LEFT JOIN t_user_role ur ON ur.userId = u.userId
+			LEFT JOIN t_role r ON r.roleId = ur.roleId
+			WHERE r.roleName like concat('company', '%') AND r.roleName != 'companyAdmin' AND u.userId != #{user.userId}
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and u.companyId = #{user.companyId}
+		</if>
+	</select>
+
+
+	<select id="queryPeoplePagerAll" resultType="list" resultMap="userResultMap">
+		<![CDATA[
+			SELECT u.*, c.companyId, c.companyName, r.roleDes,r.roleId FROM t_user u
+			LEFT JOIN t_company c ON u.companyId = c.companyId
+			LEFT JOIN t_user_role ur ON ur.userId = u.userId
+			LEFT JOIN t_role r ON r.roleId = ur.roleId
+			WHERE r.roleName like concat('company', '%') AND r.roleName != 'companyAdmin' AND u.userId != #{user.userId}
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and u.companyId = #{user.companyId}
+		</if>
+		ORDER BY u.userCreatedTime Desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="queryByAdminPager" resultType="list" resultMap="userResultMap" parameterType="com.gs.common.bean.Pager">
+		<![CDATA[
+			select u.*, c.companyId, c.companyName, r.roleDes, r.roleName from t_user u
+			LEFT JOIN t_company c on u.companyId = c.companyId
+			LEFT JOIN t_user_role ur  on ur.userId = u.userId
+			LEFT JOIN t_role r on r.roleId = ur.roleId
+			where r.roleId in(select roleId from t_role where roleName like concat('%','Admin', '%'))
+			order by userCreatedTime Desc
+		]]>limit #{beginIndex}, #{pageSize}
+	</select>
+
+	<select id="queryByCompanyAdminPager" resultType="list" resultMap="userResultMap" parameterType="com.gs.common.bean.Pager">
+		<![CDATA[
+			select u.*, c.companyId, c.companyName, r.roleDes from t_user u
+			LEFT JOIN t_company c on u.companyId = c.companyId
+			LEFT JOIN t_user_role ur  on ur.userId = u.userId
+			LEFT JOIN t_role r on r.roleId = ur.roleId
+			where u.companyId = c.companyId and r.roleId = ur.roleId and roleName like concat('company', '%', 'Admin')
+			order by u.userCreatedTime Desc
+		]]>limit #{beginIndex}, #{pageSize}
+	</select>
+
+	<select id="queryBySystemAdminPager" resultType="list" resultMap="userResultMap" parameterType="com.gs.common.bean.Pager">
+		<![CDATA[
+			select u.*, c.companyId, c.companyName, r.roleDes from t_user u
+			LEFT JOIN t_company c on u.companyId = c.companyId
+			LEFT JOIN t_user_role ur  on ur.userId = u.userId
+			LEFT JOIN t_role r on r.roleId = ur.roleId
+			where r.roleName like concat('system','%','Admin')
+			order by userCreatedTime Desc
+		]]>limit #{beginIndex}, #{pageSize}
+	</select>
+
+	<select id="count" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM t_user u
+			INNER JOIN t_user_role ur ON ur.userId = u.userId
+			INNER JOIN t_role r ON r.roleId = ur.roleId
+			WHERE r.roleName LIKE CONCAT('carOwner') AND u.userStatus = 'Y'
+		]]>
+	</select>
+
+	<select id="countByCustomer" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM t_user u
+			INNER JOIN t_user_role ur ON ur.userId = u.userId
+			INNER JOIN t_role r ON r.roleId = ur.roleId
+			WHERE r.roleName LIKE CONCAT('carOwner') AND u.userStatus = 'Y'
+		]]>
+	</select>
+
+	<select id="countCompanyEmp" parameterType="String" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM t_user u
+			LEFT JOIN t_company c ON u.companyId = c.companyId
+			LEFT JOIN t_user_role ur ON ur.userId = u.userId
+			LEFT JOIN t_role r ON r.roleId = ur.roleId
+			WHERE r.roleName like concat('company', '%') AND u.userStatus = 'Y' AND r.roleName != 'companyAdmin' AND u.userId = #{userId}
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and u.companyId = #{companyId}
+		</if>
+	</select>
+
+	<select id="countPeopleEmp" parameterType="String" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM t_user u
+			LEFT JOIN t_company c ON u.companyId = c.companyId
+			LEFT JOIN t_user_role ur ON ur.userId = u.userId
+			LEFT JOIN t_role r ON r.roleId = ur.roleId
+			WHERE r.roleName like concat('company', '%') AND u.userStatus = 'Y' AND r.roleName != 'companyAdmin' AND u.userId = #{userId}
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and u.companyId = #{companyId}
+		</if>
+	</select>
+
+	<select id="countAdmin" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) from t_user u
+			LEFT JOIN t_company c on u.companyId = c.companyId
+			LEFT JOIN t_user_role ur  on ur.userId = u.userId
+			LEFT JOIN t_role r on r.roleId = ur.roleId
+			where r.roleId in(select roleId from t_role where roleName like concat('%','Admin', '%'))
+		]]>
+	</select>
+
+	<select id="countCompanyAdmin" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) from t_user u
+			LEFT JOIN t_company c on u.companyId = c.companyId
+			LEFT JOIN t_user_role ur  on ur.userId = u.userId
+			LEFT JOIN t_role r on r.roleId = ur.roleId
+			where u.companyId = c.companyId and r.roleId = ur.roleId
+		]]>
+	</select>
+
+	<select id="countSystemAdmin" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) from t_user u
+			LEFT JOIN t_company c on u.companyId = c.companyId
+			LEFT JOIN t_user_role ur  on ur.userId = u.userId
+			LEFT JOIN t_role r on r.roleId = ur.roleId
+			where r.roleName like concat('system','%','Admin')
+		]]>
+	</select>
+
+	<select id="selectQuery" resultType="list" resultMap="userResultMap">
+		<![CDATA[
+			select u.*, c.companyId, c.companyName, r.roleDes from t_user u
+			LEFT JOIN t_company c on u.companyId = c.companyId
+			LEFT JOIN t_user_role ur  on ur.userId = u.userId
+			LEFT JOIN t_role r on r.roleId = ur.roleId
+			where r.roleId in(select roleId from t_role where roleName like concat('%','Admin', '%'))
+		]]>
+		<if test="userName != null and userName != '' ">
+			and u.userName like concat('%',#{userName},'%')
+		</if>
+		<if test="userPhone != null and userPhone != '' ">
+			and u.userPhone like concat('%',#{userPhone},'%')
+		</if>
+		<if test="userEmail != null and userEmail != '' ">
+			and u.userEmail like concat('%',#{userEmail},'%')
+		</if>
+		order by userCreatedTime Desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+
+	<select id="countSelectQueryEmp" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM t_user u
+			INNER JOIN t_company c ON u.companyId = c.companyId
+			LEFT JOIN t_user_role ur ON ur.userId = u.userId
+			LEFT JOIN t_role r ON r.roleId = ur.roleId
+			WHERE r.roleName like concat('company', '%')
+		]]>
+		<if test="user.userPhone != null and user.userPhone != '' ">
+			and u.userPhone like concat('%',trim(#{user.userPhone}),'%')
+		</if>
+		<if test="user.userName != null and user.userName != '' ">
+			and u.userName like concat('%',trim(#{user.userName}),'%')
+		</if>
+		<if test="user.userEmail != null and user.userEmail != '' ">
+			and u.userEmail like concat('%',trim(#{user.userEmail}),'%')
+		</if>
+		<if test="role.roleId != null and role.roleId != '' and role.roleId != 'null' and role.roleId != 'undefined'">
+			and r.roleId = #{role.roleId}
+		</if>
+		<if test="company.companyId != null and company.companyId != '' and company.companyId != 'null' and company.companyId != 'undefined'">
+			and c.companyId = #{company.companyId}
+		</if>
+		<if test="user.companyId != null and user.companyId != ''">
+			and u.companyId = #{user.companyId}
+		</if>
+	</select>
+
+	<select id="selectQueryEmp" resultType="list" resultMap="userResultMap">
+		<![CDATA[
+			SELECT u.*, c.companyId, c.companyName, r.roleDes,r.roleId FROM t_user u
+			INNER JOIN t_company c ON u.companyId = c.companyId
+			LEFT JOIN t_user_role ur ON ur.userId = u.userId
+			LEFT JOIN t_role r ON r.roleId = ur.roleId
+			WHERE r.roleName like concat('company', '%')
+		]]>
+		<if test="user.userPhone != null and user.userPhone != '' ">
+			and u.userPhone like concat('%',trim(#{user.userPhone}),'%')
+		</if>
+		<if test="user.userName != null and user.userName != '' ">
+			and u.userName like concat('%',trim(#{user.userName}),'%')
+		</if>
+		<if test="user.userEmail != null and user.userEmail != '' ">
+			and u.userEmail like concat('%',trim(#{user.userEmail}),'%')
+		</if>
+		<if test="role.roleId != null and role.roleId != '' and role.roleId != 'null' and role.roleId != 'undefined'">
+			and r.roleId = #{role.roleId}
+		</if>
+		<if test="company.companyId != null and company.companyId != '' and company.companyId != 'null' and company.companyId != 'undefined'">
+			and c.companyId = #{company.companyId}
+		</if>
+		order by u.companyId DESC, u.userStatus DESC, u.userCreatedTime DESC
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+
+	<select id="countSelectAdmin" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) from t_user u
+			LEFT JOIN t_company c on u.companyId = c.companyId
+			LEFT JOIN t_user_role ur  on ur.userId = u.userId
+			LEFT JOIN t_role r on r.roleId = ur.roleId
+			where r.roleId in(select roleId from t_role where roleName like concat('%','Admin', '%'))
+		]]>
+		<if test="userName != null and userName != '' ">
+			and u.userName like concat('%',#{userName},'%')
+		</if>
+		<if test="userPhone != null and userPhone != '' ">
+			and u.userPhone like concat('%',#{userPhone},'%')
+		</if>
+		<if test="userEmail != null and userEmail != '' ">
+			and u.userEmail like concat('%',#{userEmail},'%')
+		</if>
+	</select>
+
+	<update id="inactive" parameterType="string">
+		<![CDATA[
+			UPDATE t_user set userStatus = 'N' where userId = #{userId}
+		]]>
+	</update>
+
+	<update id="active" parameterType="string">
+		<![CDATA[
+			UPDATE t_user set userStatus = 'Y' where userId = #{userId}
+		]]>
+	</update>
+
+	<select id="queryAdmin" resultType="user" resultMap="userResultMap">
+		<![CDATA[
+			select u.* from
+				t_user u, t_user_role ur, t_role r
+				where 1 = 1 and u.userId = ur.userId and r.roleId = ur.roleId
+				and u.userId = (select ur1.userId from t_user_role ur1
+				where ur1.roleId = (select r1.roleId from t_role r1
+				where r1.roleName = 'systemSuperAdmin'))
+		]]>
+	</select>
+
+	<select id="queryUserByPhone" resultMap="userResultMap">
+		<![CDATA[
+			select * from t_user u where u.userPhone = #{phone}
+		]]>
+	</select>
+
+</mapper>

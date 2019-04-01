@@ -1,0 +1,188 @@
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.ComplaintDAO">
+	<resultMap id="complaintResultMap" type="complaint">
+		<id column="complaintId" property="complaintId"/>
+		<result column="complaintContent" property="complaintContent"/>
+		<result column="complaintCreatedTime" property="complaintCreatedTime"/>
+		<result column="complaintReply" property="complaintReply"/>
+		<result column="complaintReplyTime" property="complaintReplyTime"/>
+		<result column="complaintReplyUser" property="complaintReplyUser"/>
+		<result column="companyId" property="companyId"/>
+		<!--管理员Id-->
+		<association property="admin" javaType="com.gs.bean.User">
+			<id column="adminId" property="userId"/>
+			<result column="adminName" property="userName"/>
+			<result column="adminPhone" property="userPhone"/>
+		</association>
+		<!--客户Id-->
+		<association property="customer" javaType="com.gs.bean.User">
+			<id column="userId" property="userId"/>
+			<result column="customerName" property="userName"/>
+		</association>
+
+		<association property="company" javaType="com.gs.bean.Company">
+			<id column="companyId" property="companyId"/>
+			<result column="companyName" property="companyName"/>
+		</association>
+
+	</resultMap>
+
+
+	<insert id="insert"  parameterType="complaint">
+		<![CDATA[
+		insert into t_complaint (complaintId,userId,complaintContent,complaintCreatedTime,companyId)
+ 		VALUES(UUID(),#{userId},#{complaintContent},NOW(),#{companyId})
+		]]>
+	</insert>
+
+	<insert id="batchInsert"  parameterType="list">
+		<![CDATA[
+
+		]]>
+	</insert>
+
+	<delete id="delete" parameterType="complaint">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<update id="update" parameterType="complaint">
+		<![CDATA[
+		update t_complaint set  complaintContent = #{complaintContent},companyId = #{companyId}
+		where complaintId = #{complaintId}
+		]]>
+	</update>
+
+	<update id="updateReply" parameterType="complaint">
+		<![CDATA[
+		update t_complaint set  complaintReply = #{complaintReply}, complaintReplyTime= now(),
+		complaintReplyUser = #{complaintReplyUser}
+		where complaintId = #{complaintId}
+		]]>
+	</update>
+
+
+	<update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryAll" resultMap="complaintResultMap">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByStatus" resultMap="complaintResultMap" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="query" parameterType="complaint" resultType="complaint">
+		<![CDATA[
+		select * from t_complaint
+		]]>
+	</select>
+
+	<select id="queryById" parameterType="string" resultType="complaint">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByPager" resultType="list" resultMap="complaintResultMap">
+		<![CDATA[
+		select c.*,u.userId as adminId,u.userName as adminName,u1.userName as customerName
+		,com.companyId,com.companyName
+		from t_complaint c
+		LEFT JOIN  t_user u on c.userId=u.userId
+		LEFT JOIN t_user u1 on c.complaintReplyUser= u1.userId
+		LEFT JOIN  t_company com on c.companyId = com.companyId
+		where 1 = 1
+		]]>
+		<if test="user.companyId != null and user.companyId != '' ">
+			and c.companyId = #{user.companyId}
+		</if>
+		order by c.companyId desc, c.complaintCreatedTime desc
+ 		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="count" resultType="int">
+		<![CDATA[
+		select count(*) from t_complaint c, t_user u where c.userId=u.userId
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and c.companyId = #{companyId}
+		</if>
+	</select>
+
+	<select id="queryByPagerUser" resultType="list" resultMap="complaintResultMap">
+		<![CDATA[
+		select c.*,u.userId as adminId,u.userName as adminName,u1.userName as customerName
+		,com.companyId,com.companyName
+		from t_complaint c
+		LEFT JOIN  t_user u on c.userId=u.userId
+		LEFT JOIN t_user u1 on c.complaintReplyUser= u1.userId
+		LEFT JOIN  t_company com on c.companyId = com.companyId
+		where 1 = 1
+		]]>
+		<if test="user.userId != null and user.userId != '' ">
+			and c.userId = #{user.userId}
+		</if>
+		order by c.companyId desc, c.complaintCreatedTime desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="countByUser" resultType="int">
+		<![CDATA[
+		select count(*) from t_complaint c, t_user u where c.userId=u.userId
+		]]>
+		<if test="userId != null and userId != ''">
+			and u.userId = #{userId}
+		</if>
+	</select>
+
+	<update id="inactive" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<update id="active" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryByTop" resultType="list" resultMap="complaintResultMap">
+		<![CDATA[
+		select c.*, u.userId as adminId, u.userName as adminName, u.userPhone as adminPhone
+			from t_complaint c, t_user u
+			where 1 = 1 and c.userId = u.userId
+		]]>
+		<if test="user.companyId != null and user.companyId != '' ">
+			and c.companyId = #{user.companyId}
+		</if>
+		order by c.companyId desc, c.complaintCreatedTime desc
+		limit 0, #{top}
+	</select>
+
+</mapper>

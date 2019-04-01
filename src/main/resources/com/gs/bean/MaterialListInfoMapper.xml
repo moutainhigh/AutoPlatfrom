@@ -1,0 +1,160 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gs.dao.MaterialListInfoDAO">
+
+    <resultMap id="materialListInfoResultMap" type="materialListInfo">
+        <id column="materialId" property="materialId"/>
+        <result column="materialCount" property="materialCount"/>
+        <result column="materialCreatedTime" property="materialCreatedTime"/>
+        <result column="materialStatus" property="materialStatus"/>
+        <result column="userName" property="userName"/>
+        <result column="userRequests" property="userRequests"/>
+        <result column="maintainName" property="maintainName"/>
+        <result column="accId" property="accId" />
+        <result column="accPrice" property="accPrice"/>
+        <result column="accName" property="accName"/>
+    </resultMap>
+
+    <select id="queryByPager" resultMap="materialListInfoResultMap" parameterType="com.gs.common.bean.Pager">
+        <![CDATA[
+			SELECT ml.materialId, ml.materialCount, ml.materialCreatedTime, ml.materialStatus, c.userName, c.userRequests, mf.maintainName,
+			mf.maintainMoney, a.accName FROM t_material_list ml, t_maintain_record mr, t_maintain_detail md, t_maintain_fix mf, t_accessories a, t_checkin c
+			WHERE ml.accId = a.accId AND ml.recordId = mr.recordId AND mr.recordId = md.recordId
+			AND md.maintainId = mf.maintainId AND mr.checkinId = c.checkinId
+			order by ml.materialCreatedTime asc, c.userName
+		]]> limit #{beginIndex}, #{pageSize}
+    </select>
+
+    <select id="queryBySpeedStatus" resultMap="materialListInfoResultMap">
+        <![CDATA[
+            select ml.*, c.checkinId, c.userName, c.userRequests, mf.maintainName, a.accName, a.accPrice
+            from t_material_list ml, t_checkin c, t_maintain_fix mf, t_accessories a,
+            t_maintain_record mr,t_maintain_detail md, t_maintain_fix_acc mfa
+            where ml.recordId = mr.recordId and mr.checkinId = c.checkinId
+            and md.recordId = ml.recordId and ml.recordId = md.recordId and
+            md.maintainId = mf.maintainId and ml.accId = a.accId and
+            md.maintainId = mfa.maintainId and a.accId = mfa.accId and
+            mr.recordId = #{recordId}
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and mr.companyId = #{user.companyId}
+        </if>
+		order by ml.materialCreatedTime asc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="queryBySpeedStatusAndStatus" resultMap="materialListInfoResultMap">
+        <![CDATA[
+            select ml.*, c.checkinId, c.userName, c.userRequests, mf.maintainName, a.accName, a.accPrice
+            from t_material_list ml, t_checkin c, t_maintain_fix mf, t_accessories a,
+            t_maintain_record mr,t_maintain_detail md, t_maintain_fix_acc mfa
+            where ml.recordId = mr.recordId and mr.checkinId = c.checkinId
+            and md.recordId = ml.recordId and ml.recordId = md.recordId and
+            md.maintainId = mf.maintainId and ml.accId = a.accId and
+            md.maintainId = mfa.maintainId and a.accId = mfa.accId and
+            mr.recordId = #{recordId} and ml.materialStatus = #{materialStatus}
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and mr.companyId = #{user.companyId}
+        </if>
+        order by ml.materialCreatedTime asc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="termQueryPager" resultMap="materialListInfoResultMap">
+        <![CDATA[
+			SELECT ml.materialId, ml.materialCount, ml.materialCreatedTime, ml.materialStatus, c.userName, c.userRequests, mf.maintainName,
+			mf.maintainMoney, a.accName FROM t_material_list ml, t_maintain_record mr, t_maintain_detail md, t_maintain_fix mf, t_accessories a, t_checkin c
+			WHERE ml.accId = a.accId AND ml.recordId = mr.recordId AND mr.recordId = md.recordId
+			AND md.maintainId = mf.maintainId AND mr.checkinId = c.checkinId
+		]]>
+        <if test="startTime != null and startTime != '' and endTime != null and endTime != '' ">
+            and (ml.materialCreatedTime &gt;= #{startTime} and ml.materialCreatedTime &lt;= #{endTime})
+        </if>
+        <if test="userName != null and userName != '' ">
+            and c.userName like concat('%',#{userName},'%')
+        </if>
+        <if test="user.companyId != null and user.companyId != ''">
+            and mr.companyId = #{user.companyId}
+        </if>
+        order by ml.materialCreatedTime asc, c.userName
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="queryByStatus" resultMap="materialListInfoResultMap">
+        <![CDATA[
+			SELECT ml.materialId, ml.materialCount, ml.materialCreatedTime, ml.materialStatus, c.userName, c.userRequests, mf.maintainName,
+			mf.maintainMoney, a.accName FROM t_material_list ml, t_maintain_record mr, t_maintain_detail md, t_maintain_fix mf, t_accessories a, t_checkin c
+			WHERE ml.accId = a.accId AND ml.recordId = mr.recordId AND mr.recordId = md.recordId
+			AND md.maintainId = mf.maintainId AND mr.checkinId = c.checkinId AND ml.materialStatus = #{status}
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and mr.companyId = #{user.companyId}
+        </if>
+        order by ml.materialCreatedTime asc, c.userName
+		limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="count" resultType="int">
+        <![CDATA[
+            select count(*) from t_material_list
+        ]]>
+    </select>
+
+    <select id="statusCount" resultType="int">
+        <![CDATA[
+            select count(*) from t_material_list ml, t_maintain_record mr where ml.recordId = mr.recordId
+            and ml.recordId = #{recordId} and ml.materialStatus = #{materialStatus};
+        ]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and mr.companyId = #{user.companyId}
+        </if>
+    </select>
+
+    <select id="termCount" resultType="int">
+        <![CDATA[
+            select count(*) from t_material_list ml, t_maintain_record mr, t_maintain_detail md, t_maintain_fix mf, t_accessories a, t_checkin c
+			WHERE ml.accId = a.accId AND ml.recordId = mr.recordId AND mr.recordId = md.recordId
+			AND md.maintainId = mf.maintainId AND mr.checkinId = c.checkinId
+        ]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and mr.companyId = #{user.companyId}
+        </if>
+        <if test="startTime != null and startTime != '' and endTime != null and endTime != '' ">
+            and (ml.materialCreatedTime &gt;= #{startTime} and ml.materialCreatedTime &lt;= #{endTime})
+        </if>
+        <if test="userName != null and userName != '' ">
+            and c.userName like concat('%',#{userName},'%')
+        </if>
+    </select>
+
+    <select id="countBySpeedStatus" resultType="int">
+        <![CDATA[
+            select count(*) from t_material_list ml, t_maintain_record mr where ml.recordId = #{recordId}
+            and mr.recordId = ml.recordId
+        ]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and mr.companyId = #{user.companyId}
+        </if>
+    </select>
+
+    <update id="updateCount" parameterType="materialListInfo" >
+        <![CDATA[
+            update t_material_list set materialCount = #{materialCount} where materialId = #{materialId}
+        ]]>
+    </update>
+
+    <update id="inactive" parameterType="string">
+        <![CDATA[
+			update t_material_list set materialStatus = 'N' where materialId = #{materialId}
+        ]]>
+    </update>
+
+    <update id="active" parameterType="string">
+        <![CDATA[
+			update t_material_list set materialStatus = 'Y' where materialId = #{materialId}
+        ]]>
+    </update>
+
+</mapper>

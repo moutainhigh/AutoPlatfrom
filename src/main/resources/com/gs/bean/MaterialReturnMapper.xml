@@ -1,0 +1,138 @@
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.MaterialReturnDAO">
+
+	<resultMap id="materialReturnResultMap" type="materialReturn">
+		<id column="materialReturnId" property="materialReturnId"/>
+		<result column="recordId" property="recordId"/>
+		<result column="accId" property="accId"/>
+		<result column="accCount" property="accCount"/>
+		<result column="mrCreatedDate" property="mrCreatedDate"/>
+		<result column="mrReturnDate" property="mrReturnDate"/>
+		<association property="accessories" javaType="com.gs.bean.Accessories">
+			<id property="accId" column="accId"/>
+		</association>
+	</resultMap>
+
+	<insert id="insert"  parameterType="materialReturn">
+		<![CDATA[
+
+		]]>
+	</insert>
+
+	<insert id="batchInsert"  parameterType="list">
+		<![CDATA[
+
+		]]>
+	</insert>
+
+	<delete id="delete" parameterType="materialReturn">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<update id="update" parameterType="materialReturn">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryAll" resultMap="materialReturnResultMap">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByStatus" resultMap="materialReturnResultMap" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="query" parameterType="materialReturn" resultType="materialReturn">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryById" parameterType="string" resultType="materialReturn">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByPager" resultType="list" resultMap="materialReturnResultMap" parameterType="com.gs.common.bean.Pager">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="count" resultType="int">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<update id="inactive" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<update id="active" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryByConditionReturn"  resultType="list" resultMap="materialReturnResultMap">
+		<![CDATA[
+			select sum(mr.accCount) as accCount ,mr.mrCreatedDate from t_material_return mr, t_accessories a
+            where  mr.accId = a.accId and a.accStatus = 'Y' and
+           	mr.mrCreatedDate >= #{startTime} and mr.mrCreatedDate <= #{endTime}
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and a.companyId = #{companyId}
+		</if>
+		<if test="accTypeId != null and accTypeId != ''">
+			and a.accTypeId = #{accTypeId}
+		</if>
+		<if test="type =='year'">
+			GROUP BY year(mr.mrCreatedDate)
+		</if>
+		<if test="type =='quarter'">
+			GROUP BY quarter(mr.mrCreatedDate)
+		</if>
+		<if test="type =='month'">
+			GROUP BY month(mr.mrCreatedDate)
+		</if>
+		<if test="type =='week'">
+			GROUP BY week(mr.mrCreatedDate)
+		</if>
+		<if test="type =='day'">
+			GROUP BY day(mr.mrCreatedDate)
+		</if>
+	</select>
+
+</mapper>

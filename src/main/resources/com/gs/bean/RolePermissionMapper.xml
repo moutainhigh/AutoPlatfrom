@@ -1,0 +1,37 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.RolePermissionDAO">
+
+	<select id="queryAllPermissionByRoleName" parameterType="string" resultType="string">
+		select permissionName from t_permission p, t_role_permission rp, t_role r
+		where p.permissionId = rp.permissionId and r.roleId = rp.roleId and r.roleName = #{roleName}
+	</select>
+
+	<select id="queryByRoleIdOrMeduleId" resultType="string">
+		select p.permissionZHName from t_permission p, t_role_permission rp, t_role r, t_module m
+		where p.permissionId = rp.permissionId and p.moduleId = m.moduleId and r.roleId = rp.roleId and
+		r.roleId = #{roleId} and m.moduleId = #{moduleId}
+	</select>
+
+	<insert id="addByRoleIdAndPermissionId">
+		<selectKey resultType="int" keyProperty="rpId" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into t_role_permission (rpId,roleId,permissionId)
+		values
+		<foreach collection="list" item="item" index="index" separator="," >
+			(uuid(),#{item.roleId},#{item.permissionId})
+		</foreach>
+	</insert>
+
+	<delete id="delByRoleIdAndPermissionId">
+		delete from t_role_permission where permissionId in
+		<foreach collection="permissionIds" item="str" open="(" separator="," close=")">
+			#{str}
+		</foreach>
+		and roleId = #{roleId}
+	</delete>
+
+</mapper>

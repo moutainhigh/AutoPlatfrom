@@ -1,0 +1,270 @@
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.IncomingOutgoingDAO">
+
+	<resultMap id="incomingOutgoingResultMap" type="incomingOutgoing">
+		<id column="inOutId" property="inOutId"></id>
+		<result column="inOutMoney" property="inOutMoney"></result>
+		<result column="inOutCreatedTime" property="inOutCreatedTime"></result>
+		<result column="inOutStatus" property="inOutStatus"></result>
+		<result column="inOutCreatedUser" property="inOutCreatedUser"></result>
+		<result column="inTypeId" property="inTypeId"></result>
+		<result column="outTypeId" property="outTypeId"></result>
+		<result column="companyId" property="companyId"></result>
+		<association property="incomingType" javaType="com.gs.bean.IncomingType">
+			<id column="inType_id" property="inTypeId"/>
+			<result column="inTypeName" property="inTypeName"/>
+		</association>
+
+		<association property="outgoingType" javaType="com.gs.bean.OutgoingType">
+			<id column="outType_id" property="outTypeId"/>
+			<result column="outTypeName" property="outTypeName"/>
+		</association>
+
+		<association property="user" javaType="com.gs.bean.User">
+			<id column="userId" property="userId"/>
+			<result column="userName" property="userName"/>
+		</association>
+
+		<association property="company" javaType="com.gs.bean.Company">
+			<id column="company_id" property="companyId"/>
+			<result column="companyName" property="companyName"/>
+		</association>
+
+	</resultMap>
+
+	<insert id="insert"  parameterType="incomingOutgoing">
+		<![CDATA[
+			insert into t_incoming_outgoing(inOutId, inTypeId,outTypeId,inOutMoney,inOutCreatedUser,inOutCreatedTime,inOutStatus,companyId)
+			 values(uuid(), #{inTypeId},#{outTypeId},#{inOutMoney},#{inOutCreatedUser},now(),'Y',#{companyId})
+		]]>
+	</insert>
+
+	<insert id="addInsert">
+		<selectKey resultType="int" keyProperty="inOutId" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into t_incoming_outgoing
+		values
+		<foreach collection="list" item="item" index="index" separator="," >
+			(uuid(), #{item.inTypeId},#{item.outTypeId},#{item.inOutMoney},#{item.inOutCreatedUser},now(),#{item.companyId},'Y')
+		</foreach>
+	</insert>
+
+	<insert id="batchInsert"  parameterType="list">
+		<![CDATA[
+
+		]]>
+	</insert>
+
+	<delete id="delete" parameterType="incomingOutgoing">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<update id="update" parameterType="incomingOutgoing">
+		<![CDATA[
+			update t_incoming_outgoing set inOutMoney = #{inOutMoney},inOutStatus = 'Y' where inOutId = #{inOutId}
+		]]>
+	</update>
+
+	<update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryAll" resultMap="incomingOutgoingResultMap">
+		<![CDATA[
+            select io.*,i.inTypeId as inType_id, i.inTypeName,o.outTypeId as outType_id,o.outTypeName,u.userId ,
+            u.userName,c.companyName,c.companyId as company_id  from t_incoming_outgoing io
+				LEFT JOIN t_incoming_type i on io.inTypeId = i.inTypeId
+				LEFT JOIN t_outgoing_type o on io.outTypeId = o.outTypeId
+				LEFT JOIN  t_user u on io.inOutCreatedUser = u.userId
+				LEFT JOIN t_company c on io.companyId = c.companyId
+		]]>
+	</select>
+
+	<select id="queryByDefault" parameterType="int" resultType="list" resultMap="incomingOutgoingResultMap">
+		<![CDATA[
+           SELECT sum(inOutMoney) as inOutMoney,inOutCreatedTime,inOutId from t_incoming_outgoing
+             WHERE DATE_FORMAT(inOutCreatedTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' ) and  inOutStatus = 'Y'
+		]]>
+        <if test="inOutType ==1">
+            and outTypeId is not null
+        </if>
+        <if test="inOutType ==2">
+            and inTypeId is not null
+        </if>
+		<if test="companyId != null and companyId != ''">
+			and companyId = #{companyId}
+		</if>
+            GROUP BY day(inOutCreatedTime);
+	</select>
+
+    <select id="queryByCondition"  resultType="list" resultMap="incomingOutgoingResultMap">
+        <![CDATA[
+           select sum(inOutMoney) as inOutMoney ,inOutCreatedTime from t_incoming_outgoing
+            where inOutCreatedTime >= #{startTime} and inOutCreatedTime <= #{endTime} and  inOutStatus = 'Y'
+		]]>
+        <if test="inOutType ==1">
+            and outTypeId is not null
+        </if>
+        <if test="inOutType ==2">
+            and inTypeId is not null
+        </if>
+        <if test="type =='year'">
+            GROUP BY year(inOutCreatedTime)
+        </if>
+        <if test="type =='quarter'">
+            GROUP BY quarter(inOutCreatedTime)
+        </if>
+        <if test="type =='month'">
+            GROUP BY month(inOutCreatedTime)
+        </if>
+        <if test="type =='week'">
+            GROUP BY week(inOutCreatedTime)
+        </if>
+        <if test="type =='day'">
+            GROUP BY day(inOutCreatedTime)
+        </if>
+		<if test="companyId != null and companyId != ''">
+			and companyId = #{companyId}
+		</if>
+    </select>
+
+	<select id="queryPagerStatus" resultType="list" resultMap="incomingOutgoingResultMap">
+		<![CDATA[
+			select io.*,i.inTypeId as inType_id, i.inTypeName,o.outTypeId as outType_id,o.outTypeName,u.userId ,
+            u.userName,c.companyName,c.companyId as company_id  from t_incoming_outgoing io
+				LEFT JOIN t_incoming_type i on io.inTypeId = i.inTypeId
+				LEFT JOIN t_outgoing_type o on io.outTypeId = o.outTypeId
+				LEFT JOIN  t_user u on io.inOutCreatedUser = u.userId
+				LEFT JOIN t_company c on io.companyId = c.companyId
+				where io.inOutStatus = #{status}
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and io.companyId = #{user.companyId}
+		</if>
+		order by io.companyId desc, io.inOutStatus desc, io.inOutCreatedTime desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="countStatus" resultType="int">
+		<![CDATA[
+			select count(*) from t_incoming_outgoing where inOutStatus = #{status}
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and companyId = #{user.companyId}
+		</if>
+	</select>
+
+	<select id="queryByStatus" resultMap="incomingOutgoingResultMap" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="query" parameterType="incomingOutgoing" resultType="incomingOutgoing">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryById" parameterType="string" resultType="incomingOutgoing">
+		<![CDATA[
+
+		]]>
+	</select>
+
+
+	<select id="queryByPager" resultType="list" resultMap="incomingOutgoingResultMap" >
+		<![CDATA[
+			select io.*,i.inTypeId as inType_id, i.inTypeName,o.outTypeId as outType_id,o.outTypeName,u.userId ,
+            u.userName,c.companyName,c.companyId as company_id  from t_incoming_outgoing io
+				LEFT JOIN t_incoming_type i on io.inTypeId = i.inTypeId
+				LEFT JOIN t_outgoing_type o on io.outTypeId = o.outTypeId
+				LEFT JOIN  t_user u on io.inOutCreatedUser = u.userId
+				LEFT JOIN t_company c on io.companyId = c.companyId  where 1 = 1
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and io.companyId = #{user.companyId}
+		</if>
+			order by io.companyId desc, io.inOutStatus desc, io.inOutCreatedTime desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="count" resultType="int">
+		<![CDATA[
+			select count(*) from t_incoming_outgoing where 1 = 1
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and companyId = #{companyId}
+		</if>
+	</select>
+
+	<select id="queryByInOutType" resultType="list" resultMap="incomingOutgoingResultMap">
+		<![CDATA[
+			select io.*,i.inTypeId as inType_id, i.inTypeName,o.outTypeId as outType_id,o.outTypeName,u.userId ,
+            u.userName,c.companyName,c.companyId as company_id  from t_incoming_outgoing io
+				LEFT JOIN t_incoming_type i on io.inTypeId = i.inTypeId
+				LEFT JOIN t_outgoing_type o on io.outTypeId = o.outTypeId
+				LEFT JOIN  t_user u on io.inOutCreatedUser = u.userId
+				LEFT JOIN t_company c on io.companyId = c.companyId where 1 = 1
+		]]>
+		<if test="incomingOutgoing.inOutType ==1">
+			and io.outTypeId is null
+		</if>
+		<if test="incomingOutgoing.inOutType ==2">
+			and io.inTypeId is null
+		</if>
+		<if test="user.companyId != null and user.companyId != ''">
+			and io.companyId = #{user.companyId}
+		</if>
+        order by io.companyId desc, io.inOutStatus desc, io.inOutCreatedTime desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="countByInOutType" resultType="int">
+		<![CDATA[
+			select count(*) from t_incoming_outgoing where 1 = 1
+		]]>
+		<if test="incomingOutgoing.inOutType ==1">
+			and outTypeId is  null
+		</if>
+		<if test="incomingOutgoing.inOutType ==2">
+			and inTypeId is  null
+		</if>
+		<if test="user.companyId != null and user.companyId != ''">
+			and companyId = #{user.companyId}
+		</if>
+	</select>
+
+	<update id="inactive" parameterType="string">
+		<![CDATA[
+			update t_incoming_outgoing set inOutStatus = 'N' where inOutId = #{inOutId}
+		]]>
+	</update>
+
+	<update id="active" parameterType="string">
+		<![CDATA[
+			update t_incoming_outgoing set inOutStatus = 'Y' where inOutId = #{inOutId}
+		]]>
+	</update>
+
+</mapper>

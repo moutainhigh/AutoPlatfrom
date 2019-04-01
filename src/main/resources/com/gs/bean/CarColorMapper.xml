@@ -1,0 +1,104 @@
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.CarColorDAO">
+
+	<resultMap id="carColorResultMap" type="carColor">
+
+	</resultMap>
+
+	<insert id="insert"  parameterType="carColor">
+		insert into t_car_color (colorId,colorName,colorRGB,colorHex,colorDes,colorStatus) values (UUID(),#{colorName},#{colorRGB},#{colorHex},#{colorDes},'Y')
+	</insert>
+
+	<insert id="batchInsert"  parameterType="list">
+		<![CDATA[
+
+		]]>
+	</insert>
+
+	<delete id="delete" parameterType="carColor">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<update id="update" parameterType="carColor">
+		update t_car_color set colorName = #{colorName} , colorRGB = #{colorRGB} , colorHex = #{colorHex},colorDes = #{colorDes} , colorStatus = 'Y' where colorId = #{colorId}
+	</update>
+
+	<update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryAll" resultMap="carColorResultMap">
+		select * from t_car_color where colorStatus = 'Y'
+	</select>
+
+	<select id="queryByStatus" resultMap="carColorResultMap">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="query" resultType="carColor">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryById" resultType="carColor">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByPager" resultMap="carColorResultMap">
+		select * from t_car_color  limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="count" resultType="int">
+		select count(*) from t_car_color
+	</select>
+	<select id="searchByPager" resultMap="carColorResultMap">
+		select * from t_car_color  where colorName like concat('%', #{colorName}, '%') limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+	<select id="searchCount" resultType="int">
+		select count(*) from t_car_color where colorName like concat('%',#{colorName},'%')
+	</select>
+
+	<update id="inactive" parameterType="string">
+		<![CDATA[
+			update t_car_color set colorStatus = "N" where colorId = #{colorId}
+		]]>
+	</update>
+
+	<update id="active" parameterType="string">
+		<![CDATA[
+			update t_car_color set colorStatus = "Y" where colorId = #{colorId}
+		]]>
+	</update>
+
+	<select id="queryByColorPager" resultMap="carColorResultMap">
+		select * from t_car_color where colorStatus = #{status} limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="statusCount" resultType="int">
+		select count(*) from t_car_color where colorStatus = #{status}
+	</select>
+</mapper>

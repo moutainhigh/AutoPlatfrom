@@ -1,0 +1,149 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.MaintainFixAccDAO">
+
+		<resultMap id="maintainFixAccMap" type="com.gs.bean.MaintainFixAcc" >
+			<id column="mainAccId" property="mainAccId" jdbcType="VARCHAR" />
+			<result column="maintainId" property="maintainId" jdbcType="VARCHAR" />
+			<result column="accId" property="accId" jdbcType="VARCHAR" />
+			<result column="accCount" property="accCount" jdbcType="INTEGER" />
+			<association property="company" javaType="com.gs.bean.Company">
+				<id property="companyId" column="companyId"/>
+				<result property="companyName" column="companyName"/>
+			</association>
+			<association property="accessories" javaType="com.gs.bean.Accessories">
+				<id property="accId" column="accId"/>
+				<result property="accName" column="accName"/>
+				<result property="accSalePrice" column="accSalePrice"/>
+			</association>
+			<association property="maintainFix" javaType="com.gs.bean.MaintainFix">
+				<id property="maintainId" column="maintainId"/>
+				<result property="maintainName" column="maintainName"/>
+				<result property="maintainHour" column="maintainHour"/>
+				<result property="maintainMoney" column="maintainMoney"/>
+				<result property="maintainManHourFee" column="maintainManHourFee"/>
+				<result property="maintainDes" column="maintainDes"/>
+			</association>
+		</resultMap>
+
+
+	<insert id="insert" parameterType="maintainFixAcc">
+			<![CDATA[
+				insert into t_maintain_fix_acc (mainAccId,maintainId,accId,accCount) value (UUID(),#{maintainId},#{accId},#{accCount})
+			]]>
+	</insert>
+
+    <insert id="batchInsert" parameterType="list">
+		<![CDATA[
+
+        ]]>
+	</insert>
+
+    <delete id="delete" parameterType="maintainFixAcc">
+		<![CDATA[
+
+        ]]>
+	</delete>
+
+    <delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+        ]]>
+	</delete>
+
+    <delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+        ]]>
+	</delete>
+
+    <update id="update" parameterType="maintainFixAcc">
+		<![CDATA[
+
+        ]]>
+	</update>
+
+    <update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+        ]]>
+	</update>
+
+    <select id="queryAll" resultMap="maintainFixAccMap">
+		<![CDATA[
+
+        ]]>
+	</select>
+
+    <select id="queryByStatus" resultMap="maintainFixAccMap" parameterType="string">
+		<![CDATA[
+
+        ]]>
+	</select>
+
+    <select id="query" parameterType="maintainFixAcc" resultType="maintainFixAcc">
+		<![CDATA[
+
+        ]]>
+	</select>
+
+    <select id="queryById" parameterType="string" resultType="maintainFixAcc">
+		<![CDATA[
+
+        ]]>
+	</select>
+
+    <select id="queryByPager" resultMap="maintainFixAccMap"
+            parameterType="com.gs.common.bean.Pager">
+		<![CDATA[
+
+        ]]>
+	</select>
+
+    <select id="count" resultType="int">
+		<![CDATA[
+
+        ]]>
+	</select>
+
+    <update id="inactive" parameterType="string">
+		<![CDATA[
+
+        ]]>
+	</update>
+
+    <update id="active" parameterType="string">
+		<![CDATA[
+
+        ]]>
+	</update>
+
+    <select id="queryAllByMaintainId" resultType="list" resultMap="maintainFixAccMap">
+        select * from t_maintain_fix_acc where maintainId in
+        <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+	<select id="queryAllByPager" resultMap="maintainFixAccMap">
+		<![CDATA[
+     		select fix.*,acc.*,a.*, c.* from t_maintain_fix fix,t_maintain_fix_acc acc,t_accessories a, t_company c where fix.maintainId = acc.maintainId and a.accId = acc.accId and c.companyId = fix.companyId and fix.maintainId = #{id}
+    	]]>
+		<if test="user.companyId != '' and user.companyId != null">
+			and fix.companyId = #{user.companyId}
+		</if>
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="queryAllByCount" resultType="int">
+		<![CDATA[
+      		select count(*) from t_maintain_fix fix, t_maintain_fix_acc acc,t_accessories a,t_company c where fix.maintainId = acc.maintainId and a.accId = acc.accId and c.companyId = fix.companyId and fix.maintainId = #{id}
+		]]>
+		<if test="user.companyId != '' and user.companyId !=null">
+			and c.companyId = #{user.companyId}
+		</if>
+	</select>
+
+</mapper>

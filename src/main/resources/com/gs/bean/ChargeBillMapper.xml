@@ -1,0 +1,291 @@
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.ChargeBillDAO">
+
+	<resultMap id="chargeBillResultMap" type="chargeBill">
+		<id column="chargeBillId" property="chargeBillId"/>
+		<result column="chargeBillMoney" property="chargeBillMoney"/>
+		<result column="paymentMethod" property="paymentMethod"/>
+		<result column="actualPayment" property="actualPayment"/>
+		<result column="chargeTime" property="chargeTime"/>
+		<result column="chargeCreatedTime" property="chargeCreatedTime"/>
+		<result column="chargeBillDes" property="chargeBillDes"/>
+		<result column="chargeBillStatus" property="chargeBillStatus"/>
+		<!--维修保养记录-->
+		<association property="record" javaType="com.gs.bean.MaintainRecord">
+			<id property="recordId" column="recordId"/>
+			<result property="checkinId" column="checkinId"/>
+			<result property="startTime" column="startTime"/>
+			<result property="companyId" column="companyId"/>
+			<association property="checkin" javaType="com.gs.bean.Checkin">
+				<id column="checkinId" property="checkinId"/>
+				<result column="userName" property="userName"/>
+				<result column="userPhone" property="userPhone"/>
+				<result column="maintainOrFix" property="maintainOrFix"/>
+				<result column="carPlate" property="carPlate"/>
+				<result column="carMileage" property="carMileage"/>
+				<association property="plate" javaType="com.gs.bean.CarPlate">
+					<id column="plateId" property="plateId"/>
+					<result column="plateName" property="plateName"/>
+				</association>
+				<association property="brand" javaType="com.gs.bean.CarBrand">
+					<id column="brandId" property="brandId"/>
+					<result column="brandName" property="brandName"/>
+				</association>
+				<association property="model" javaType="com.gs.bean.CarModel">
+					<id column="modelId" property="modelId"/>
+					<result column="modelName" property="modelName"/>
+				</association>
+				<association property="color" javaType="com.gs.bean.CarColor">
+					<id column="colorId" property="colorId"/>
+					<result column="colorName" property="colorName"/>
+				</association>
+			</association>
+			<association property="company" javaType="com.gs.bean.Company">
+				<id column="companyId" property="companyId"/>
+				<result column="companyName" property="companyName"/>
+			</association>
+		</association>
+
+		<association property="company" javaType="com.gs.bean.Company">
+			<id column="companyId" property="companyId"/>
+			<result column="companyName" property="companyName"/>
+		</association>
+
+	</resultMap>
+
+	<insert id="insert"  parameterType="chargeBill">
+		<![CDATA[
+			insert into t_charge_bill(chargeBillId, recordId, chargeBillMoney, paymentMethod, actualPayment, chargeTime, chargeCreatedTime, chargeBillDes, chargeBillStatus, companyId)
+            	values(uuid(), #{recordId}, #{chargeBillMoney}, #{paymentMethod}, #{actualPayment}, #{chargeTime}, now(), #{chargeBillDes}, 'Y', #{companyId})
+		]]>
+	</insert>
+
+	<insert id="batchInsert"  parameterType="list">
+		<![CDATA[
+
+		]]>
+	</insert>
+
+	<delete id="delete" parameterType="chargeBill">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<update id="update" parameterType="chargeBill">
+		<![CDATA[
+			update t_charge_bill set chargeBillMoney = #{chargeBillMoney}, paymentMethod = #{paymentMethod}, actualPayment = #{actualPayment}, chargeTime = #{chargeTime}, chargeCreatedTime = now(), chargeBillStatus = 'Y' where chargeBillId = #{chargeBillId}
+		]]>
+	</update>
+
+	<update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryAll" resultMap="chargeBillResultMap">
+		<![CDATA[
+			select cb.*, r.recordId, r.checkinId, r.companyId, c.checkinId, c.userName, c.maintainOrFix, c.userPhone, p.plateId, p.plateName, b.brandId, b.brandName, co.colorId, co.colorName, m.modelId, m.modelName, cpy.companyId, cpy.companyName
+				from t_charge_bill cb, t_maintain_record r, t_checkin c, t_car_plate p, t_car_brand b, t_car_color co, t_car_model m, t_company cpy
+				where 1 = 1 and cb.recordId = r.recordId and r.checkinId = c.checkinId and c.plateId = p.plateId and c.brandId = b.brandId and c.colorId = co.colorId and c.modelId = m.modelId and cb.companyId = cpy.companyId
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and cb.companyId = #{companyId}
+		</if>
+		order by cb.companyId desc, cb.chargeBillStatus desc, cb.chargeCreatedTime desc
+	</select>
+
+	<select id="queryByStatus" resultMap="chargeBillResultMap" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="query" parameterType="chargeBill" resultType="chargeBill">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryById" parameterType="string" resultType="chargeBill">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByPager" resultType="list" resultMap="chargeBillResultMap">
+		<![CDATA[
+			select cb.*, r.recordId, r.checkinId, r.companyId, c.checkinId, c.userName, c.maintainOrFix, c.userPhone, p.plateId, p.plateName, b.brandId, b.brandName, co.colorId, co.colorName, m.modelId, m.modelName, cpy.companyId, cpy.companyName
+				from t_charge_bill cb, t_maintain_record r, t_checkin c, t_car_plate p, t_car_brand b, t_car_color co, t_car_model m, t_company cpy
+				where 1 = 1 and cb.recordId = r.recordId and r.checkinId = c.checkinId and c.plateId = p.plateId and c.brandId = b.brandId and c.colorId = co.colorId and c.modelId = m.modelId and cb.companyId = cpy.companyId
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and cb.companyId = #{user.companyId}
+		</if>
+		order by cb.companyId desc, cb.chargeBillStatus desc, cb.chargeCreatedTime desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="queryMyName" resultType="list" resultMap="chargeBillResultMap">
+		<![CDATA[
+			select cb.*, cy.companyName, u.userName, u.userPhone from t_charge_bill cb, t_company cy, t_maintain_record mr, t_checkin c, t_user u
+			where cb.recordId = mr.recordId and cb.companyId = cy.companyId and mr.checkinId = c.checkinId
+			and c.userId = u.userId and c.userId = #{user.userId}
+		]]>
+		order by cb.companyId desc, cb.chargeBillStatus desc, cb.chargeCreatedTime desc
+	</select>
+
+	<select id="queryPagerByStatus" resultType="list" resultMap="chargeBillResultMap">
+		<![CDATA[
+			select cb.*, r.recordId, r.checkinId, r.companyId, c.checkinId, c.userName, c.maintainOrFix, c.userPhone, p.plateId, p.plateName, b.brandId, b.brandName, co.colorId, co.colorName, m.modelId, m.modelName, cpy.companyId, cpy.companyName
+				from t_charge_bill cb, t_maintain_record r, t_checkin c, t_car_plate p, t_car_brand b, t_car_color co, t_car_model m, t_company cpy
+				where 1 = 1 and cb.recordId = r.recordId and r.checkinId = c.checkinId and c.plateId = p.plateId and c.brandId = b.brandId and c.colorId = co.colorId and c.modelId = m.modelId and cb.companyId = cpy.companyId and cb.chargeBillStatus = #{status}
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and cb.companyId = #{user.companyId}
+		</if>
+		order by cb.companyId desc, cb.chargeBillStatus desc, cb.chargeCreatedTime desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="queryPagerByCondition" resultType="list" resultMap="chargeBillResultMap">
+		<![CDATA[
+			select cb.*, r.recordId, r.checkinId, r.companyId, c.checkinId, c.userName, c.maintainOrFix, c.userPhone, p.plateId, p.plateName, b.brandId, b.brandName, co.colorId, co.colorName, m.modelId, m.modelName, cpy.companyId, cpy.companyName
+				from t_charge_bill cb, t_maintain_record r, t_checkin c, t_car_plate p, t_car_brand b, t_car_color co, t_car_model m, t_company cpy
+				where 1 = 1 and cb.recordId = r.recordId and r.checkinId = c.checkinId and c.plateId = p.plateId and c.brandId = b.brandId and c.colorId = co.colorId and c.modelId = m.modelId and cb.companyId = cpy.companyId
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and cb.companyId = #{user.companyId}
+		</if>
+		<if test="chargeBill.record.checkin.userName != null and chargeBill.record.checkin.userName != ''">
+			and c.userName like concat('%',#{chargeBill.record.checkin.userName},'%')
+		</if>
+		<if test="chargeBill.record.checkin.userPhone != null and chargeBill.record.checkin.userPhone != ''">
+			and c.userPhone like concat('%',#{chargeBill.record.checkin.userPhone},'%')
+		</if>
+		<if test="chargeBill.paymentMethod != 'all'">
+			and cb.paymentMethod = #{chargeBill.paymentMethod}
+		</if>
+		<if test="chargeBill.companyId != null and chargeBill.companyId != '' and chargeBill.companyId != 'null' and chargeBill.companyId != 'undefined'">
+			and cb.companyId = #{chargeBill.companyId}
+		</if>
+		order by cb.companyId desc, cb.chargeBillStatus desc, cb.chargeCreatedTime desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="count" resultType="int">
+		<![CDATA[
+			select count(*) from t_charge_bill where 1 = 1
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and companyId = #{companyId}
+		</if>
+	</select>
+
+	<select id="countByStatus" resultType="int">
+		<![CDATA[
+			select count(*) from t_charge_bill where 1 = 1 and chargeBillStatus = #{status}
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and companyId = #{user.companyId}
+		</if>
+	</select>
+
+	<select id="countByCondition" resultType="int">
+		<![CDATA[
+			select count(*) from t_charge_bill cb, t_maintain_record r, t_checkin c where 1 = 1 and cb.recordId = r.recordId and r.checkinId = c.checkinId
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and cb.companyId = #{user.companyId}
+		</if>
+		<if test="chargeBill.record.checkin.userName != null and chargeBill.record.checkin.userName != ''">
+			and c.userName like concat('%',#{chargeBill.record.checkin.userName},'%')
+		</if>
+		<if test="chargeBill.record.checkin.userPhone != null and chargeBill.record.checkin.userPhone != ''">
+			and c.userPhone like concat('%',#{chargeBill.record.checkin.userPhone},'%')
+		</if>
+		<if test="chargeBill.paymentMethod != 'all'">
+			and cb.paymentMethod = #{chargeBill.paymentMethod}
+		</if>
+		<if test="chargeBill.companyId != null and chargeBill.companyId != '' and chargeBill.companyId != 'null' and chargeBill.companyId != 'undefined'">
+			and cb.companyId = #{chargeBill.companyId}
+		</if>
+	</select>
+
+	<select id="queryByDefault"  resultMap="chargeBillResultMap">
+		<![CDATA[
+           select sum(cb.actualPayment) as actualPayment, cb.chargeCreatedTime from t_charge_bill cb
+           LEFT JOIN t_maintain_record  mr on cb.recordId = mr.recordId
+           LEFT JOIN t_checkin c on c.checkinId = mr.checkinId
+           WHERE DATE_FORMAT(cb.chargeCreatedTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
+           and c.userId = #{userId} and cb.chargeBillStatus = 'Y'
+		]]>
+		<if test="maintainOrFix =='保养'">
+			and c.maintainOrFix = '保养'
+		</if>
+		<if test="maintainOrFix =='维修'">
+			and c.maintainOrFix = '维修'
+		</if>
+		GROUP BY day(cb.chargeCreatedTime)
+	</select>
+
+	<select id="queryByCondition"  resultType="list" resultMap="chargeBillResultMap">
+		<![CDATA[
+           select sum(cb.actualPayment) as actualPayment, cb.chargeCreatedTime from t_charge_bill cb
+           LEFT JOIN t_maintain_record  mr on cb.recordId = mr.recordId
+           LEFT JOIN t_checkin c on c.checkinId = mr.checkinId
+           where cb.chargeCreatedTime >= #{startTime} and cb.chargeCreatedTime <= #{endTime}
+           and c.userId = #{userId} and cb.chargeBillStatus = 'Y'
+		]]>
+		<if test="maintainOrFix =='保养'">
+			and c.maintainOrFix = '保养'
+		</if>
+		<if test="maintainOrFix =='维修'">
+			and c.maintainOrFix = '维修'
+		</if>
+		<if test="type =='year'">
+			GROUP BY year(cb.chargeCreatedTime)
+		</if>
+		<if test="type =='quarter'">
+			GROUP BY quarter(cb.chargeCreatedTime)
+		</if>
+		<if test="type =='month'">
+			GROUP BY month(cb.chargeCreatedTime)
+		</if>
+		<if test="type =='week'">
+			GROUP BY week(cb.chargeCreatedTime)
+		</if>
+		<if test="type =='day'">
+			GROUP BY day(cb.chargeCreatedTime)
+		</if>
+	</select>
+
+	<update id="inactive" parameterType="string">
+		<![CDATA[
+			update t_charge_bill set chargeBillStatus = 'N' where chargeBillId = #{id}
+		]]>
+	</update>
+
+	<update id="active" parameterType="string">
+		<![CDATA[
+			update t_charge_bill set chargeBillStatus = 'Y' where chargeBillId = #{id}
+		]]>
+	</update>
+
+</mapper>

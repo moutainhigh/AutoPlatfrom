@@ -1,0 +1,265 @@
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.MaintainFixDAO">
+
+	<resultMap id="maintainFixResultMap" type="maintainFix">
+		<id property="maintainId" column="maintainId"></id>
+		<result property="maintainName" column="maintainName"></result>
+		<result property="maintainHour" column="maintainHour"></result>
+		<result property="maintainMoney" column="maintainMoney"></result>
+		<result property="maintainManHourFee" column="maintainManHourFee"></result>
+		<result property="maintainOrFix" column="maintainOrFix"></result>
+		<result property="maintainDes" column="maintainDes"></result>
+		<result property="companyId" column="companyId"></result>
+		<result property="maintainStatus" column="maintainStatus"></result>
+		<association property="company" javaType="com.gs.bean.Company">
+			<id property="companyId" column="companyId"></id>
+			<result property="companyName" column="companyName"/>
+		</association>
+	</resultMap>
+
+	<insert id="insert"  parameterType="maintainFix">
+		<![CDATA[
+			insert into t_maintain_fix (maintainId, maintainName, maintainHour, maintainMoney, maintainManHourFee,
+			maintainOrFix, maintainDes, maintainStatus, companyId) values (UUID(), #{maintainName}, #{maintainHour},
+			#{maintainMoney},#{maintainManHourFee},#{maintainOrFix},#{maintainDes},'Y',#{companyId})
+		]]>
+	</insert>
+
+	<insert id="batchInsert"  parameterType="list">
+		<![CDATA[
+
+		]]>
+	</insert>
+
+	<delete id="delete" parameterType="maintainFix">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<update id="update" parameterType="maintainFix">
+		<![CDATA[
+			update t_maintain_fix set maintainName = #{maintainName} ,
+			 maintainHour = #{maintainHour} ,
+			 maintainMoney = #{maintainMoney} ,
+			 maintainManHourFee = #{maintainManHourFee} ,
+			 maintainOrFix = #{maintainOrFix} ,
+			 maintainDes = #{maintainDes} , companyId = #{companyId} ,
+			 maintainStatus = 'Y' where maintainId = #{maintainId}
+		]]>
+	</update>
+
+	<update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryAll" resultMap="maintainFixResultMap">
+		<![CDATA[
+			select * from t_maintain_fix where maintainStatus = 'Y'
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and companyId = #{companyId}
+		</if>
+	</select>
+
+	<select id="queryByType" resultMap="maintainFixResultMap">
+		<![CDATA[
+			select * from t_maintain_fix where maintainStatus = 'Y'
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and companyId = #{companyId}
+		</if>
+		<if test="maintainOrFix == '保养'">
+			and maintainOrFix = '保养'
+		</if>
+		<if test="maintainOrFix == '维修'">
+			and maintainOrFix = '维修'
+		</if>
+	</select>
+
+	<select id="queryByStatus" resultMap="maintainFixResultMap">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="query" resultType="maintainFix">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryById" resultType="maintainFix">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByPager" resultMap="maintainFixResultMap">
+		<![CDATA[
+			select mf.*, c.companyName from t_maintain_fix  mf, t_company c where mf.companyId = c.companyId and mf.maintainOrFix = '维修'
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and mf.companyId = #{user.companyId}
+		</if>
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="count" resultType="int">
+		<![CDATA[
+			select count(*) from t_maintain_fix fx ,t_company c where fx.maintainOrFix = '维修' and c.companyId = fx.companyId
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and fx.companyId = #{companyId}
+		</if>
+	</select>
+
+	<select id="queryBymaintainPager" resultMap="maintainFixResultMap">
+		<![CDATA[
+			select mf.*, c.companyName from t_maintain_fix  mf, t_company  c where mf.companyId = c.companyId and
+			mf.maintainOrFix = '保养'
+		]]>
+			<if test="user.companyId != null and user.companyId != ''">
+				and mf.companyId = #{user.companyId}
+			</if>
+			limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="MaintainCont" resultType="int">
+		<![CDATA[
+			select count(*) from t_maintain_fix fx,t_company c where fx.maintainOrFix = '保养' and c.companyId = fx.companyId
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and fx.companyId = #{companyId}
+		</if>
+	</select>
+
+	<select id="byStatusPager" resultMap="maintainFixResultMap">
+		<![CDATA[
+			select mf.*, c.companyName from t_maintain_fix mf, t_company c where mf.maintainOrFix = '保养' and  mf.companyId = c.companyId
+		]]>
+		<if test="status != null and status != ''">
+			and mf.maintainStatus = #{status}
+		</if>
+		<if test="user.companyId != null and user.companyId != ''">
+			and mf.companyId = #{user.companyId}
+		</if>
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="countStatus" resultType="int">
+		<![CDATA[
+			select count(*) from t_maintain_fix fx,t_company c where fx.maintainOrFix = '保养' and c.companyId = fx.companyId
+		]]>
+		<if test="status!=null and status !=''">
+			and fx.maintainStatus = #{status}
+		</if>
+		<if test="user.companyId != null and user.companyId != ''">
+			and fx.companyId = #{user.companyId}
+		</if>
+	</select>
+
+	<select id="searchByPager" resultMap="maintainFixResultMap">
+		<![CDATA[
+			select mf.*, c.companyName from t_maintain_fix mf, t_company c where mf.maintainOrFix = '保养' and  mf.companyId = c.companyId
+		]]>
+		<if test="name != null and name != ''">
+			and mf.maintainName like concat('%',#{name},'%')
+		</if>
+		<if test="user.companyId != null and user.companyId != ''">
+			and mf.companyId = #{user.companyId}
+		</if>
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="searCount" resultType="int">
+		<![CDATA[
+			select count(*) from t_maintain_fix fx,t_company c where fx.maintainOrFix = '保养' and c.companyId = fx.companyId
+		]]>
+		<if test="name!=null and name !=''">
+			and fx.maintainName like concat('%',#{name},'%')
+		</if>
+		<if test="user.companyId != null and user.companyId != ''">
+			and fx.companyId = #{user.companyId}
+		</if>
+	</select>
+
+	<select id="repairByStatusPager" resultMap="maintainFixResultMap">
+		<![CDATA[
+			select mf.*, c.companyName from t_maintain_fix mf, t_company c where mf.maintainOrFix = '维修' and  mf.companyId = c.companyId
+		]]>
+		<if test="status != null and status != ''">
+			and mf.maintainStatus = #{status}
+		</if>
+		<if test="user.companyId != null and user.companyId != ''">
+			and mf.companyId = #{user.companyId}
+		</if>
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="repairCountStatus" resultType="int">
+		<![CDATA[
+			select count(*) from t_maintain_fix fx,t_company c where fx.maintainOrFix = '维修' and c.companyId = fx.companyId
+		]]>
+		<if test="status!=null and status !=''">
+			and fx.maintainStatus = #{status}
+		</if>
+		<if test="user.companyId != null and user.companyId != ''">
+			and fx.companyId = #{user.companyId}
+		</if>
+	</select>
+
+	<select id="searchByRepairPager" resultMap="maintainFixResultMap">
+		<![CDATA[
+			select mf.*, c.companyName from t_maintain_fix mf, t_company c where mf.maintainOrFix = '维修' and  mf.companyId = c.companyId
+		]]>
+		<if test="name != null and name != ''">
+			and mf.maintainName like concat('%',#{name},'%')
+		</if>
+		<if test="user.companyId != null and user.companyId != ''">
+			and mf.companyId = #{user.companyId}
+		</if>
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="searRepairCount" resultType="int">
+		<![CDATA[
+			select count(*) from t_maintain_fix fx,t_company c where fx.maintainOrFix = '维修' and c.companyId = fx.companyId
+		]]>
+		<if test="name!=null and name !=''">
+			and fx.maintainName like concat('%',#{name},'%')
+		</if>
+		<if test="user.companyId != null and user.companyId != ''">
+			and fx.companyId = #{user.companyId}
+		</if>
+	</select>
+
+	<update id="inactive" parameterType="string">
+		<![CDATA[
+			update t_maintain_fix set maintainStatus = 'N' where maintainId = #{maintainId}
+		]]>
+	</update>
+
+	<update id="active" parameterType="string">
+		<![CDATA[
+			update t_maintain_fix set maintainStatus = 'Y' where maintainId = #{maintainId}
+		]]>
+	</update>
+</mapper>

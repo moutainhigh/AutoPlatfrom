@@ -1,0 +1,481 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.AccessoriesBuyDAO">
+
+    <resultMap id="accessoriesBuyResultMap" type="com.gs.bean.AccessoriesBuy">
+        <id property="accBuyId" column="accBuyId"/>
+        <result property="accUnit" column="accUnit"/>
+        <result property="accBuyCount" column="accBuyCount"/>
+        <result property="accBuyPrice" column="accBuyPrice"/>
+        <result property="accBuyTotal" column="accBuyTotal"/>
+        <result property="accBuyDiscount" column="accBuyDiscount"/>
+        <result property="accBuyMoney" column="accBuyMoney"/>
+        <result property="accBuyTime" column="accBuyTime"/>
+        <result property="accBuyCreatedTime" column="accBuyCreatedTime"/>
+        <result property="companyId" column="companyId"/>
+        <result property="accBuyStatus" column="accBuyStatus"/>
+        <result property="accBuyCheck" column="accBuyCheck"/>
+        <result property="accIsBuy" column="accIsBuy"/>
+        <result property="coont" column="coont"/>
+
+        <association property="accessories" javaType="com.gs.bean.Accessories">
+            <id property="accId" column="accId"/>
+            <result property="accName" column="accName"/>
+            <result property="accCommodityCode" column="accCommodityCode"/>
+            <result property="accDes" column="accDes"/>
+
+            <association property="accessoriesType" javaType="com.gs.bean.AccessoriesType">
+                <id property="accTypeId" column="accTypeId"/>
+                <result property="accTypeName" column="accTypeName"/>
+            </association>
+
+            <association property="company" javaType="com.gs.bean.Company">
+                <id property="companyId" column="companyId"/>
+                <result property="companyName" column="companyName"/>
+            </association>
+
+            <association property="supply" javaType="com.gs.bean.Supply">
+                <id property="supplyId" column="supplyId"/>
+                <result property="supplyName" column="supplyName"/>
+            </association>
+
+        </association>
+
+
+    </resultMap>
+
+    <insert id="insert" parameterType="accessoriesBuy">
+		insert into
+		auto_platform.t_accessories_buy(accBuyId, accId, accUnit, accBuyCount, accBuyPrice, accBuyTotal, accBuyDiscount, accBuyMoney, accBuyTime, accBuyCreatedTime, companyId, accBuyStatus, accBuyCheck, accIsBuy)
+		values
+		(uuid(),#{accId},#{accUnit},#{accBuyCount},#{accBuyPrice},#{accBuyTotal},#{accBuyDiscount},#{accBuyMoney},#{accBuyTime},now(),#{companyId},#{accBuyStatus}, #{accBuyCheck}, #{accIsBuy})
+
+	</insert>
+
+    <insert id="batchInsert" parameterType="list">
+		<![CDATA[
+
+        ]]>
+	</insert>
+
+    <delete id="delete" parameterType="accessoriesBuy">
+		<![CDATA[
+
+        ]]>
+	</delete>
+
+    <delete id="deleteById" parameterType="string">
+
+    </delete>
+
+    <delete id="batchDelete" parameterType="list">
+
+    </delete>
+
+    <update id="update" parameterType="accessoriesBuy">
+		update
+		auto_platform.t_accessories_buy
+		set
+		accUnit = #{accUnit}, accBuyCount = #{accBuyCount}, accBuyPrice = #{accBuyPrice}, accBuyTotal = #{accBuyTotal},
+		accBuyDiscount = #{accBuyDiscount}, accBuyMoney = #{accBuyMoney}, accBuyTime = #{accBuyTime}, accBuyStatus = #{accBuyStatus}
+		where accBuyId = #{accBuyId}
+	</update>
+
+    <update id="updateAccBuyCheck">
+        update t_accessories_buy aby set aby.accBuyCheck = #{checkStatus} where aby.accBuyId = #{accBuyId}
+    </update>
+
+    <update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+        ]]>
+	</update>
+
+    <select id="dataPrimary" parameterType="string" resultType="int">
+        select count(acc.accName) from t_accessories_buy aby inner join t_accessories acc on aby.accId = acc.accId where acc.accName = #{name}
+    </select>
+
+    <update id="batchUpdateBuyCheck">
+            UPDATE t_accessories_buy SET accBuyCheck = 'Y' WHERE accBuyId in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="updateAccIsBuy" parameterType="string">
+        update t_accessories_buy aby set aby.accIsBuy = 'Y' where aby.accBuyId = #{id}
+    </update>
+
+    <select id="queryByDefaultCount" resultMap="accessoriesBuyResultMap">
+        <![CDATA[
+           select count(ab.accBuyId) as coont ,ab.accBuyCreatedTime from t_accessories_buy ab
+             WHERE DATE_FORMAT(ab.accBuyCreatedTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' ) and  ab.accBuyStatus = 'Y'
+		]]>
+        <if test="companyId != null and companyId != ''">
+            and ab.companyId = #{companyId}
+        </if>
+        GROUP BY day(ab.accBuyCreatedTime)
+    </select>
+
+    <select id="queryByConditionCount" resultType="list" resultMap="accessoriesBuyResultMap">
+        <![CDATA[
+           select count(ab.accBuyId) as coont ,ab.accBuyCreatedTime from t_accessories_buy ab
+            where ab.accBuyCreatedTime >= #{startTime} and ab.accBuyCreatedTime <= #{endTime} and  ab.accBuyStatus = 'Y'
+		]]>
+        <if test="companyId != null and companyId != ''">
+            and ab.companyId = #{companyId}
+        </if>
+        <if test="type =='year'">
+            GROUP BY year(ab.accBuyCreatedTime)
+        </if>
+        <if test="type =='quarter'">
+            GROUP BY quarter(ab.accBuyCreatedTime)
+        </if>
+        <if test="type =='month'">
+            GROUP BY month(ab.accBuyCreatedTime)
+        </if>
+        <if test="type =='week'">
+            GROUP BY week(ab.accBuyCreatedTime)
+        </if>
+        <if test="type =='day'">
+            GROUP BY day(ab.accBuyCreatedTime)
+        </if>
+
+    </select>
+
+    <select id="queryByDefaultPay" resultMap="accessoriesBuyResultMap">
+        <![CDATA[
+           select sum(ab.accBuyMoney) as accBuyMoney ,ab.accBuyCreatedTime from t_accessories_buy ab
+             WHERE DATE_FORMAT(ab.accBuyCreatedTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' ) and  ab.accBuyStatus = 'Y'
+		]]>
+        <if test="companyId != null and companyId != ''">
+            and ab.companyId = #{companyId}
+        </if>
+        GROUP BY day(ab.accBuyCreatedTime)
+    </select>
+
+    <select id="queryByConditionPay" resultType="list" resultMap="accessoriesBuyResultMap">
+        <![CDATA[
+           select sum(ab.accBuyMoney) as accBuyMoney ,ab.accBuyCreatedTime from t_accessories_buy ab
+            where ab.accBuyCreatedTime >= #{startTime} and ab.accBuyCreatedTime <= #{endTime} and  ab.accBuyStatus = 'Y'
+
+		]]>
+        <if test="type =='year'">
+            GROUP BY year(ab.accBuyCreatedTime)
+        </if>
+        <if test="type =='quarter'">
+            GROUP BY quarter(ab.accBuyCreatedTime)
+        </if>
+        <if test="type =='month'">
+            GROUP BY month(ab.accBuyCreatedTime)
+        </if>
+        <if test="type =='week'">
+            GROUP BY week(ab.accBuyCreatedTime)
+        </if>
+        <if test="type =='day'">
+            GROUP BY day(ab.accBuyCreatedTime)
+        </if>
+
+        <if test="companyId != null and companyId != ''">
+            and ab.companyId = #{companyId}
+        </if>
+
+    </select>
+
+
+    <select id="queryAll" resultMap="accessoriesBuyResultMap">
+		select * from auto_platform.t_accessories_buy
+	</select>
+
+    <select id="queryByStatus" resultMap="accessoriesBuyResultMap" parameterType="string">
+        select * from auto_platform.t_accessories_buy where accBuyStatus = #{status}
+        <if test="user.companyId != null and user.companyId != ''">
+            and companyId = #{user.companyId}
+        </if>
+    </select>
+
+    <select id="accIsBuy" resultMap="accessoriesBuyResultMap" resultType="list">
+        <![CDATA[
+        SELECT
+        ab.*,
+        ac.accId,
+        ac.accName,
+        ac.accDes,
+        ac.supplyId,
+        ac.accCommodityCode,
+        sy.supplyName,
+        ae.accTypeId,
+        ae.accTypeName,
+        cpy.companyName
+        FROM
+        (
+            (
+                (
+                    (
+                        t_accessories_buy ab
+                        INNER JOIN t_accessories ac ON ab.accId = ac.accId
+                    )
+                    INNER JOIN t_company cpy ON ab.companyId = cpy.companyId
+                )
+                INNER JOIN t_accessories_type ae ON ac.accTypeId = ae.accTypeId
+            )
+            INNER JOIN t_supply sy ON ac.supplyId = sy.supplyId
+        )
+        where ab.accIsBuy = 'Y'
+        ]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and cpy.companyId = #{user.companyId}
+        </if>
+        ORDER BY ab.accBuyTime DESC
+        limit
+        #{pager.beginIndex},#{pager.pageSize}
+    </select>
+
+    <select id="countAccIsBuy" resultType="int">
+        <![CDATA[
+        SELECT
+            count(ab.accBuyId)
+        FROM
+        (
+            (
+                (
+                    (
+                        t_accessories_buy ab
+                        INNER JOIN t_accessories ac ON ab.accId = ac.accId
+                    )
+                    INNER JOIN t_company cpy ON ab.companyId = cpy.companyId
+                )
+                INNER JOIN t_accessories_type ae ON ac.accTypeId = ae.accTypeId
+            )
+            INNER JOIN t_supply sy ON ac.supplyId = sy.supplyId
+        )
+        where ab.accIsBuy = 'Y'
+        ]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and cpy.companyId = #{user.companyId}
+        </if>
+    </select>
+
+    <select id="queryByCheckStatus" resultMap="accessoriesBuyResultMap" parameterType="string">
+        select * from auto_platform.t_accessories_buy where accBuyCheck = #{checkState}
+    </select>
+
+
+    <select id="query" parameterType="accessoriesBuy" resultType="accessoriesBuy">
+		<![CDATA[
+          select * from t_accessories_buy
+        ]]>
+	</select>
+
+    <select id="queryById" resultType="accessoriesBuy">
+		select * from auto_platform.t_accessories_buy where accId = #{id}
+	</select>
+
+    <select id="queryByPager" resultType="list" resultMap="accessoriesBuyResultMap">
+        <![CDATA[
+        SELECT
+            ab.*,
+            ac.accId,
+            ac.accName,
+            ac.accDes,
+            ac.supplyId,
+            ac.accCommodityCode,
+            sy.supplyName,
+            ae.accTypeId,
+            ae.accTypeName,
+            cpy.companyName
+        FROM
+            (
+                (
+                    (
+                        (
+                            t_accessories_buy ab
+                            LEFT JOIN t_accessories ac ON ab.accId = ac.accId
+                        )
+                        INNER JOIN t_company cpy ON ab.companyId = cpy.companyId
+                    )
+                    INNER JOIN t_accessories_type ae ON ac.accTypeId = ae.accTypeId
+                )
+                INNER JOIN t_supply sy ON ac.supplyId = sy.supplyId
+            )
+            where 1 = 1
+        ]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and cpy.companyId = #{user.companyId}
+        </if>
+        ORDER BY ab.accBuyTime DESC
+        limit
+        #{pager.beginIndex},#{pager.pageSize}
+    </select>
+
+    <select id="count" resultType="int">
+        select count(ab.accBuyId) from auto_platform.t_accessories_buy ab
+        <if test="companyId != null and companyId != ''">
+            where ab.companyId = #{companyId}
+        </if>
+    </select>
+
+    <update id="inactive" parameterType="string">
+        update auto_platform.t_accessories_buy set accBuyStatus = 'N' WHERE accBuyId = #{id}
+
+    </update>
+
+    <update id="active" parameterType="string">
+        update auto_platform.t_accessories_buy set accBuyStatus = 'Y' WHERE accBuyId = #{id}
+
+    </update>
+
+    <select id="queryByBuyStatePager" resultType="list" resultMap="accessoriesBuyResultMap">
+        SELECT
+        ab.*, ac.accId,
+        ac.accName,
+        ac.accDes,
+        ac.supplyId,
+        ac.accCommodityCode,
+        sy.supplyName,
+        ae.accTypeId,
+        ae.accTypeName,
+        cpy.companyName
+        FROM
+        (
+        (
+        (
+        (
+        t_accessories_buy ab
+        INNER JOIN t_accessories ac ON ab.accId = ac.accId
+        )
+        INNER JOIN t_company cpy ON ab.companyId = cpy.companyId
+        )
+        INNER JOIN t_accessories_type ae ON ac.accTypeId = ae.accTypeId
+        )
+        INNER JOIN t_supply sy ON ac.supplyId = sy.supplyId
+        )
+        where ab.accBuyStatus = 'Y'
+        <if test="user.companyId != null and user.companyId != ''">
+            and ab.companyId = #{user.companyId}
+        </if>
+        order by ab.accBuyTime desc
+        limit #{pager.beginIndex},#{pager.pageSize}
+    </select>
+
+    <select id="queryByCheckStatePager" resultType="list" resultMap="accessoriesBuyResultMap">
+        SELECT
+        ab.*,
+        ac.accId,
+        ac.accDes,
+        ac.accName,
+        ac.supplyId,
+        ac.accCommodityCode,
+        sy.supplyName,
+        ae.accTypeId,
+        ae.accTypeName,
+        cpy.companyName
+        FROM
+        (
+        (
+        (
+        (
+        t_accessories_buy ab
+        INNER JOIN t_accessories ac ON ab.accId = ac.accId
+        )
+        INNER JOIN t_company cpy ON ab.companyId = cpy.companyId
+        )
+        INNER JOIN t_accessories_type ae ON ac.accTypeId = ae.accTypeId
+        )
+        INNER JOIN t_supply sy ON ac.supplyId = sy.supplyId
+        )
+        where ab.accBuyCheck = 'Y'
+        <if test="user.companyId != null and user.companyId != ''">
+            and ab.companyId = #{user.companyId}
+        </if>
+        order by ab.accBuyTime desc
+        limit #{pager.beginIndex},#{pager.pageSize}
+    </select>
+
+    <select id="countByBuyState" resultType="int">
+        select count(accBuyCount) from auto_platform.t_accessories_buy where accBuyStatus = 'Y'
+        <if test="user.companyId != null and user.companyId != ''">
+            and companyId = #{user.companyId}
+        </if>
+    </select>
+
+    <select id="countByCheckState" resultType="int">
+        select count(accBuyCheck) from auto_platform.t_accessories_buy where accBuyCheck = 'Y'
+        <if test="user.companyId != null and user.companyId != ''">
+            and companyId = #{user.companyId}
+        </if>
+    </select>
+
+    <select id="queryByBuyTimeScopeByAccNamePager" resultType="list" resultMap="accessoriesBuyResultMap">
+        SELECT
+        ab.*,
+        ac.accId,
+        ac.accName,
+        ac.accDes,
+        ac.supplyId,
+        ac.accCommodityCode,
+        sy.supplyName,
+        ae.accTypeId,
+        ae.accTypeName,
+        cpy.companyName
+        FROM
+        (
+        (
+        (
+        (
+        t_accessories_buy ab
+        INNER JOIN t_accessories ac ON ab.accId = ac.accId
+        )
+        INNER JOIN t_company cpy ON ab.companyId = cpy.companyId
+        )
+        INNER JOIN t_accessories_type ae ON ac.accTypeId = ae.accTypeId
+        )
+        INNER JOIN t_supply sy ON ac.supplyId = sy.supplyId
+        )
+        where 1 = 1
+        <if test="buyTimeStart != null and buyTimeStart != ''">
+            and (ab.accBuyTime &gt;= #{buyTimeStart} and ab.accBuyTime &lt;= #{buyTimeEnd})
+        </if>
+        <if test="accName != null and accName != '' ">
+            and ac.accName like concat(concat('%',#{accName}),'%')
+        </if>
+        <if test="user.companyId != null and user.companyId != ''">
+            and ab.companyId = #{user.companyId}
+        </if>
+        order by ab.accBuyTime desc
+        limit #{pager.beginIndex},#{pager.pageSize}
+    </select>
+
+    <select id="countByBuyTimeScope" resultType="int">
+        SELECT
+        count(ab.accBuyId)
+        FROM
+        (
+        (
+        (
+        (
+        t_accessories_buy ab
+        INNER JOIN t_accessories ac ON ab.accId = ac.accId
+        )
+        INNER JOIN t_company cpy ON ab.companyId = cpy.companyId
+        )
+        INNER JOIN t_accessories_type ae ON ac.accTypeId = ae.accTypeId
+        )
+        INNER JOIN t_supply sy ON ac.supplyId = sy.supplyId
+        )
+        where 1 = 1
+        <if test="buyTimeStart != null and buyTimeStart != ''">
+            and (ab.accBuyTime &gt;= #{buyTimeStart} and ab.accBuyTime &lt;= #{buyTimeEnd})
+        </if>
+        <if test="accName != null and accName != '' ">
+            and ac.accName like concat(concat('%',#{accName}),'%')
+        </if>
+        <if test="user.companyId != null and user.companyId != ''">
+            and ab.companyId = #{user.companyId}
+        </if>
+    </select>
+
+
+</mapper>

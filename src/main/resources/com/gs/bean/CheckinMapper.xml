@@ -1,0 +1,283 @@
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.CheckinDAO">
+
+	<resultMap id="checkinResultMap" type="checkin">
+		<id property="checkinId" column="checkinId" />
+		<result property="userId" column="userId" />
+		<result property="appointmentId" column="appointmentId" />
+		<result property="userName" column="userName" />
+		<result property="userPhone" column="userPhone" />
+		<result property="carPlate" column="carPlate" />
+		<result property="arriveTime" column="arriveTime" />
+		<result property="carMileage" column="carMileage" />
+		<result property="carThings" column="carThings" />
+		<result property="intactDegrees" column="intactDegrees" />
+		<result property="userRequests" column="userRequests" />
+		<result property="carWash" column="carWash" />
+		<result property="oilCount" column="oilCount" />
+		<result property="maintainOrFix" column="maintainOrFix" />
+		<result property="checkinCreatedTime" column="checkinCreatedTime" />
+		<result property="checkinStatus" column="checkinStatus" />
+
+		<association property="brand" javaType="com.gs.bean.CarBrand">
+			<id property="brandId" column="brandId"/>
+			<id property="brandName" column="brandName"/>
+		</association>
+		<association property="color" javaType="com.gs.bean.CarColor">
+			<id property="colorId" column="colorId"/>
+			<id property="colorName" column="colorName"/>
+		</association>
+		<association property="plate" javaType="com.gs.bean.CarPlate">
+			<id property="plateId" column="plateId"/>
+			<id property="plateName" column="plateName"/>
+		</association>
+		<association property="model" javaType="com.gs.bean.CarModel">
+			<id property="modelId" column="modelId"/>
+			<id property="modelName" column="modelName"/>
+		</association>
+		<association property="company" javaType="com.gs.bean.Company">
+			<id property="companyId" column="companyId"/>
+			<id property="companyName" column="companyName"/>
+		</association>
+	</resultMap>
+
+	<insert id="insert"  parameterType="checkin">
+		<![CDATA[
+			insert into t_checkin(checkinId, userId, appointmentId, userName, userPhone, brandId, colorId,
+				modelId, plateId, carPlate, arriveTime, carMileage, carThings, intactDegrees, userRequests,
+				maintainOrFix, checkinCreatedTime, companyId, carWash, oilCount)
+				values(#{checkinId}, #{userId}, #{appointmentId}, #{userName}, #{userPhone}, #{brandId}, #{colorId},
+				#{modelId}, #{plateId}, #{carPlate}, #{arriveTime}, #{carMileage}, #{carThings}, #{intactDegrees}, #{userRequests},
+				#{maintainOrFix}, now(), #{companyId}, #{carWash}, #{oilCount})
+		]]>
+	</insert>
+
+	<insert id="batchInsert"  parameterType="list">
+		<![CDATA[
+
+		]]>
+	</insert>
+
+	<delete id="delete" parameterType="checkin">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<update id="update" parameterType="checkin">
+		<![CDATA[
+			update t_checkin set userId = #{userId}, appointmentId = #{appointmentId}, userName = #{userName}, userPhone = #{userPhone},
+				brandId = #{brandId}, colorId = #{colorId}, modelId = #{modelId}, plateId = #{plateId}, carPlate = #{carPlate},
+				arriveTime = #{arriveTime}, carMileage = #{carMileage}, carThings = #{carThings}, intactDegrees = #{intactDegrees}, userRequests = #{userRequests},
+				maintainOrFix = #{maintainOrFix}, checkinCreatedTime = now(), checkinStatus = 'Y', carWash = #{carWash}, oilCount = #{oilCount} where checkinId = #{checkinId}
+		]]>
+	</update>
+
+	<update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryAll" resultMap="checkinResultMap">
+		<![CDATA[
+			select * from t_checkin
+		]]>
+	</select>
+
+	<select id="queryByStatus" resultMap="checkinResultMap" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="query" parameterType="checkin" resultType="checkin">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryById" parameterType="string" resultType="checkin">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByPager" resultType="list" resultMap="checkinResultMap">
+		<![CDATA[
+			select c.*, b.brandId, b.brandName, co.colorId, co.colorName, m.modelId, m.modelName, p.plateId, p.plateName, cpy.companyId, cpy.companyName
+				from t_checkin c, t_car_brand b, t_car_color co, t_car_model m, t_car_plate p, t_company cpy
+				where 1 = 1 and c.brandId = b.brandId and c.colorId = co.colorId and c.modelId = m.modelId and c.plateId = p.plateId and cpy.companyId = c.companyId
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and c.companyId = #{user.companyId}
+		</if>
+		order by c.companyId desc, c.checkinStatus desc, c.checkinCreatedTime desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="queryMyName" resultType="list" resultMap="checkinResultMap">
+		<![CDATA[
+			select c.*, b.brandId, b.brandName, co.colorId, co.colorName, m.modelId, m.modelName, p.plateId, p.plateName, cpy.companyId, cpy.companyName
+			from t_checkin c LEFT JOIN t_car_brand b on c.brandId = b.brandId
+			LEFT JOIN t_car_color co on c.colorId = co.colorId
+			LEFT JOIN t_car_model m on c.modelId = m.modelId
+			LEFT JOIN t_car_plate p on c.plateId = p.plateId
+			LEFT JOIN t_company cpy on cpy.companyId = c.companyId
+			where c.checkinStatus = 'Y'
+		]]>
+		<if test="user.userId != null and user.userId != ''">
+			and c.userId = #{user.userId}
+		</if>
+		order by c.userName desc, c.checkinStatus desc, c.checkinCreatedTime
+	</select>
+
+	<select id="queryPagerByStatus" resultType="list" resultMap="checkinResultMap">
+		<![CDATA[
+			select c.*, b.brandId, b.brandName, co.colorId, co.colorName, m.modelId, m.modelName, p.plateId, p.plateName, cpy.companyId, cpy.companyName
+				from t_checkin c, t_car_brand b, t_car_color co, t_car_model m, t_car_plate p, t_company cpy
+				where 1=1 and c.brandId = b.brandId and c.colorId = co.colorId and c.modelId = m.modelId and c.plateId = p.plateId and cpy.companyId = c.companyId and checkinStatus = #{status}
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and c.companyId = #{user.companyId}
+		</if>
+		order by c.companyId desc, c.checkinStatus desc, c.checkinCreatedTime desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="queryPagerByCondition" resultType="list" resultMap="checkinResultMap">
+		<![CDATA[
+			select c.*, b.brandId, b.brandName, co.colorId, co.colorName, m.modelId, m.modelName, p.plateId, p.plateName, cpy.companyId, cpy.companyName
+				from t_checkin c, t_car_brand b, t_car_color co, t_car_model m, t_car_plate p, t_company cpy
+				where 1 = 1 and c.brandId = b.brandId and c.colorId = co.colorId and c.modelId = m.modelId and c.plateId = p.plateId and c.companyId = cpy.companyId
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and c.companyId = #{user.companyId}
+		</if>
+		<if test="checkin.userName != null and checkin.userName != ''">
+			and c.userName like concat('%',#{checkin.userName},'%')
+		</if>
+		<if test="checkin.userPhone != null and checkin.userPhone != ''">
+			and c.userPhone like concat('%',#{checkin.userPhone},'%')
+		</if>
+		<if test="checkin.carPlate != null and checkin.carPlate != ''">
+			and c.carPlate like concat('%',#{checkin.carPlate},'%')
+		</if>
+		<if test="checkin.maintainOrFix != 'all'">
+			and c.maintainOrFix = #{checkin.maintainOrFix}
+		</if>
+		<if test="checkin.companyId != null and checkin.companyId != '' and checkin.companyId != 'null' and checkin.companyId != 'undefined'">
+			and c.companyId = #{checkin.companyId}
+		</if>
+		order by c.companyId desc, c.checkinStatus desc, c.checkinCreatedTime desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="queryByTrackStatus" resultType="checkin" parameterType="string">
+		<![CDATA[
+			select * from t_checkin where 1 = 1 and userId= #{userId}
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and companyId = #{user.companyId}
+		</if>
+	</select>
+
+	<select id="count" resultType="int">
+		<![CDATA[
+			select count(*) from t_checkin where 1 = 1
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and companyId = #{companyId}
+		</if>
+	</select>
+
+	<select id="countByStatus" resultType="int">
+		<![CDATA[
+			select count(*) from t_checkin where 1 = 1 and checkinStatus = #{status}
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and companyId = #{user.companyId}
+		</if>
+	</select>
+
+	<select id="countByCondition" resultType="int">
+		<![CDATA[
+			select count(*) from t_checkin where 1 = 1
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and companyId = #{user.companyId}
+		</if>
+		<if test="checkin.userName != null and checkin.userName != ''">
+			and userName like concat('%',#{checkin.userName},'%')
+		</if>
+		<if test="checkin.userPhone != null and checkin.userPhone != ''">
+			and userPhone like concat('%',#{checkin.userPhone},'%')
+		</if>
+		<if test="checkin.carPlate != null and checkin.carPlate != ''">
+			and carPlate like concat('%',#{checkin.carPlate},'%')
+		</if>
+		<if test="checkin.maintainOrFix != 'all'">
+			and maintainOrFix = #{checkin.maintainOrFix}
+		</if>
+		<if test="checkin.companyId != null and checkin.companyId != '' and checkin.companyId != 'null' and checkin.companyId != 'undefined'">
+			and companyId = #{checkin.companyId}
+		</if>
+
+	</select>
+
+	<update id="inactive" parameterType="string">
+		<![CDATA[
+			update t_checkin set checkinStatus = 'N' where checkinId = #{id}
+		]]>
+	</update>
+
+	<update id="active" parameterType="string">
+		<![CDATA[
+			update t_checkin set checkinStatus = 'Y' where checkinId = #{id}
+		]]>
+	</update>
+
+	<select id="queryByTop" resultType="list" resultMap="checkinResultMap">
+		<![CDATA[
+			select c.*, b.brandId, b.brandName, co.colorId, co.colorName, m.modelId, m.modelName, p.plateId, p.plateName, cpy.companyId, cpy.companyName
+				from t_checkin c, t_car_brand b, t_car_color co, t_car_model m, t_car_plate p, t_company cpy
+				where 1 = 1 and c.brandId = b.brandId and c.colorId = co.colorId and c.modelId = m.modelId and c.plateId = p.plateId and cpy.companyId = c.companyId
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and c.companyId = #{user.companyId}
+		</if>
+		order by c.checkinStatus desc, c.checkinCreatedTime desc
+		limit 0, #{top}
+	</select>
+
+	<select id="queryByPhone" resultType="int">
+		<![CDATA[
+			select count(*) from t_checkin where 1 = 1 and checkinStatus = 'Y' and userPhone = #{phone}
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and companyId = #{user.companyId}
+		</if>
+	</select>
+
+	<update id="updateCheckinByPhone">
+		<![CDATA[
+			update t_checkin set userId = #{user.userId} where userPhone = #{user.userPhone}
+		]]>
+	</update>
+
+</mapper>

@@ -1,0 +1,175 @@
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.SupplyTypeDAO">
+
+	<resultMap id="supplyTypeResultMap" type="supplyType">
+		<id property="supplyTypeId" column="supplyTypeId"></id>
+		<result property="supplyTypeName" column="supplyTypeName"></result>
+		<result property="supplyTypeDes" column="supplyTypeDes"></result>
+		<result property="supplyTypeStatus" column="supplyTypeStatus"></result>
+
+		<association property="company" javaType="com.gs.bean.Company">
+			<id property="companyId" column="companyId"/>
+			<id property="companyName" column="companyName"/>
+		</association>
+	</resultMap>
+
+	<insert id="insert"  parameterType="supplyType">
+		<![CDATA[
+ 			insert into t_supply_type(supplyTypeId, supplyTypeName, supplyTypeDes, companyId, supplyTypeStatus) values(uuid(), #{supplyTypeName}, #{supplyTypeDes}, #{companyId}, 'Y')
+		]]>
+	</insert>
+
+	<insert id="batchInsert"  parameterType="list">
+		<![CDATA[
+
+		]]>
+	</insert>
+
+	<delete id="delete" parameterType="supplyType">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<update id="update" parameterType="supplyType">
+		<![CDATA[
+		update t_supply_type set supplyTypeName = #{supplyTypeName}, supplyTypeDes = #{supplyTypeDes}, companyId = #{companyId}, supplyTypeStatus = 'Y' where supplyTypeId = #{supplyTypeId}
+		]]>
+	</update>
+
+	<update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryAll" resultMap="supplyTypeResultMap">
+		<![CDATA[
+		select * from t_supply_type where 1 = 1
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and companyId = #{companyId}
+		</if>
+	</select>
+
+	<select id="queryByStatus" resultMap="supplyTypeResultMap" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="query" parameterType="supplyType" resultType="supplyType">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryById" parameterType="string" resultType="supplyType">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByPager" resultType="list" resultMap="supplyTypeResultMap">
+		<![CDATA[
+		select t.*, c.companyName from t_supply_type t, t_company c
+		where 1 = 1 and t.companyId = c.companyId
+        ]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and t.companyId = #{user.companyId}
+		</if>
+        order by t.companyId desc, t.supplyTypeStatus desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="queryPagerByStatus" resultType="list" resultMap="supplyTypeResultMap">
+		<![CDATA[
+		select t.*, c.companyName from t_supply_type t, t_company c
+		where 1 = 1 and t.companyId = c.companyId and supplyTypeStatus = #{status}
+        ]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and t.companyId = #{user.companyId}
+		</if>
+        order by t.companyId desc, t.supplyTypeStatus desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="queryPagerByCondition" resultType="list" resultMap="supplyTypeResultMap">
+		<![CDATA[
+			select t.*, c.companyId, c.companyName from t_supply_type t, t_company c
+			where 1=1 and c.companyId = t.companyId
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and t.companyId = #{user.companyId}
+		</if>
+		<if test="supplyType.supplyTypeName != null and supplyType.supplyTypeName != ''">
+			and t.supplyTypeName like concat('%',#{supplyType.supplyTypeName},'%')
+		</if>
+		<if test="supplyType.companyId != null and supplyType.companyId != '' and supplyType.companyId != 'null' and supplyType.companyId != 'undefined'">
+			and t.companyId = #{supplyType.companyId}
+		</if>
+        order by t.companyId desc, t.supplyTypeStatus desc
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="count" resultType="int">
+		<![CDATA[
+		select count(supplyTypeId) from t_supply_type where 1 = 1
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and companyId = #{companyId}
+		</if>
+	</select>
+
+	<select id="countByStatus" resultType="int">
+		<![CDATA[
+		select count(supplyTypeId) from t_supply_type where supplyTypeStatus = #{status}
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and companyId = #{user.companyId}
+		</if>
+	</select>
+
+	<select id="countByCondition" resultType="int">
+	<![CDATA[
+			select count(*) from t_supply_type where 1 = 1
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and companyId = #{user.companyId}
+		</if>
+		<if test="supplyType.supplyTypeName != null and supplyType.supplyTypeName != ''">
+			and supplyTypeName like concat('%',#{supplyType.supplyTypeName},'%')
+		</if>
+		<if test="supplyType.companyId != null and supplyType.companyId != '' and supplyType.companyId != 'null' and supplyType.companyId != 'undefined'">
+			and companyId = #{supplyType.companyId}
+		</if>
+	</select>
+
+	<update id="inactive" parameterType="string">
+		<![CDATA[
+		update t_supply_type set supplyTypeStatus = 'N' where supplyTypeId = #{supplyTypeId}
+		]]>
+	</update>
+
+	<update id="active" parameterType="string">
+		<![CDATA[
+		update t_supply_type set supplyTypeStatus = 'Y' where supplyTypeId = #{supplyTypeId}
+		]]>
+	</update>
+
+</mapper>

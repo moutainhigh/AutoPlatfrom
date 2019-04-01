@@ -1,0 +1,185 @@
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.AccessoriesTypeDAO">
+
+	<resultMap id="accessoriesTypeResultMap" type="accessoriesType">
+		<id property="accTypeId" column="accTypeId" />
+		<result property="accTypeName" column="accTypeName" />
+		<result property="accTypeDes" column="accTypeDes" />
+		<result property="accTypeStatus" column="accTypeStatus" />
+
+		<association property="company" javaType="com.gs.bean.Company">
+			<id property="companyId" column="companyId" />
+			<id property="companyName" column="companyName" />
+		</association>
+	</resultMap>
+
+	<insert id="insert"  parameterType="accessoriesType">
+		<![CDATA[
+			INSERT into t_accessories_type(accTypeId, accTypeName, accTypeDes, companyId, accTypeStatus) values (#{accTypeId}, #{accTypeName}, #{accTypeDes}, #{companyId}, 'Y')
+		]]>
+	</insert>
+
+	<insert id="batchInsert"  parameterType="list">
+		<![CDATA[
+
+		]]>
+	</insert>
+
+	<delete id="delete" parameterType="accessoriesType">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<update id="update" parameterType="accessoriesType">
+		<![CDATA[
+			update t_accessories_type set accTypeName = #{accTypeName}, accTypeDes = #{accTypeDes}, companyId = #{companyId}, accTypeStatus = #{accTypeStatus} where accTypeId = #{accTypeId}
+		]]>
+	</update>
+
+	<update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryAll" resultMap="accessoriesTypeResultMap">
+		<![CDATA[
+			select * from t_accessories_type
+		]]>
+		<if test="companyId != null and companyId != ''">
+			WHERE companyId = #{companyId}
+		</if>
+	</select>
+
+	<select id="queryByStatus" resultMap="accessoriesTypeResultMap" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="query" resultType="accessoriesType">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryById" resultType="accessoriesType">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByPager" resultMap="accessoriesTypeResultMap">
+		<![CDATA[
+			select u.*, c.companyId, c.companyName from t_accessories_type u, t_company c where 1=1 and c.companyId = u.companyId
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and u.companyId = #{user.companyId}
+		</if>
+		order by u.companyId Desc, u.accTypeDes
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="queryByStatusPager" resultMap="accessoriesTypeResultMap">
+		<![CDATA[
+			select at.*, c.companyId, c.companyName from t_accessories_type at, t_company c where c.companyId = at.companyId and at.accTypeStatus = #{accTypeStatus}
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and at.companyId = #{user.companyId}
+		</if>
+		order by at.companyId Desc, at.accTypeDes
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="queryByCondition" resultType="list" resultMap="accessoriesTypeResultMap">
+		<![CDATA[
+ 			select at.*, c.companyId, c.companyName from t_accessories_type at, t_company c where c.companyId = at.companyId
+		]]>
+		<if test="accessoriesType.accTypeName != null and accessoriesType.accTypeName !=''">
+			and at.accTypeName like concat('%', #{accessoriesType.accTypeName},'%')
+		</if>
+		<if test="accessoriesType.companyId != null and accessoriesType.companyId != '' and accessoriesType.companyId != 'null' and accessoriesType.companyId != 'undefined'">
+			and at.companyId = #{accessoriesType.companyId}
+		</if>
+		<if test="user.companyId != null and user.companyId != ''">
+			and at.companyId = #{user.companyId}
+		</if>
+		order by at.companyId desc, at.accTypeDes
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="count" resultType="int">
+	<![CDATA[
+ 			select count(accTypeId) from t_accessories_type where 1 = 1
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and companyId = #{companyId}
+		</if>
+</select>
+
+	<select id="countByStatus" resultType="int">
+		<![CDATA[
+			select count(*) from t_accessories_type where accTypeStatus = #{status}
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and companyId = #{user.companyId}
+		</if>
+	</select>
+
+	<select id="countByCondition" resultType="int">
+		<![CDATA[
+			select count(*) from t_accessories_type where 1 = 1
+		]]>
+		<if test="accessoriesType.accTypeName != null and accessoriesType.accTypeName != ''">
+			and accTypeName like concat('%',#{accessoriesType.accTypeName},'%')
+		</if>
+		<if test="accessoriesType.accTypeDes != null and accessoriesType.accTypeDes != ''">
+			and accTypeDes like concat('%',#{accessoriesType.accTypeDes},'%')
+		</if>
+		<if test="accessoriesType.companyId != null and accessoriesType.companyId != '' and accessoriesType.companyId != 'null'">
+			and companyId = #{accessoriesType.companyId}
+		</if>
+		<if test="user.companyId != null and user.companyId != ''">
+			and companyId = #{user.companyId}
+		</if>
+	</select>
+
+	<update id="inactive" parameterType="string">
+		<![CDATA[
+			update t_accessories_type set accTypeStatus = 'N' where accTypeId = #{accTypeId}
+		]]>
+	</update>
+
+	<update id="active" parameterType="string">
+		<![CDATA[
+			update t_accessories_type set accTypeStatus = 'Y' where accTypeId = #{accTypeId}
+		]]>
+	</update>
+
+	<select id="queryByCompany" resultMap="accessoriesTypeResultMap">
+		<![CDATA[
+			select * from t_accessories_type
+			where accTypeStatus = 'Y'
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and companyId = #{companyId}
+		</if>
+	</select>
+
+</mapper>

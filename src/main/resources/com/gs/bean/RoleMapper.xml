@@ -1,0 +1,148 @@
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.RoleDAO">
+
+	<resultMap id="roleResultMap" type="role">
+	</resultMap>
+
+	<insert id="insert"  parameterType="role">
+		<![CDATA[
+			INSERT INTO t_role(roleId, roleName, roleDes) VALUES (uuid(), #{roleName}, #{roleDes})
+		]]>
+	</insert>
+
+	<insert id="batchInsert"  parameterType="list">
+		<![CDATA[
+
+		]]>
+	</insert>
+
+	<delete id="delete" parameterType="role">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<update id="update" parameterType="role">
+		<![CDATA[
+			UPDATE t_role SET roleName = #{roleName}, roleDes = #{roleDes}  WHERE roleId = #{roleId}
+		]]>
+	</update>
+
+	<update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryAll" resultMap="roleResultMap">
+		<![CDATA[
+			select * from t_role where roleStatus = 'Y'
+		]]>
+	</select>
+
+	<select id="queryByStatus" resultMap="roleResultMap" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="query" parameterType="role" resultType="role">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryById" parameterType="string" resultType="role">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByName" parameterType="string" resultType="role">
+		<![CDATA[
+			select * from t_role where roleName = #{roleName}
+		]]>
+	</select>
+
+	<select id="queryByUserId" parameterType="string" resultType="role">
+		<![CDATA[
+			select r.* from t_role r, t_user_role ur where r.roleId = ur.roleId and ur.userId = #{userId}
+		]]>
+	</select>
+
+	<select id="queryByPager" resultType="list" resultMap="roleResultMap">
+		<![CDATA[
+			SELECT * FROM t_role limit #{pager.beginIndex}, #{pager.pageSize}
+		]]>
+	</select>
+
+	<select id="queryCAdminAndSOAdmin" resultMap="roleResultMap">
+	<![CDATA[
+			select * from t_role where roleName like concat('%','Admin') and roleName not like 'systemSuperAdmin'
+	]]>
+	</select>
+
+	<select id="count" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM t_role
+		]]>
+	</select>
+
+	<select id="queryRoleNameIsExist" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM t_role WHERE roleName = #{roleName};
+		]]>
+	</select>
+
+	<select id="queryRoleDesIsExist" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) FROM t_role WHERE roleDes = #{roleDes};
+		]]>
+	</select>
+
+	<select id="queryByCompanyRole" resultMap="roleResultMap">
+		<![CDATA[
+			select * from t_role r WHERE r.roleName like concat('company', '%') and r.roleName != 'companyAdmin' and  r.roleName != 'companyHumanManager'
+		]]>
+	</select>
+
+	<select id="queryByCompanyRoleAll" resultMap="roleResultMap">
+		<![CDATA[
+			select * from t_role r WHERE r.roleName like concat('company', '%') and r.roleName != 'companyAdmin'
+		]]>
+	</select>
+
+	<select id="queryRole" resultMap="roleResultMap">
+		<![CDATA[
+			select * from t_role r WHERE r.roleName like concat('company', '%')
+		]]>
+	</select>
+
+	<update id="inactive" parameterType="string">
+		<![CDATA[
+			UPDATE t_role set roleStatus = 'N' where roleId = #{roleId}
+		]]>
+	</update>
+
+	<update id="active" parameterType="string">
+		<![CDATA[
+			  UPDATE t_role set roleStatus = 'Y' where roleId = #{roleId}
+		]]>
+	</update>
+
+</mapper>

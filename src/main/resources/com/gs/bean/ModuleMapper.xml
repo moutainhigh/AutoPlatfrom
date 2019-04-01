@@ -1,0 +1,119 @@
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.ModuleDAO">
+
+	<resultMap id="moduleResultMap" type="module">
+
+	</resultMap>
+
+	<insert id="insert"  parameterType="module">
+		<![CDATA[
+			insert into t_module(moduleId, moduleName, moduleDes, moduleStatus) values(uuid(), #{moduleName}, #{moduleDes}, #{moduleStatus})
+		]]>
+	</insert>
+
+	<insert id="batchInsert"  parameterType="list">
+		<![CDATA[
+
+		]]>
+	</insert>
+
+	<delete id="delete" parameterType="module">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<update id="update" parameterType="module">
+		<![CDATA[
+			update t_module set moduleName = #{moduleName}, moduleDes = #{moduleDes}, moduleStatus = #{moduleStatus} where moduleId = #{moduleId}
+		]]>
+	</update>
+
+	<update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryAll" resultMap="moduleResultMap">
+		<![CDATA[
+			select * from t_module where moduleStatus = 'Y'
+		]]>
+	</select>
+
+	<select id="queryByStatus" resultMap="moduleResultMap" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="query" parameterType="module" resultType="module">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryById" parameterType="string" resultType="module">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByPager" resultType="list" resultMap="moduleResultMap">
+		<![CDATA[
+			select  * from t_module  limit #{pager.beginIndex}, #{pager.pageSize}
+		]]>
+	</select>
+
+	<select id="queryByStatusPager" resultMap="moduleResultMap">
+		<![CDATA[
+			select * from t_module where moduleStatus = #{moduleStatus} limit #{pager.beginIndex}, #{pager.pageSize}
+		]]>
+	</select>
+
+	<select id="count" resultType="int">
+		<![CDATA[
+			select count(moduleId) from t_module
+		]]>
+	</select>
+
+	<select id="countByStatus" parameterType="String" resultType="int">
+		<![CDATA[
+			select count(*) from t_module where moduleStatus = #{moduleStatus}
+		]]>
+	</select>
+
+	<select id="queryModuleNameIsExist" resultType="int">
+		<![CDATA[
+			select count(*) from t_module where moduleName = #{moduleName}
+		]]>
+	</select>
+
+	<update id="inactive" parameterType="string">
+		<![CDATA[
+			update t_module set moduleStatus = 'N' where moduleId = #{moduleId}
+		]]>
+	</update>
+
+	<update id="active" parameterType="string">
+		<![CDATA[
+			update t_module set moduleStatus = 'Y' where moduleId = #{moduleId}
+		]]>
+	</update>
+
+</mapper>

@@ -1,0 +1,107 @@
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.CarBrandDAO">
+
+	<resultMap id="carBrandResultMap" type="carBrand">
+
+	</resultMap>
+
+	<insert id="insert"  parameterType="carBrand">
+		insert into t_car_brand (brandId,brandName,brandDes,brandStatus) values (UUID(),#{brandName},#{brandDes},'Y');
+	</insert>
+
+	<insert id="batchInsert"  parameterType="list">
+		<![CDATA[
+
+		]]>
+	</insert>
+
+	<delete id="delete" parameterType="carBrand">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string">
+		delete from t_car_brand where brandId = #{brandId}
+	</delete>
+
+	<delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<update id="update" parameterType="carBrand">
+		update t_car_brand set brandName = #{brandName} , brandDes = #{brandDes} , brandStatus= 'Y' WHERE brandId = #{brandId}
+	</update>
+
+	<update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryAll" resultMap="carBrandResultMap">
+		select * from t_car_brand where brandStatus = 'Y'
+	</select>
+
+	<select id="queryByStatus" resultMap="carBrandResultMap">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="query" resultType="carBrand">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryById" resultType="carBrand">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByPager" resultMap="carBrandResultMap">
+		select * from t_car_brand order by brandName ASC limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="searchByPager" resultMap="carBrandResultMap">
+		select * from t_car_brand where brandName like concat('%', #{brandName}, '%') order by brandName desc limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="count" resultType="int">
+		select count(*) from t_car_brand
+	</select>
+
+	<select id="searchCount" resultType="int">
+		select count(brandId) from t_car_brand where 1 = 1 and brandName like concat('%',#{brandName},'%')
+	</select>
+
+	<update id="inactive" parameterType="string">
+		update t_car_brand set brandStatus= 'N' where brandId = #{brandId}
+	</update>
+
+	<update id="active" parameterType="string">
+		update t_car_brand set brandStatus= 'Y' where brandId = #{brandId}
+	</update>
+
+	<select id="queryNameById" parameterType="string" resultType="String">
+		<![CDATA[
+			select brandName from t_car_brand where brandId = #{brandId}
+		]]>
+	</select>
+
+	<select id="queryByBrandPager" resultType="list" resultMap="carBrandResultMap">
+		select * from t_car_brand  where brandStatus = #{status} limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="statusCount" resultType="int">
+		select count(brandId) from t_car_brand where brandStatus = #{status}
+	</select>
+
+</mapper>

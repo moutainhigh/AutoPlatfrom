@@ -1,0 +1,213 @@
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.MaintainDetailDAO">
+
+	<resultMap id="maintainDetailResultMap" type="maintainDetail">
+		<id column="detailId" property="detailId"/>
+		<result column="maintainDiscount" property="maintainDiscount"/>
+		<result column="detailCreatedTime" property="detailCreatedTime"/>
+		<result column="coont" property="coont"/>
+		<!--维修保养记录-->
+		<association property="record" javaType="com.gs.bean.MaintainRecord">
+			<id property="recordId" column="recordId"/>
+			<result property="checkinId" column="checkinId"/>
+			<result property="startTime" column="startTime"/>
+			<association property="checkin" javaType="com.gs.bean.Checkin">
+				<id column="checkinId" property="checkinId"/>
+				<result column="userName" property="userName"/>
+				<result column="userPhone" property="userPhone"/>
+				<result column="maintainOrFix" property="maintainOrFix"/>
+				<result column="carPlate" property="carPlate"/>
+				<result column="carMileage" property="carMileage"/>
+				<association property="plate" javaType="com.gs.bean.CarPlate">
+					<id column="plateId" property="plateId"/>
+					<result column="plateName" property="plateName"/>
+				</association>
+			</association>
+		</association>
+		<!--维修保养项目-->
+		<association property="maintain" javaType="com.gs.bean.MaintainFix">
+			<id property="maintainId" column="maintainId"/>
+			<id property="maintainName" column="maintainName"/>
+			<result property="maintainMoney" column="maintainMoney"></result>
+		</association>
+
+	</resultMap>
+
+	<insert id="insert"  parameterType="maintainDetail">
+		<![CDATA[
+			insert into t_maintain_detail(detailId, recordId, maintainId, maintainDiscount, detailCreatedTime)
+            	values(uuid(), #{recordId}, #{maintainId}, #{maintainDiscount}, now())
+		]]>
+	</insert>
+
+	<insert id="batchInsert"  parameterType="list">
+		<![CDATA[
+
+		]]>
+	</insert>
+
+	<delete id="delete" parameterType="maintainDetail">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<update id="update" parameterType="maintainDetail">
+		<![CDATA[
+        	update t_maintain_detail set recordId = #{recordId}, maintainId = #{maintainId}, maintainDiscount = #{maintainDiscount}, detailCreatedTime = now() where detailId = #{detailId}
+		]]>
+	</update>
+
+	<update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryAll" resultMap="maintainDetailResultMap">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByStatus" resultMap="maintainDetailResultMap" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="query" parameterType="maintainDetail" resultType="maintainDetail">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryById" parameterType="string" resultType="maintainDetail">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByPager" resultType="list" resultMap="maintainDetailResultMap">
+		<![CDATA[
+			select d.*, r.recordId, r.checkinId, f.maintainId, f.maintainName, f.maintainMoney, c.checkinId, c.userName, c.maintainOrFix, c.userPhone
+				from t_maintain_detail d, t_maintain_record r, t_maintain_fix f, t_checkin c
+				where d.recordId = r.recordId and d.maintainId = f.maintainId and r.checkinId = c.checkinId
+		]]>
+		order by d.detailCreatedTime desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="queryPagerByRecordId" resultType="list" resultMap="maintainDetailResultMap">
+		<![CDATA[
+			select d.*, r.recordId, r.checkinId, r.startTime, f.maintainId, f.maintainName, f.maintainMoney, c.checkinId, c.userName, c.carMileage, c.maintainOrFix, c.userPhone, c.carPlate, p.plateId, p.plateName
+				from t_maintain_detail d, t_maintain_record r, t_maintain_fix f, t_checkin c, t_car_plate p
+				where d.recordId = r.recordId and d.maintainId = f.maintainId and r.checkinId = c.checkinId and c.plateId = p.plateId and d.recordId = #{recordId}
+		]]>
+		order by d.detailCreatedTime desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="count" resultType="int">
+		<![CDATA[
+			select count(*) from t_maintain_detail
+		]]>
+	</select>
+
+	<select id="countByRecordId" resultType="int">
+		<![CDATA[
+			select count(*) from t_maintain_detail where recordId = #{recordId}
+		]]>
+	</select>
+
+	<update id="inactive" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<update id="active" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryIsDetail" resultType="int">
+		<![CDATA[
+			select count(*) from t_maintain_detail where recordId = #{recordId} and maintainId = #{maintainId}
+		]]>
+	</select>
+
+
+	<select id="queryByDefault"  resultMap="maintainDetailResultMap">
+		<![CDATA[
+           select count(d.detailId) as coont ,d.detailCreatedTime from t_maintain_fix mf ,t_maintain_detail d
+             WHERE DATE_FORMAT(d.detailCreatedTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
+           and mf.maintainId = d.maintainId and  mf.maintainStatus = 'Y'
+		]]>
+		<if test="maintainOrFix =='保养'">
+			and mf.maintainOrFix = '保养'
+		</if>
+		<if test="maintainOrFix =='维修'">
+			and mf.maintainOrFix = '维修'
+		</if>
+		<if test="companyId != null and companyId != ''">
+			and mf.companyId = #{companyId}
+		</if>
+		<if test="maintainId != null and maintainId != ''">
+			and d.maintainId = #{maintainId}
+		</if>
+		GROUP BY day(d.detailCreatedTime)
+	</select>
+
+	<select id="queryByCondition"  resultType="list" resultMap="maintainDetailResultMap">
+		<![CDATA[
+           select count(d.detailId) as coont ,d.detailCreatedTime from t_maintain_fix mf ,t_maintain_detail d
+            where d.detailCreatedTime >= #{startTime} and d.detailCreatedTime <= #{endTime}
+           and mf.maintainId = d.maintainId and  mf.maintainStatus = 'Y'
+		]]>
+		<if test="maintainOrFix =='保养'">
+			and mf.maintainOrFix = '保养'
+		</if>
+		<if test="maintainOrFix =='维修'">
+			and mf.maintainOrFix = '维修'
+		</if>
+		<if test="companyId != null and companyId != ''">
+			and mf.companyId = #{companyId}
+		</if>
+		<if test="maintainId != null and maintainId != ''">
+			and d.maintainId = #{maintainId}
+		</if>
+		<if test="type =='year'">
+			GROUP BY year(d.detailCreatedTime)
+		</if>
+		<if test="type =='quarter'">
+			GROUP BY quarter(d.detailCreatedTime)
+		</if>
+		<if test="type =='month'">
+			GROUP BY month(d.detailCreatedTime)
+		</if>
+		<if test="type =='week'">
+			GROUP BY week(d.detailCreatedTime)
+		</if>
+		<if test="type =='day'">
+			GROUP BY day(d.detailCreatedTime)
+		</if>
+	</select>
+
+</mapper>

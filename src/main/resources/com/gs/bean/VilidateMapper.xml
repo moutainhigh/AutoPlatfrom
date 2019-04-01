@@ -1,0 +1,160 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.VilidateDAO">
+
+    <select id="queryDataIsExistCompanyName" resultType="int">
+        <![CDATA[
+			select count(*) from t_company where companyName = #{companyName}
+		]]>
+    </select>
+
+    <select id="queryDataIsExistCompanyTel" resultType="int">
+        <![CDATA[
+			select count(*) from t_company where companyTel = #{companyTel}
+		]]>
+    </select>
+
+    <select id="queryDataIsExistCompanyWebsite" resultType="int">
+        <![CDATA[
+			select count(*) from t_company where companyWebsite = #{companyWebsite}
+		]]>
+    </select>
+
+    <select id="queryDataIsExistUserEmail" resultType="int">
+        <![CDATA[
+			select count(*) from t_user where userEmail = #{userEmail}
+		]]>
+    </select>
+
+    <select id="queryDataIsExistUserPhone" resultType="int">
+        <![CDATA[
+			select count(*) from t_user where userPhone = #{userPhone}
+		]]>
+    </select>
+
+    <select id="queryDataIsExistUserIdentity" resultType="int">
+        <![CDATA[
+			select count(*) from t_user where userIdentity = #{userIdentity}
+		]]>
+    </select>
+
+    <select id="queryDataIsExistRoleName" resultType="int">
+        <![CDATA[
+			select count(*) from t_role where roleName = #{roleName}
+		]]>
+    </select>
+
+    <select id="queryDataIsExistRoleDes" resultType="int">
+        <![CDATA[
+			select count(*) from t_role where roleDes = #{roleDes}
+		]]>
+    </select>
+
+    <select id="queryDataIsExistModuleName" resultType="int">
+        <![CDATA[
+			select count(*) from t_module where moduleName = #{moduleName}
+		]]>
+    </select>
+
+    <select id="queryDataIsExistPermissionName" resultType="int">
+        <![CDATA[
+			select count(*) from t_permission where permissionName = #{permissionName}
+		]]>
+    </select>
+
+    <select id="queryDataIsExistPermissionZHName" resultType="int">
+        <![CDATA[
+			select count(*) from t_permission where permissionZHName = #{permissionZHName}
+		]]>
+    </select>
+
+    <select id="queryDataIsExistBrandName" resultType="int">
+        <![CDATA[
+			select count(*) from t_car_brand where brandName = #{brandName}
+		]]>
+    </select>
+
+    <select id="queryDataIsExistModelName" resultType="int">
+        <![CDATA[
+			select count(*) from t_car_model where modelName = #{modelName}
+		]]>
+    </select>
+
+    <select id="queryDataIsExistColorName" resultType="int">
+        <![CDATA[
+			select count(*) from t_car_color where colorName = #{colorName}
+		]]>
+    </select>
+
+    <select id="queryDataIsExistPlateName" resultType="int">
+        <![CDATA[
+			select count(*) from t_car_plate where plateName = #{plateName}
+		]]>
+    </select>
+
+    <select id="queryDataIsExistFixName" resultType="int">
+        <![CDATA[
+			select count(*) from t_maintain_fix where maintainName = #{maintainName}
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and companyId = #{user.companyId}
+        </if>
+    </select>
+
+    <select id="queryDataIsExistSupplyTypeName" resultType="int">
+        <![CDATA[
+			select count(*) from t_supply_type where supplyTypeName = #{supplyTypeName}
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and companyId = #{user.companyId}
+        </if>
+    </select>
+
+    <select id="queryDataIsExistSupplyName" resultType="int">
+        <![CDATA[
+			select count(*) from t_supply where supplyName = #{supplyName}
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and companyId = #{user.companyId}
+        </if>
+    </select>
+
+    <select id="queryDataIsExistAccTypeName" resultType="int">
+        <![CDATA[
+			select count(*) from t_accessories_type where accTypeName = #{accTypeName}
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and companyId = #{user.companyId}
+        </if>
+    </select>
+
+    <select id="queryDataIsExistAccName" resultType="int">
+        <![CDATA[
+			select count(*) from t_accessories where accName = #{accName}
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and companyId = #{user.companyId}
+        </if>
+    </select>
+
+    <select id="queryDataIsExistInTypeName" resultType="int">
+        <![CDATA[
+			select count(*) from t_incoming_type where inTypeName = #{inTypeName}
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and companyId = #{user.companyId}
+        </if>
+    </select>
+
+    <select id="queryDataIsExistOuTypeName" resultType="int">
+        <![CDATA[
+			select count(*) from t_outgoing_type where outTypeName = #{ouTypeName}
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and companyId = #{user.companyId}
+        </if>
+    </select>
+
+</mapper>

@@ -1,0 +1,162 @@
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.MessageSendDAO">
+	<resultMap id="messageSendResultMap" type="messageSend">
+		<id property="messageId" column="messageId" />
+		<result property="sendMsg" column="sendMsg" />
+		<result property="sendTime" column="sendTime" />
+		<result column="companyId" property="companyId"/>
+		<result property="sendCreatedTime" column="sendCreatedTime" />
+		<association property="checkin" javaType="com.gs.bean.Checkin">
+			<id property="userId" column="userId"/>
+			<id property="userName" column="userName"/>
+			<id property="userPhone" column="userPhone"/>
+		</association>
+		<association property="user" javaType="com.gs.bean.User">
+			<id property="userId" column="userId"/>
+			<id property="userName" column="userName"/>
+			<id property="userPhone" column="userPhone"/>
+		</association>
+
+		<association property="company" javaType="com.gs.bean.Company">
+			<id property="companyId" column="companyId"/>
+			<id property="companyName" column="companyName"/>
+		</association>
+	</resultMap>
+
+	<insert id="insert"  parameterType="messageSend">
+		<![CDATA[
+
+		]]>
+	</insert>
+
+	<insert id="addMessageId">
+		<selectKey resultType="int" keyProperty="messageId" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into t_message_send (messageId,userId,companyId)
+		values
+		<foreach collection="list" item="item" index="index" separator="," >
+			(uuid(),#{item.userId},#{item.companyId})
+		</foreach>
+	</insert>
+
+	<insert id="batchInsert"  parameterType="list">
+		<![CDATA[
+
+		]]>
+	</insert>
+
+	<delete id="delete" parameterType="messageSend">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<update id="update" parameterType="messageSend">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<update id="batchUpdateBySendMsg" >
+		<![CDATA[
+		  update t_message_send s set s.sendMsg= #{sendMsg}, s.sendCreatedTime= now() where s.messageId in
+		]]>
+			<foreach collection="idList" item="str" open="(" separator="," close=")">
+				#{str}
+			</foreach>
+	</update>
+
+	<update id="batchUpdateBySuccess" >
+		<![CDATA[
+		  update t_message_send s set s.sendTime = now() where s.messageId in
+		]]>
+		<foreach collection="idList" item="str" open="(" separator="," close=")">
+			#{str}
+		</foreach>
+	</update>
+
+	<select id="queryAll" resultMap="messageSendResultMap">
+		<![CDATA[
+			 select * from t_message_send s, t_user u where s.userId=u.userId
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and s.companyId = #{companyId}
+		</if>
+		GROUP BY (s.userId)
+	</select>
+
+	<select id="queryByStatus" resultMap="messageSendResultMap" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="query" parameterType="messageSend" resultType="messageSend">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryById" parameterType="string" resultType="messageSend">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByPager" resultType="list" resultMap="messageSendResultMap">
+		<![CDATA[
+		select * from t_message_send s, t_user u,t_company c where
+		s.userId=u.userId and s.companyId = c.companyId
+		]]>
+		<if test="user.companyId != null and user.companyId != ''">
+			and s.companyId = #{user.companyId}
+		</if>
+		GROUP BY (s.userId)
+		order by s.companyId desc,s.sendCreatedTime
+		limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="count" resultType="int">
+		<![CDATA[
+		select count(*) from t_message_send where 1 =1
+		]]>
+		<if test="companyId != null and companyId != ''">
+			and companyId = #{companyId}
+		</if>
+	</select>
+
+	<update id="inactive" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<update id="active" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</update>
+
+</mapper>

@@ -1,0 +1,113 @@
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.CarPlateDAO">
+
+	<resultMap id="carPlateResultMap" type="carPlate">
+
+	</resultMap>
+
+	<insert id="insert"  parameterType="carPlate">
+		insert into t_car_plate (plateId,plateName,plateDes,plateStatus) values (UUID(),#{plateName},#{plateDes},'Y')
+	</insert>
+
+	<insert id="batchInsert"  parameterType="list">
+		<![CDATA[
+
+		]]>
+	</insert>
+
+	<delete id="delete" parameterType="carPlate">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<update id="update" parameterType="carPlate">
+		update t_car_plate set plateName=#{plateName},plateDes=#{plateDes},plateStatus="Y" where plateId = #{plateId}
+	</update>
+
+	<update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryAll" resultMap="carPlateResultMap">
+		select * from t_car_plate where plateStatus = 'Y'
+	</select>
+
+	<select id="queryByStatus" resultMap="carPlateResultMap">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="query" resultType="carPlate">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryById" resultType="carPlate">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByPager" resultMap="carPlateResultMap">
+		select * from t_car_plate order by plateName asc limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="count" resultType="int">
+		<![CDATA[
+		select count(*) from t_car_plate
+		]]>
+	</select>
+
+	<select id="searchByPager" resultMap="carPlateResultMap">
+		select * from t_car_plate where plateName like concat('%',#{plateName},'%') order by plateName asc limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="searchCount" resultType="int">
+		<![CDATA[
+		select count(*) from t_car_plate where 1 = 1 and plateName like concat('%',#{plateName},'%')
+		]]>
+	</select>
+
+	<update id="inactive" parameterType="string">
+		<![CDATA[
+			update t_car_plate set plateStatus = "N" where plateId = #{plateId}
+		]]>
+	</update>
+
+	<update id="active" parameterType="string">
+		<![CDATA[
+			update t_car_plate set plateStatus = "Y" where plateId = #{plateId}
+		]]>
+	</update>
+
+	<select id="byStatusPager" resultMap="carPlateResultMap">
+		select * from t_car_plate where plateStatus = #{status} limit #{pager.beginIndex}, #{pager.pageSize}
+	</select>
+
+	<select id="countStatus" resultType="int">
+		<![CDATA[
+			select count(*) from t_car_plate where plateStatus = #{status}
+		]]>
+	</select>
+
+</mapper>

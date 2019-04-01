@@ -1,0 +1,303 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.AppointmentDAO">
+
+    <resultMap id="appointmentResultMap" type="appointment">
+        <id property="appointmentId" column="appointmentId"/>
+        <result property="userId" column="userId"/>
+        <result property="userName" column="userName"/>
+        <result property="userPhone" column="userPhone"/>
+        <result property="carPlate" column="carPlate"/>
+        <result property="arriveTime" column="arriveTime"/>
+        <result property="maintainOrFix" column="maintainOrFix"/>
+        <result property="appCreatedTime" column="appCreatedTime"/>
+        <result property="appoitmentStatus" column="appoitmentStatus"/>
+        <result property="speedStatus" column="speedStatus"/>
+
+        <association property="brand" javaType="com.gs.bean.CarBrand">
+            <id property="brandId" column="brandId"/>
+            <id property="brandName" column="brandName"/>
+        </association>
+        <association property="color" javaType="com.gs.bean.CarColor">
+            <id property="colorId" column="colorId"/>
+            <id property="colorName" column="colorName"/>
+        </association>
+        <association property="plate" javaType="com.gs.bean.CarPlate">
+            <id property="plateId" column="plateId"/>
+            <id property="plateName" column="plateName"/>
+        </association>
+        <association property="model" javaType="com.gs.bean.CarModel">
+            <id property="modelId" column="modelId"/>
+            <id property="modelName" column="modelName"/>
+        </association>
+        <association property="company" javaType="com.gs.bean.Company">
+            <id property="companyId" column="companyId"/>
+            <id property="companyName" column="companyName"/>
+        </association>
+    </resultMap>
+
+    <insert id="insert" parameterType="appointment">
+		<![CDATA[
+
+			insert into t_appointment(appointmentId,userId, userName,userPhone,brandId,colorId,modelId,plateId,carPlate,
+			arriveTime,maintainOrFix,appCreatedTime,companyId,appoitmentStatus,speedStatus) values(uuid(),
+			#{userId},#{userName},#{userPhone},#{brandId},#{colorId},#{modelId},
+			#{plateId},#{carPlate},#{arriveTime},#{maintainOrFix},now(),#{companyId},'Y',#{speedStatus})
+
+        ]]>
+	</insert>
+
+
+    <insert id="batchInsert" parameterType="list">
+		<![CDATA[
+
+        ]]>
+	</insert>
+
+    <delete id="delete" parameterType="appointment">
+		<![CDATA[
+
+        ]]>
+	</delete>
+
+    <delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+        ]]>
+	</delete>
+
+    <delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+        ]]>
+	</delete>
+
+    <update id="update" parameterType="appointment">
+		<![CDATA[
+
+			update t_appointment set userId = #{userId},userName = #{userName},
+				userPhone = #{userPhone},brandId = #{brandId},colorId = #{colorId},modelId = #{modelId},plateId = #{plateId},
+				carPlate = #{carPlate},arriveTime = #{arriveTime},maintainOrFix = #{maintainOrFix},
+				appCreatedTime = now(),appoitmentStatus = 'Y' where appointmentId = #{appointmentId}
+        ]]>
+	</update>
+
+    <update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+        ]]>
+	</update>
+
+    <select id="queryAll" resultMap="appointmentResultMap">
+        <![CDATA[
+			select c.*, b.brandId, b.brandName, co.colorId, co.colorName, m.modelId, m.modelName, p.plateId, p.plateName, cpy.companyId, cpy.companyName
+				from t_appointment c, t_car_brand b, t_car_color co, t_car_model m, t_car_plate p, t_company cpy
+				where 1=1 and c.brandId = b.brandId and c.colorId = co.colorId and c.modelId = m.modelId and c.plateId = p.plateId and cpy.companyId = c.companyId
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and c.companyId = #{user.companyId}
+        </if>
+    </select>
+
+    <select id="queryByStatus" resultMap="appointmentResultMap" parameterType="string">
+		<![CDATA[
+        ]]>
+	</select>
+
+    <select id="query" parameterType="appointment" resultType="appointment">
+		<![CDATA[
+
+        ]]>
+	</select>
+
+    <select id="queryById" parameterType="string" resultType="appointment">
+		<![CDATA[
+
+			select * from t_appointment where appointmentId = #{id}
+
+        ]]>
+	</select>
+
+    <select id="queryByPager" resultType="list" resultMap="appointmentResultMap">
+        <![CDATA[
+			select c.*, b.brandId, b.brandName, co.colorId, co.colorName, m.modelId, m.modelName, p.plateId, p.plateName, cpy.companyId, cpy.companyName
+				from t_appointment c, t_car_brand b, t_car_color co, t_car_model m, t_car_plate p, t_company cpy
+				where 1=1 and c.brandId = b.brandId and c.colorId = co.colorId and c.modelId = m.modelId and c.plateId = p.plateId and cpy.companyId = c.companyId and c.speedStatus = '已预约'
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and c.companyId = #{user.companyId}
+        </if>
+        order by c.appCreatedTime desc, c.companyId
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="queryMyName" resultType="list" resultMap="appointmentResultMap">
+        <![CDATA[
+            select c.*, b.brandId, b.brandName, co.colorId, co.colorName, m.modelId, m.modelName, p.plateId, p.plateName, cpy.companyId, cpy.companyName
+            from t_appointment c LEFT JOIN t_car_brand b on c.brandId = b.brandId
+                                  LEFT JOIN t_car_model m on c.modelId = m.modelId
+								  LEFT JOIN t_car_plate p on c.plateId = p.plateId
+								  LEFT JOIN t_company cpy on c.companyId = cpy.companyId
+								  LEFT JOIN t_car_color co on c.colorId = co.colorId where 1 = 1
+        ]]>
+        <if test="user.userId != null and user.userId != ''">
+            and c.userId = #{user.userId}
+        </if>
+        order by c.userName desc, c.appCreatedTime
+    </select>
+
+    <select id="querySpeedStatus" resultType="list" resultMap="appointmentResultMap">
+        <![CDATA[
+			select c.*, b.brandId, b.brandName, co.colorId, co.colorName, m.modelId, m.modelName, p.plateId, p.plateName, cpy.companyId, cpy.companyName
+				from t_appointment c, t_car_brand b, t_car_color co, t_car_model m, t_car_plate p, t_company cpy
+				where 1=1 and c.brandId = b.brandId and c.colorId = co.colorId and c.modelId = m.modelId and c.plateId = p.plateId and cpy.companyId = c.companyId and c.speedStatus = '已登记'
+
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and c.companyId = #{user.companyId}
+        </if>
+        order by c.appCreatedTime desc, c.companyId desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="queryPagerByStatus" resultType="list" resultMap="appointmentResultMap">
+        <![CDATA[
+			select c.*, b.brandId, b.brandName, co.colorId, co.colorName, m.modelId, m.modelName, p.plateId, p.plateName, cpy.companyId, cpy.companyName
+				from t_appointment c, t_car_brand b, t_car_color co, t_car_model m, t_car_plate p, t_company cpy
+				where 1=1 and c.brandId = b.brandId and c.colorId = co.colorId and c.modelId = m.modelId and c.plateId = p.plateId and cpy.companyId = c.companyId and appoitmentStatus = #{status} and c.speedStatus = '已预约'
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and c.companyId = #{user.companyId}
+        </if>
+        order by c.appCreatedTime desc, c.companyId desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="queryPagerByCondition" resultType="list" resultMap="appointmentResultMap">
+        <![CDATA[
+			select c.*, b.brandId, b.brandName, co.colorId, co.colorName, m.modelId, m.modelName, p.plateId, p.plateName, cpy.companyId, cpy.companyName
+				from t_appointment c, t_car_brand b, t_car_color co, t_car_model m, t_car_plate p, t_company cpy
+				where 1=1 and c.brandId = b.brandId and c.colorId = co.colorId and c.modelId = m.modelId and c.plateId = p.plateId and c.companyId = cpy.companyId and c.speedStatus = '已预约'
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and c.companyId = #{user.companyId}
+        </if>
+        <if test="appointment.userName != null and appointment.userName != ''">
+            and c.userName like concat('%',#{appointment.userName},'%')
+        </if>
+        <if test="appointment.userPhone != null and appointment.userPhone != ''">
+            and c.userPhone like concat('%',#{appointment.userPhone},'%')
+        </if>
+        <if test="appointment.carPlate != null and appointment.carPlate != ''">
+            and c.carPlate like concat('%',#{appointment.carPlate},'%')
+        </if>
+        <if test="appointment.maintainOrFix != 'all'">
+            and c.maintainOrFix = #{appointment.maintainOrFix}
+        </if>
+        <if test="appointment.companyId != null and appointment.companyId != '' and appointment.companyId != 'null' and appointment.companyId != 'undefined'">
+            and c.companyId = #{appointment.companyId}
+        </if>
+        order by c.companyId desc, c.appCreatedTime desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="count" resultType="int">
+        <![CDATA[
+			select count(*) from t_appointment where 1 = 1 and speedStatus = '已预约'
+		]]>
+        <if test="companyId != null and companyId != ''">
+            and companyId = #{companyId}
+        </if>
+    </select>
+
+    <select id="countByStatus" resultType="int">
+        <![CDATA[
+			select count(*) from t_appointment where appoitmentStatus = #{status} and speedStatus = '已预约'
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and companyId = #{user.companyId}
+        </if>
+    </select>
+
+    <select id="countByCondition" resultType="int">
+        <![CDATA[
+			select count(*) from t_appointment where 1 = 1 and speedStatus = '已预约'
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and companyId = #{user.companyId}
+        </if>
+        <if test="appointment.userName != null and appointment.userName != ''">
+            and userName like concat('%',#{appointment.userName},'%')
+        </if>
+        <if test="appointment.userPhone != null and appointment.userPhone != ''">
+            and userPhone like concat('%',#{appointment.userPhone},'%')
+        </if>
+        <if test="appointment.carPlate != null and appointment.carPlate != ''">
+            and carPlate like concat('%',#{appointment.carPlate},'%')
+        </if>
+        <if test="appointment.maintainOrFix != 'all'">
+            and maintainOrFix = #{appointment.maintainOrFix}
+        </if>
+        <if test="appointment.companyId != null and appointment.companyId != '' and appointment.companyId != 'null' and appointment.companyId != 'undefined'">
+            and companyId = #{appointment.companyId}
+        </if>
+    </select>
+
+    <update id="inactive" parameterType="string">
+		<![CDATA[
+
+			update t_appointment set appoitmentStatus = 'N' where appointmentId = #{id}
+
+        ]]>
+	</update>
+
+    <update id="active" parameterType="string">
+		<![CDATA[
+
+			update t_appointment set appoitmentStatus = 'Y' where appointmentId = #{id}
+
+        ]]>
+	</update>
+
+    <update id="updateSpeedStatusById">
+		<![CDATA[
+
+			update t_appointment set speedStatus = #{speedStatus} where appointmentId = #{id}
+
+        ]]>
+	</update>
+
+    <select id="queryPagerByTop" resultType="list" resultMap="appointmentResultMap">
+        <![CDATA[
+			select c.*, b.brandId, b.brandName, co.colorId, co.colorName, m.modelId, m.modelName, p.plateId, p.plateName, cpy.companyId, cpy.companyName
+				from t_appointment c, t_car_brand b, t_car_color co, t_car_model m, t_car_plate p, t_company cpy
+				where 1=1 and c.brandId = b.brandId and c.colorId = co.colorId and c.modelId = m.modelId and c.plateId = p.plateId and cpy.companyId = c.companyId and c.speedStatus = '已预约'
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and c.companyId = #{user.companyId}
+        </if>
+        order by c.appCreatedTime desc
+        limit 0, #{top}
+    </select>
+
+
+    <select id="queryByPhone" resultType="int">
+        <![CDATA[
+			select count(*) from t_appointment where 1 = 1 and appoitmentStatus = 'Y' and speedStatus = '已预约' and userPhone = #{phone}
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and companyId = #{user.companyId}
+        </if>
+    </select>
+
+    <update id="updateAppByPhone">
+        <![CDATA[
+
+			update t_appointment set userId = #{user.userId} where userPhone = #{user.userPhone}
+
+        ]]>
+    </update>
+
+</mapper>

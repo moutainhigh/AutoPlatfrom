@@ -1,0 +1,783 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.MaintainRecordDAO">
+    <resultMap id="maintainRecordResultMap" type="maintainRecord">
+        <id column="recordId" property="recordId"/>
+        <result column="startTime" property="startTime"/>
+        <result column="endTime" property="endTime"/>
+        <result column="actualEndTime" property="actualEndTime"/>
+        <result column="recordCreatedTime" property="recordCreatedTime"/>
+        <result column="pickupTime" property="pickupTime"/>
+        <result column="trackStatus" property="trackStatus"/>
+        <result column="recordDes" property="recordDes"/>
+        <result column="recordStatus" property="recordStatus"/>
+        <result column="speedStatus" property="speedStatus"/>
+        <result column="pickingStatus" property="pickingStatus"/>
+        <result column="signStatus" property="signStatus"/>
+        <result column="coont" property="coont"></result>
+        <!--接待表Id-->
+        <association property="checkin" javaType="com.gs.bean.Checkin">
+            <id column="checkinId" property="checkinId"/>
+            <result column="userName" property="userName"/>
+            <result column="carPlate" property="carPlate"/>
+            <result column="carMileage" property="carMileage"/>
+            <result column="userPhone" property="userPhone"/>
+            <result column="userId" property="userId"/>
+            <result column="userRequests" property="userRequests"/>
+            <result column="maintainOrFix" property="maintainOrFix"/>
+        </association>
+        <association property="company" javaType="com.gs.bean.Company">
+            <id property="companyId" column="companyId"/>
+            <id property="companyName" column="companyName"/>
+        </association>
+        <association property="workInfo" javaType="com.gs.bean.WorkInfo">
+            <id property="workId" column="workId"/>
+            <id property="userId" column="work_userId"/>
+        </association>
+        <association property="user" javaType="com.gs.bean.User">
+            <id property="userId" column="user_userId"/>
+            <id property="userName" column="user_userName"/>
+        </association>
+        <association property="chargeBill" javaType="com.gs.bean.ChargeBill">
+            <id property="chargeBillId" column="chargeBillId"/>
+            <id property="recordId" column="record_recordId"/>
+            <id property="chargeBillMoney" column="chargeBillMoney"/>
+        </association>
+    </resultMap>
+    <insert id="insert" parameterType="maintainRecord">
+		<![CDATA[
+          insert into t_maintain_record(recordId, checkinId, startTime, endTime, actualEndTime, recordCreatedTime, pickupTime, companyId, recordDes, recordStatus, trackStatus)
+            values(#{recordId}, #{checkinId}, #{startTime}, #{endTime}, #{actualEndTime}, now(), #{pickupTime}, #{companyId}, #{recordDes}, 'Y', 'N')
+        ]]>
+	</insert>
+
+    <insert id="batchInsert" parameterType="list">
+		<![CDATA[
+
+        ]]>
+	</insert>
+
+    <delete id="delete" parameterType="maintainRecord">
+		<![CDATA[
+
+        ]]>
+	</delete>
+
+    <delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+        ]]>
+	</delete>
+
+    <delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+        ]]>
+	</delete>
+
+    <select id="countByEmp" resultType="int">
+        SELECT
+        COUNT(*)
+        FROM
+            t_maintain_record mr
+         INNER JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+         INNER JOIN t_company cy ON cy.companyId = ch.companyId
+         INNER JOIN t_work_info wi ON wi.recordId = mr.recordId
+         INNER JOIN t_user u ON u.userId = wi.userId
+         WHERE
+            u.userId = #{userId}
+    </select>
+
+    <select id="queryByEmp" resultType="list" resultMap="maintainRecordResultMap">
+        <![CDATA[
+			SELECT
+                mr.*, ch.userName,
+                ch.carPlate,
+                ch.maintainOrFix,
+                cy.companyName,
+                u.userName AS user_userName
+             FROM
+                t_maintain_record mr
+             INNER JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+             INNER JOIN t_company cy ON cy.companyId = ch.companyId
+             INNER JOIN t_work_info wi ON wi.recordId = mr.recordId
+             INNER JOIN t_user u ON u.userId = wi.userId
+             WHERE
+	            u.userId = #{user.userId}
+		]]>
+        order by mr.startTime Desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="countByEmp_N" resultType="int">
+        SELECT
+        COUNT(*)
+        FROM
+        t_maintain_record mr
+        INNER JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+        INNER JOIN t_company cy ON cy.companyId = ch.companyId
+        INNER JOIN t_work_info wi ON wi.recordId = mr.recordId
+        INNER JOIN t_user u ON u.userId = wi.userId
+        WHERE
+         mr.recordStatus = 'N' AND u.userId = #{userId}
+    </select>
+
+    <select id="queryByEmp_N" resultType="list" resultMap="maintainRecordResultMap">
+        <![CDATA[
+			SELECT
+                mr.*, ch.userName,
+                ch.carPlate,
+                ch.maintainOrFix,
+                cy.companyName,
+                u.userName AS user_userName
+             FROM
+                t_maintain_record mr
+             INNER JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+             INNER JOIN t_company cy ON cy.companyId = ch.companyId
+             INNER JOIN t_work_info wi ON wi.recordId = mr.recordId
+             INNER JOIN t_user u ON u.userId = wi.userId
+             WHERE
+	            mr.recordStatus = 'N' AND u.userId = #{user.userId}
+		]]>
+        order by mr.startTime Desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="countByEmp_Y" resultType="int">
+        SELECT
+        COUNT(*)
+        FROM
+        t_maintain_record mr
+        INNER JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+        INNER JOIN t_company cy ON cy.companyId = ch.companyId
+        INNER JOIN t_work_info wi ON wi.recordId = mr.recordId
+        INNER JOIN t_user u ON u.userId = wi.userId
+        WHERE
+         mr.recordStatus = 'Y' AND u.userId = #{userId}
+    </select>
+
+    <select id="queryByEmp_Y" resultType="list" resultMap="maintainRecordResultMap">
+        <![CDATA[
+			SELECT
+                mr.*, ch.userName,
+                ch.carPlate,
+                ch.maintainOrFix,
+                cy.companyName,
+                u.userName AS user_userName,
+                u.userId AS user_userId,
+                wi.userId AS work_userId
+             FROM
+                t_maintain_record mr
+             INNER JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+             INNER JOIN t_company cy ON cy.companyId = ch.companyId
+             INNER JOIN t_work_info wi ON wi.recordId = mr.recordId
+             INNER JOIN t_user u ON u.userId = wi.userId
+             WHERE
+	            mr.recordStatus = 'Y' AND u.userId = #{user.userId}
+		]]>
+        order by mr.startTime Desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="countByUser" resultType="int">
+        SELECT
+        COUNT(*)
+        FROM
+        t_maintain_record mr
+        INNER JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+        INNER JOIN	t_company cy ON cy.companyId = ch.companyId
+        INNER JOIN t_user u ON u.userId = ch.userId WHERE u.userId = #{userId}
+    </select>
+
+    <select id="queryByUser" resultType="list" resultMap="maintainRecordResultMap">
+        <![CDATA[
+			SELECT
+                mr.*,
+                ch.userName,
+                ch.carPlate,
+                ch.maintainOrFix,
+                cy.companyName,
+                u.userName AS user_userName
+            FROM
+                t_maintain_record mr
+            INNER JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+            INNER JOIN	t_company cy ON cy.companyId = ch.companyId
+            INNER JOIN t_user u ON u.userId = ch.userId WHERE u.userId = #{user.userId}
+		]]>
+        order by mr.startTime Desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="countByUser_N" resultType="int">
+        SELECT
+        COUNT(*)
+        FROM
+        t_maintain_record mr
+        INNER JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+        INNER JOIN	t_company cy ON cy.companyId = ch.companyId
+        INNER JOIN t_user u ON u.userId = ch.userId WHERE  mr.recordStatus = 'N' AND u.userId = #{userId}
+    </select>
+
+    <select id="queryByUser_N" resultType="list" resultMap="maintainRecordResultMap">
+        <![CDATA[
+			SELECT
+                mr.*,
+                ch.userName,
+                ch.carPlate,
+                ch.maintainOrFix,
+                cy.companyName,
+                u.userName AS user_userName
+            FROM
+                t_maintain_record mr
+            INNER JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+            INNER JOIN	t_company cy ON cy.companyId = ch.companyId
+            INNER JOIN t_user u ON u.userId = ch.userId WHERE  mr.recordStatus = 'N' AND u.userId = #{user.userId}
+		]]>
+        order by mr.startTime Desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="countByUser_Y"  resultType="int">
+        SELECT
+        COUNT(*)
+        FROM
+        t_maintain_record mr
+        INNER JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+        INNER JOIN	t_company cy ON cy.companyId = ch.companyId
+        INNER JOIN t_user u ON u.userId = ch.userId WHERE mr.recordStatus = 'Y' AND u.userId = #{userId}
+    </select>
+
+    <select id="queryByUser_Y" resultType="list" resultMap="maintainRecordResultMap">
+        <![CDATA[
+			SELECT
+                mr.*,
+                ch.userName,
+                ch.carPlate,
+                ch.maintainOrFix,
+                cy.companyName,
+                u.userName AS user_userName
+            FROM
+                t_maintain_record mr
+            INNER JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+            INNER JOIN	t_company cy ON cy.companyId = ch.companyId
+            INNER JOIN t_user u ON u.userId = ch.userId WHERE  mr.recordStatus = 'Y' AND u.userId = #{user.userId}
+		]]>
+        order by mr.startTime Desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="countByProgressPager" resultType="int">
+        SELECT
+        COUNT(*)
+        FROM
+        t_maintain_record mr
+        INNER JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+        INNER JOIN	t_company cy ON cy.companyId = ch.companyId
+        LEFT JOIN t_user u ON u.userId = ch.userId
+        <if test="companyId != null and companyId != ''">
+            and ch.companyId = #{companyId}
+        </if>
+    </select>
+
+    <select id="queryByProgressPager" resultType="list" resultMap="maintainRecordResultMap">
+        <![CDATA[
+			SELECT
+                mr.*,
+                ch.userName,
+                ch.carPlate,
+                ch.maintainOrFix,
+                cy.companyName,
+                u.userName AS user_userName
+            FROM
+                t_maintain_record mr
+            INNER JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+            INNER JOIN	t_company cy ON cy.companyId = ch.companyId
+            LEFT JOIN t_user u ON u.userId = ch.userId
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and ch.companyId = #{user.companyId}
+        </if>
+        order by mr.startTime Desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="countByProgressPager_Y" resultType="int">
+        SELECT
+        COUNT(*)
+        FROM
+        t_maintain_record mr
+        INNER JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+        INNER JOIN	t_company cy ON cy.companyId = ch.companyId
+        LEFT JOIN t_user u ON u.userId = ch.userId WHERE mr.recordStatus = 'Y'
+        <if test="companyId != null and companyId != ''">
+            and ch.companyId = #{companyId}
+        </if>
+    </select>
+
+    <select id="queryByProgressPager_Y" resultType="list" resultMap="maintainRecordResultMap">
+        <![CDATA[
+			SELECT
+                mr.*,
+                ch.userName,
+                ch.carPlate,
+                ch.maintainOrFix,
+                cy.companyName,
+                u.userName AS user_userName
+            FROM
+                t_maintain_record mr
+            INNER JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+            INNER JOIN	t_company cy ON cy.companyId = ch.companyId
+            LEFT JOIN t_user u ON u.userId = ch.userId WHERE mr.recordStatus = 'Y'
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and ch.companyId = #{user.companyId}
+        </if>
+        order by mr.startTime Desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+
+    <select id="countByProgressPager_N" resultType="int">
+        SELECT
+        COUNT(*)
+        FROM
+        t_maintain_record mr
+        INNER JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+        INNER JOIN	t_company cy ON cy.companyId = ch.companyId
+        LEFT JOIN t_user u ON u.userId = ch.userId WHERE mr.recordStatus = 'N'
+        <if test="companyId != null and companyId != ''">
+            and ch.companyId = #{companyId}
+        </if>
+    </select>
+
+    <select id="queryByProgressPager_N" resultType="list" resultMap="maintainRecordResultMap">
+        <![CDATA[
+			SELECT
+                mr.*,
+                ch.userName,
+                ch.carPlate,
+                ch.maintainOrFix,
+                cy.companyName,
+                u.userName AS user_userName
+            FROM
+                t_maintain_record mr
+            INNER JOIN t_checkin ch ON ch.checkinId = mr.checkinId
+            INNER JOIN	t_company cy ON cy.companyId = ch.companyId
+            LEFT JOIN t_user u ON u.userId = ch.userId WHERE mr.recordStatus = 'N'
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and ch.companyId = #{user.companyId}
+        </if>
+        order by mr.startTime Desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+
+    <update id="update" parameterType="maintainRecord">
+        <![CDATA[
+          update t_maintain_record
+            set checkinId = #{checkinId}, startTime = #{startTime}, endTime = #{endTime}, actualEndTime = #{actualEndTime}, recordCreatedTime = now(), pickupTime = #{pickupTime}, recordDes = #{recordDes}, recordStatus = 'Y', trackStatus = #{trackStatus} where recordId = #{recordId}
+        ]]>
+    </update>
+
+    <update id="updateTime" parameterType="maintainRecord">
+        <![CDATA[
+          update t_maintain_record
+            set startTime = now(), endTime = #{endTime}, speedStatus = #{speedStatus}  where recordId = #{recordId}
+        ]]>
+    </update>
+
+    <update id="updateTrackStatus" parameterType="string">
+        <![CDATA[
+          update t_maintain_record
+            set trackStatus = #{trackStatus} where checkinId=#{checkinId}
+        ]]>
+    </update>
+
+    <update id="batchUpdate" parameterType="list">
+        <![CDATA[
+
+        ]]>
+    </update>
+
+    <select id="queryAll" resultMap="maintainRecordResultMap">
+        <![CDATA[
+          select * from t_maintian_record where 1 = 1 and recordStatus = 'Y'
+        ]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and companyId = #{user.companyId}
+        </if>
+        order by companyId desc, recordStatus desc, recordCreatedTime desc
+    </select>
+
+    <select id="queryByStatus" resultMap="maintainRecordResultMap" parameterType="string">
+        <![CDATA[
+
+        ]]>
+    </select>
+
+    <select id="query" parameterType="maintainRecord" resultType="maintainRecord">
+        <![CDATA[
+
+        ]]>
+    </select>
+
+    <select id="queryById" parameterType="string" resultType="maintainRecord">
+        <![CDATA[
+          select * from t_maintain_record where 1 = 1 and recordId = #{id}
+        ]]>
+    </select>
+
+    <select id="queryByPager" resultType="list" resultMap="maintainRecordResultMap">
+        <![CDATA[
+		  select r.*, c.checkinId, c.userName, c.carPlate, c.carMileage, c.userPhone, c.maintainOrFix, cpy.companyId, cpy.companyName
+		    from t_maintain_record r,  t_checkin c, t_company cpy
+		    where c.checkinId = r.checkinId and c.companyId = cpy.companyId
+        ]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and r.companyId = #{user.companyId}
+        </if>
+        order by r.companyId desc, r.recordStatus desc, r.pickingStatus desc, r.recordCreatedTime desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="queryByMyName" resultType="list" resultMap="maintainRecordResultMap">
+        <![CDATA[
+		  select r.*, c.checkinId, u.userName, c.carPlate, c.carMileage, u.userPhone, c.maintainOrFix, cpy.companyId, cpy.companyName
+		    from t_maintain_record r,  t_checkin c, t_company cpy, t_user u
+		    where c.checkinId = r.checkinId and c.companyId = cpy.companyId
+		    and c.userId = u.userId and c.userId = #{user.userId}
+        ]]>
+        order by r.companyId desc, r.recordStatus desc, r.pickingStatus desc, r.recordCreatedTime desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="queryPagerByStatus" resultType="list" resultMap="maintainRecordResultMap">
+        <![CDATA[
+			select r.*, c.checkinId, c.userName, c.carPlate, c.carMileage, c.userPhone, c.maintainOrFix,c.userId, cpy.companyId, cpy.companyName
+			  from t_maintain_record r,  t_checkin c, t_company cpy
+			  where c.checkinId = r.checkinId and c.companyId = cpy.companyId and r.recordStatus = #{status}
+			  and (c.userId != ''  and c.userId is not null and c.userId != 'null')
+			  and r.speedStatus = '已完成'
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and r.companyId = #{user.companyId}
+        </if>
+        order by r.companyId desc, r.recordStatus desc, r.recordCreatedTime desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="queryPagerByCondition" resultType="list" resultMap="maintainRecordResultMap">
+        <![CDATA[
+			select r.*, c.checkinId, c.userName, c.carPlate, c.carMileage, c.userPhone, c.maintainOrFix, cpy.companyId, cpy.companyName
+			  from t_maintain_record r,  t_checkin c, t_company cpy
+		      where 1 = 1 and c.checkinId = r.checkinId and c.companyId = cpy.companyId and r.speedStatus in
+		]]>
+        <foreach item="item" index="index" collection="speedStatus" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="user.companyId != null and user.companyId != ''">
+            and r.companyId = #{user.companyId}
+        </if>
+        <if test="record.checkin.userName != null and record.checkin.userName != ''">
+            and c.userName like concat('%',#{record.checkin.userName},'%')
+        </if>
+        <if test="record.checkin.carPlate != null and record.checkin.carPlate != ''">
+            and c.carPlate like concat('%',#{record.checkin.carPlate},'%')
+        </if>
+        <if test="record.startTime != null and record.startTime != ''">
+            and r.startTime = #{record.startTime}
+        </if>
+        <if test="record.checkin.maintainOrFix != 'all'">
+            and c.maintainOrFix = #{record.checkin.maintainOrFix}
+        </if>
+        <if test="record.companyId != null and record.companyId != '' and record.companyId != 'null' and record.companyId != 'undefined'">
+            and r.companyId = #{record.companyId}
+        </if>
+        order by r.companyId desc, r.recordStatus desc, r.recordCreatedTime desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="queryPagerByTrackStatus" resultType="list" resultMap="maintainRecordResultMap">
+        <![CDATA[
+			select r.*, c.checkinId, c.userName, c.carPlate, c.carMileage, c.userPhone, c.userId, c.userRequests, c.maintainOrFix, cpy.companyId, cpy.companyName
+			  from t_maintain_record r,  t_checkin c, t_company cpy
+			  where c.checkinId = r.checkinId and c.companyId = cpy.companyId and r.recordStatus = 'Y' and r.trackStatus = #{status}
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and r.companyId = #{user.companyId}
+        </if>
+        order by r.companyId desc, r.recordStatus desc, r.recordCreatedTime desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="queryPagerBySpeedStatus" resultType="list" resultMap="maintainRecordResultMap">
+        <![CDATA[
+			select r.*, c.checkinId, c.userName, c.carPlate, c.carMileage, c.userPhone, c.userId, c.userRequests, c.maintainOrFix, cpy.companyId, cpy.companyName
+			  from t_maintain_record r,  t_checkin c, t_company cpy
+			  where c.checkinId = r.checkinId and c.companyId = cpy.companyId and r.recordStatus = 'Y' and r.speedStatus in
+		]]>
+        <foreach item="item" index="index" collection="speedStatus" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="user.companyId != null and user.companyId != ''">
+            and r.companyId = #{user.companyId}
+        </if>
+        order by r.companyId desc, r.recordStatus desc, r.recordCreatedTime desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="queryMyName" resultType="list" resultMap="maintainRecordResultMap">
+        <![CDATA[
+			select r.*, c.checkinId, u.userName, c.carPlate, c.carMileage, u.userPhone, u.userId, c.userRequests, c.maintainOrFix, cpy.companyId, cpy.companyName
+			  from t_maintain_record r,  t_checkin c, t_company cpy, t_user u
+			  where c.checkinId = r.checkinId and c.companyId = cpy.companyId and r.recordStatus = 'Y' and c.userId = u.userId and c.userId = #{user.userId}
+		]]>
+        order by r.companyId desc, r.recordStatus desc, r.recordCreatedTime desc
+    </select>
+
+    <select id="queryCustomerCar" resultType="list" resultMap="maintainRecordResultMap">
+        <![CDATA[
+                select c.userName,mr.endTime,mr.actualEndTime,mr.pickupTime,mr.speedStatus,cb.chargeBillMoney from
+                t_maintain_record mr, t_checkin c, t_charge_bill cb
+                where mr.recordId=cb.recordId and c.checkinId=mr.checkinId and c.userPhone=#{userPhone}
+		]]>
+                order by c.arriveTime desc  limit 0,5
+    </select>
+
+    <select id="queryPagerBySpeedStatusAndPickingStatus" resultType="list" resultMap="maintainRecordResultMap">
+        <![CDATA[
+			select r.*, c.checkinId, c.userName, c.carPlate, c.carMileage, c.userPhone, c.userId, c.userRequests, c.maintainOrFix, cpy.companyId, cpy.companyName
+			  from t_maintain_record r,  t_checkin c, t_company cpy
+			  where c.checkinId = r.checkinId and c.companyId = cpy.companyId and r.recordStatus = 'Y' and r.pickingStatus != #{pickingStatus} and r.speedStatus in
+		]]>
+        <foreach item="item" index="index" collection="speedStatus" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="user.companyId != null and user.companyId != ''">
+            and r.companyId = #{user.companyId}
+        </if>
+        order by r.companyId desc, r.recordStatus desc, r.recordCreatedTime desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="queryPagerByUserId" resultType="list" resultMap="maintainRecordResultMap">
+        <![CDATA[
+		  select r.*, c.checkinId, c.userName, c.carPlate, c.carMileage, c.userPhone, c.maintainOrFix, cpy.companyId, cpy.companyName
+		    from t_maintain_record r,  t_checkin c, t_company cpy, t_work_info i
+		    where c.checkinId = r.checkinId and c.companyId = cpy.companyId and r.recordId = i.recordId and r.pickingStatus != #{pickingStatus} and i.userId = #{user.userId} and r.speedStatus in
+        ]]>
+        <foreach item="item" index="index" collection="speedStatus" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="user.companyId != null and user.companyId != ''">
+            and r.companyId = #{user.companyId}
+        </if>
+        order by r.companyId desc, r.recordStatus desc, r.recordCreatedTime desc
+        limit #{pager.beginIndex}, #{pager.pageSize}
+    </select>
+
+    <select id="count" resultType="int">
+        <![CDATA[
+		  select count(*) from t_maintain_record where 1 = 1 and speedStatus = '已登记'
+        ]]>
+        <if test="companyId != null and companyId != ''">
+            and companyId = #{companyId}
+        </if>
+    </select>
+
+    <select id="countByStatus" resultType="int">
+        <![CDATA[
+			select count(*) from t_maintain_record r,  t_checkin c, t_company cpy
+			where c.checkinId = r.checkinId and c.companyId = cpy.companyId and r.recordStatus = #{status}
+			and (c.userId != ''  and c.userId is not null and c.userId != 'null')
+			and r.speedStatus = '已完成'
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and r.companyId = #{user.companyId}
+        </if>
+    </select>
+
+    <select id="countByCondition" resultType="int">
+        <![CDATA[
+			select count(*) from t_maintain_record r, t_checkin c where 1 = 1 and r.checkinId = c.checkinId and r.speedStatus in
+		]]>
+        <foreach item="item" index="index" collection="speedStatus" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="user.companyId != null and user.companyId != ''">
+            and r.companyId = #{user.companyId}
+        </if>
+        <if test="record.checkin.userName != null and record.checkin.userName != ''">
+            and c.userName like concat('%',#{record.checkin.userName},'%')
+        </if>
+        <if test="record.checkin.carPlate != null and record.checkin.carPlate != ''">
+            and c.carPlate like concat('%',#{record.checkin.carPlate},'%')
+        </if>
+        <if test="record.startTime != null and record.startTime != ''">
+            and r.startTime = #{record.startTime}
+        </if>
+        <if test="record.checkin.maintainOrFix != 'all'">
+            and c.maintainOrFix = #{record.checkin.maintainOrFix}
+        </if>
+        <if test="record.companyId != null and record.companyId != '' and record.companyId != 'null' and record.companyId != 'undefined'">
+            and r.companyId = #{record.companyId}
+        </if>
+
+    </select>
+
+    <select id="countByTrackStatus" resultType="int">
+        <![CDATA[
+			select count(*) from t_maintain_record where 1 = 1 and recordStatus = 'Y' and trackStatus = #{status}
+		]]>
+        <if test="user.companyId != null and user.companyId != ''">
+            and companyId = #{user.companyId}
+        </if>
+    </select>
+
+    <select id="countBySpeedStatus" resultType="int">
+        <![CDATA[
+			select count(*) from t_maintain_record where 1 = 1 and recordStatus = 'Y' and speedStatus in
+		]]>
+        <foreach item="item" index="index" collection="speedStatus" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="user.companyId != null and user.companyId != ''">
+            and companyId = #{user.companyId}
+        </if>
+    </select>
+
+    <select id="countBySpeedStatusAndPickingStatus" resultType="int">
+        <![CDATA[
+			select count(*) from t_maintain_record where 1 = 1 and recordStatus = 'Y' and pickingStatus != #{pickingStatus} and speedStatus in
+		]]>
+        <foreach item="item" index="index" collection="speedStatus" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="user.companyId != null and user.companyId != ''">
+            and companyId = #{user.companyId}
+        </if>
+    </select>
+
+    <select id="countByUserId" resultType="int">
+        <![CDATA[
+		  select count(*) from t_maintain_record r, t_work_info i where 1 = 1 and r.recordId = i.recordId and r.pickingStatus != #{pickingStatus} and i.userId = #{user.userId} and r.speedStatus in
+        ]]>
+        <foreach item="item" index="index" collection="speedStatus" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="user.companyId != null and user.companyId != ''">
+            and r.companyId = #{user.companyId}
+        </if>
+    </select>
+
+    <select id="queryByDefault"  resultMap="maintainRecordResultMap">
+        <![CDATA[
+            select count(mr.recordId) as coont ,mr.recordCreatedTime from t_maintain_record mr,t_checkin c
+             WHERE DATE_FORMAT(mr.recordCreatedTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' ) and  mr.recordStatus = 'Y'
+            and mr.checkinId = c.checkinId and mr.speedStatus = '已完成'
+		]]>
+        <if test="maintainOrFix =='保养'">
+            and c.maintainOrFix = '保养'
+        </if>
+        <if test="maintainOrFix =='维修'">
+            and c.maintainOrFix = '维修'
+        </if>
+        <if test="companyId != null and companyId != ''">
+            and mr.companyId = #{companyId}
+        </if>
+        GROUP BY day(mr.recordCreatedTime)
+    </select>
+
+    <select id="queryByCondition"  resultType="list" resultMap="maintainRecordResultMap">
+        <![CDATA[
+           select count(mr.recordId) as coont ,mr.recordCreatedTime from t_maintain_record mr,t_checkin c
+            where mr.recordCreatedTime >= #{startTime} and mr.recordCreatedTime <= #{endTime} and  mr.recordStatus = 'Y'
+           and mr.checkinId = c.checkinId and mr.speedStatus = '已完成'
+		]]>
+        <if test="maintainOrFix =='保养'">
+            and c.maintainOrFix = '保养'
+        </if>
+        <if test="maintainOrFix =='维修'">
+            and c.maintainOrFix = '维修'
+        </if>
+        <if test="companyId != null and companyId != ''">
+            and mr.companyId = #{companyId}
+        </if>
+        <if test="type =='year'">
+            GROUP BY year(mr.recordCreatedTime)
+        </if>
+        <if test="type =='quarter'">
+            GROUP BY quarter(mr.recordCreatedTime)
+        </if>
+        <if test="type =='month'">
+            GROUP BY month(mr.recordCreatedTime)
+        </if>
+        <if test="type =='week'">
+            GROUP BY week(mr.recordCreatedTime)
+        </if>
+        <if test="type =='day'">
+            GROUP BY day(mr.recordCreatedTime)
+        </if>
+    </select>
+
+
+    <update id="inactive" parameterType="string">
+		<![CDATA[
+
+		  update t_maintain_record set recordStatus = 'N' where recordId = #{id}
+
+        ]]>
+	</update>
+
+    <update id="active" parameterType="string">
+		<![CDATA[
+
+		  update t_maintain_record set recordStatus = 'Y' where recordId = #{id}
+
+        ]]>
+	</update>
+
+    <update id="updateSpeedStatusById">
+        <![CDATA[
+
+		  update t_maintain_record set speedStatus = #{speedStatus} where recordId = #{id}
+
+        ]]>
+    </update>
+
+    <update id="updatePickingStatusById">
+        <![CDATA[
+
+		  update t_maintain_record set pickingStatus = #{pickingStatus} where recordId = #{id}
+
+        ]]>
+    </update>
+
+    <update id="updateEndTimeById">
+        <![CDATA[
+
+		  update t_maintain_record set actualEndTime = #{endTime} where recordId = #{id}
+
+        ]]>
+    </update>
+
+    <update id="updatePickupTime">
+        <![CDATA[
+
+		  update t_maintain_record set pickupTime = now() where recordId = #{recordId}
+
+        ]]>
+    </update>
+
+    <update id="updateSign">
+        <![CDATA[
+
+		  update t_maintain_record set signStatus = #{status} where recordId = #{id}
+
+        ]]>
+    </update>
+
+</mapper>

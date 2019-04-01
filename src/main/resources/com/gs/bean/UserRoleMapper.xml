@@ -1,0 +1,114 @@
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gs.dao.UserRoleDAO">
+
+	<resultMap id="userRoleResultMap" type="userRole">
+		<id property="userRoleId" column="userRoleId" />
+		<result property="userId" column="userId" />
+		<result property="roleId" column="roleId" />
+		<result property="urCreatedTime" column="urCreatedTime" />
+
+	</resultMap>
+
+	<insert id="insert"  parameterType="userRole">
+		<![CDATA[
+			INSERT INTO t_user_role
+				(userRoleId, userId, roleId, urCreatedTime)
+			VALUES
+				(uuid(), #{userId}, #{roleId}, now())
+		]]>
+	</insert>
+
+	<insert id="batchInsert"  parameterType="list">
+		<![CDATA[
+
+		]]>
+	</insert>
+
+	<delete id="delete" parameterType="userRole">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="deleteById" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<delete id="batchDelete" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</delete>
+
+	<update id="update" parameterType="userRole">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<update id="updateByRole" parameterType="userRole">
+		<![CDATA[
+			UPDATE t_user_role SET roleId = #{roleId} WHERE userId = #{userId}
+		]]>
+	</update>
+
+	<update id="batchUpdate" parameterType="list">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<select id="queryAll" resultMap="userRoleResultMap">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByStatus" resultMap="userRoleResultMap" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="query" parameterType="userRole" resultType="userRole">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryById" parameterType="string" resultType="userRole">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="queryByPager" resultType="list" resultMap="userRoleResultMap" parameterType="com.gs.common.bean.Pager">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<select id="count" resultType="int">
+		<![CDATA[
+
+		]]>
+	</select>
+
+	<update id="inactive" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</update>
+
+	<update id="active" parameterType="string">
+		<![CDATA[
+
+		]]>
+	</update>
+
+</mapper>
