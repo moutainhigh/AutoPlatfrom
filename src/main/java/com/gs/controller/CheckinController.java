@@ -53,13 +53,20 @@ public class CheckinController {
     @Resource
     private AppointmentService appointmentService;
 
-    // 可以看的角色：董事长、接待员、超级管理员、普通管理员
+    /**
+     * 可以看的角色：董事长、接待员、超级管理员、普通管理员
+     */
     private String queryRole = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_RECEIVE + ","
             + Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN;
-
-    // 可以操作的角色：董事长、接待员
+    /**
+     * 可以操作的角色：董事长、接待员
+     */
     private String editRole = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_RECEIVE;
 
+    /**
+     * 访问登记页面
+     * @return
+     */
     @RequestMapping(value = "checkin_page", method = RequestMethod.GET)
     public String checkinPage() {
         if (SessionGetUtil.isUser()) {
@@ -75,6 +82,10 @@ public class CheckinController {
 
     }
 
+    /**
+     * 车主用户查看我的接待
+     * @return
+     */
     @RequestMapping(value = "my_checkin", method = RequestMethod.GET)
     public ModelAndView carOwerAppointment(){
         ModelAndView mav = new ModelAndView();
@@ -89,6 +100,13 @@ public class CheckinController {
         return mav;
     }
 
+    /**
+     * 分页查询登记记录
+     * @param pageNumber
+     * @param pageSize
+     * @param status
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "checkin_pager", method = RequestMethod.GET)
     public Pager4EasyUI<Checkin> checkinPager(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize, @Param("status") String status) {
@@ -100,15 +118,15 @@ public class CheckinController {
                     Pager pager = new Pager();
                     pager.setPageNo(Integer.valueOf(pageNumber));
                     pager.setPageSize(Integer.valueOf(pageSize));
-                    List<Checkin> checkins = new ArrayList<Checkin>();
-                    if (status.equals("ALL")) {
+                    List<Checkin> checkins = new ArrayList<>();
+                    if ("ALL".equals(status)) {
                         pager.setTotalRecords(checkinService.count(user));
                         checkins = checkinService.queryByPager(pager, user);
                     } else {
                         pager.setTotalRecords(checkinService.countByStatus(status, user));
                         checkins = checkinService.queryPagerByStatus(pager, status, user);
                     }
-                    return new Pager4EasyUI<Checkin>(pager.getTotalRecords(), checkins);
+                    return new Pager4EasyUI<>(pager.getTotalRecords(), checkins);
                 }
                 return null;
             } catch (Exception e) {
@@ -121,6 +139,17 @@ public class CheckinController {
         }
     }
 
+    /**
+     * 根据条件分页查询登记记录
+     * @param pageNumber
+     * @param pageSize
+     * @param userName
+     * @param userPhone
+     * @param carPlate
+     * @param maintainOrFix
+     * @param companyId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "condition_pager", method = RequestMethod.GET)
     public Pager4EasyUI<Checkin> queryPagerByCondition(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize,
@@ -141,11 +170,11 @@ public class CheckinController {
                     Pager pager = new Pager();
                     pager.setPageNo(Integer.valueOf(pageNumber));
                     pager.setPageSize(Integer.valueOf(pageSize));
-                    List<Checkin> checkins = new ArrayList<Checkin>();
+                    List<Checkin> checkins = new ArrayList<>();
                     pager.setTotalRecords(checkinService.countByCondition(checkin, user));
                     checkins = checkinService.queryPagerByCondition(pager, checkin, user);
 
-                    return new Pager4EasyUI<Checkin>(pager.getTotalRecords(), checkins);
+                    return new Pager4EasyUI<>(pager.getTotalRecords(), checkins);
                 }
                 return null;
             } catch (Exception e) {
@@ -158,6 +187,12 @@ public class CheckinController {
         }
     }
 
+    /**
+     * 添加登记记录
+     * @param checkin
+     * @param isApp
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public ControllerResult addCheckin(@Param("checkin") Checkin checkin, @Param("isApp") boolean isApp) {
@@ -199,6 +234,11 @@ public class CheckinController {
         }
     }
 
+    /**
+     * 修改登记记录
+     * @param checkin
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "edit", method = RequestMethod.POST)
     public ControllerResult editCheckin(Checkin checkin) {
@@ -220,6 +260,12 @@ public class CheckinController {
         }
     }
 
+    /**
+     * 更新登记记录的状态
+     * @param checkinId
+     * @param status
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "update_status", method = RequestMethod.GET)
     public ControllerResult updateCheckinStatus(String checkinId, String status) {
@@ -227,7 +273,7 @@ public class CheckinController {
             try {
                 if (CheckRoleUtil.checkRoles(editRole)) {
                     logger.info("更新登记记录的状态");
-                    if (status.equals("Y")) {
+                    if ("Y".equals(status)) {
                         checkinService.inactive(checkinId);
                     } else {
                         checkinService.active(checkinId);

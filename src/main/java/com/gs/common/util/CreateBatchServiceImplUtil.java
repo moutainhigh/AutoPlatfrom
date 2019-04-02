@@ -12,9 +12,9 @@ import java.util.Date;
 import java.util.Properties;
 
 /**
- *由Wjhsmart技术支持
  *
- *@author Wjhsmart
+ *
+ *@author qm
  *@since 2017-04-12 08:08:20
  */
 public class CreateBatchServiceImplUtil extends JFrame {
@@ -67,9 +67,9 @@ public class CreateBatchServiceImplUtil extends JFrame {
         lbl4.setBounds(350, 42, 350, 15);
         panel.add(lbl4);
 
-        JLabel label_1 = new JLabel("输出目录:");
-        label_1.setBounds(80, 71, 100, 15);
-        panel.add(label_1);
+        JLabel label1 = new JLabel("输出目录:");
+        label1.setBounds(80, 71, 100, 15);
+        panel.add(label1);
 
         txtFilePath = new JTextField();
         txtFilePath.setBounds(200, 68, 147, 21);
@@ -81,9 +81,9 @@ public class CreateBatchServiceImplUtil extends JFrame {
         lbl5.setBounds(350, 71, 350, 15);
         panel.add(lbl5);
 
-        JLabel label_2 = new JLabel("生成包结构目录:");
-        label_2.setBounds(79, 100, 100, 15);
-        panel.add(label_2);
+        JLabel label2 = new JLabel("生成包结构目录:");
+        label2.setBounds(79, 100, 100, 15);
+        panel.add(label2);
 
         txtPackage = new JTextField();
         txtPackage.setBounds(200, 97, 147, 21);
@@ -158,6 +158,7 @@ public class CreateBatchServiceImplUtil extends JFrame {
 
         JButton button = new JButton("执行");
         button.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 go();
             }
@@ -172,6 +173,7 @@ public class CreateBatchServiceImplUtil extends JFrame {
 
         addWindowListener(new WindowAdapter() {
 
+            @Override
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
                 export();
@@ -205,13 +207,13 @@ public class CreateBatchServiceImplUtil extends JFrame {
         String beanPackageName = txtBeanPackageName.getText();
         boolean createPackage = checkBox.getSelectedObjects() != null;
 
-        if (clazz.equals("") || packageName.equals("") || beanPackageName.equals("") ||
-                packages.equals("") || daoClazz.equals("") || serviceClazz.equals("") || pageClazz.equals("")) {
+        if ("".equals(clazz) || "".equals(packageName) || "".equals(beanPackageName) ||
+                "".equals(packages) || "".equals(daoClazz) || "".equals(serviceClazz) || "".equals(pageClazz)) {
             setTips("所有都必须输入");
             return;
         }
 
-        if (filePath.equals("")) {
+        if ("".equals(filePath)) {
             filePath = getProjSrcPath();
         }
 
@@ -256,9 +258,6 @@ public class CreateBatchServiceImplUtil extends JFrame {
         try {
             OutputStream out = new FileOutputStream(configFile);
             p.store(out, "退出保存文件," + sdf.format(new Date()));
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -274,9 +273,6 @@ public class CreateBatchServiceImplUtil extends JFrame {
                 p.load(is);
                 is.close();
                 setUIVal();
-            } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -324,8 +320,7 @@ public class CreateBatchServiceImplUtil extends JFrame {
     public void createServiceImpl(String filePath, String packageName, String clazz, String daoClazz, String serviceClazz, String pageClazz, String beanPackageName) {
         String[] beanNames = clazz.split(",");
 
-        for (int i = 0, len = beanNames.length; i < len; i++) {
-            String beanName = beanNames[i];
+        for (String beanName : beanNames) {
             String lowerBeanName = lowerFirestChar(beanName);
             String packageinfo = "package " + packageName
                     + ";\r\n\r\n";
@@ -336,56 +331,53 @@ public class CreateBatchServiceImplUtil extends JFrame {
             importBean.append("import javax.annotation.Resource;\r\n");
             importBean.append("import java.util.List;\r\n");
 
-            importBean.append("import " + daoClazz + "." + beanName + "DAO;\r\n");
-            importBean.append("import " + serviceClazz + "." + beanName + "Service;\r\n");
-            importBean.append("import " + pageClazz + ";\r\n");
+            importBean.append("import ").append(daoClazz).append(".").append(beanName).append("DAO;\r\n");
+            importBean.append("import ").append(serviceClazz).append(".").append(beanName).append("Service;\r\n");
+            importBean.append("import ").append(pageClazz).append(";\r\n");
 
-            classInfo.append("由Wjhsmart技术支持\r\n*");
+            classInfo.append("\r\n*");
             classInfo.append("\r\n");
-            classInfo.append("*@author Wjhsmart\r\n");
+            classInfo.append("*@author qm\r\n");
             classInfo.append("*@since ");
             classInfo.append(sdf.format(new Date()));
             classInfo.append("\r\n*/\r\n");
 
             classInfo.append("@Service\r\n");
-            classInfo.append("public class ")
-                    .append(beanName + "ServiceImpl implements " + beanName + "Service ").append("{\r\n");
+            classInfo.append("public class ").append(beanName).append("ServiceImpl implements ").append(beanName).append("Service ").append("{\r\n");
             classInfo.append("\r\n");
             classInfo.append("\t@Resource\r\n");
-            classInfo.append("\tprivate " + beanName + "DAO " + lowerBeanName + "DAO;");
+            classInfo.append("\tprivate ").append(beanName).append("DAO ").append(lowerBeanName).append("DAO;");
             classInfo.append("\r\n\r\n");
 
-            classInfo.append("\tpublic int insert(" + beanName + " " + lowerBeanName + ") { return " + lowerBeanName + "DAO.insert(" + lowerBeanName + "); }");
+            classInfo.append("\tpublic int insert(").append(beanName).append(" ").append(lowerBeanName).append(") { return ").append(lowerBeanName).append("DAO.insert(").append(lowerBeanName).append("); }");
             classInfo.append("\r\n");
-            classInfo.append("\tpublic int batchInsert(List<" + beanName + "> list) { return " + lowerBeanName + "DAO.batchInsert(list); }");
+            classInfo.append("\tpublic int batchInsert(List<").append(beanName).append("> list) { return ").append(lowerBeanName).append("DAO.batchInsert(list); }");
             classInfo.append("\r\n");
-            classInfo.append("\tpublic int delete(" + beanName + " " + lowerBeanName + ") { return " + lowerBeanName + "DAO.delete(" + lowerBeanName + "); }");
+            classInfo.append("\tpublic int delete(").append(beanName).append(" ").append(lowerBeanName).append(") { return ").append(lowerBeanName).append("DAO.delete(").append(lowerBeanName).append("); }");
             classInfo.append("\r\n");
-            classInfo.append("\tpublic int deleteById(String id) {\n" +
-                    "        return " + lowerBeanName + "DAO.deleteById(id);\n" +
-                    "    }");
+            classInfo.append("\tpublic int deleteById(String id) {\n" + "        return ").append(lowerBeanName).append("DAO.deleteById(id);\n").append("    }");
             classInfo.append("\r\n");
-            classInfo.append("\tpublic int batchDelete(List<" + beanName + "> list) { return " + lowerBeanName + "DAO.batchDelete(list); }");
+            classInfo.append("\tpublic int batchDelete(List<").append(beanName).append("> list) { return ").append(lowerBeanName).append("DAO.batchDelete(list); }");
             classInfo.append("\r\n");
-            classInfo.append("\tpublic int update(" + beanName + " " + lowerBeanName + ") { return " + lowerBeanName + "DAO.update(" + lowerBeanName + "); }");
+            classInfo.append("\tpublic int update(").append(beanName).append(" ").append(lowerBeanName).append(") { return ").append(lowerBeanName).append("DAO.update(").append(lowerBeanName).append("); }");
             classInfo.append("\r\n");
-            classInfo.append("\tpublic int batchUpdate(List<" + beanName + "> list) { return " + lowerBeanName + "DAO.batchUpdate(list); }");
+            classInfo.append("\tpublic int batchUpdate(List<").append(beanName).append("> list) { return ").append(lowerBeanName).append("DAO.batchUpdate(list); }");
             classInfo.append("\r\n");
-            classInfo.append("\tpublic List<" + beanName + "> queryAll() { return " + lowerBeanName + "DAO.queryAll(); }");
+            classInfo.append("\tpublic List<").append(beanName).append("> queryAll() { return ").append(lowerBeanName).append("DAO.queryAll(); }");
             classInfo.append("\r\n");
-            classInfo.append("\tpublic List<" + beanName + "> queryByStatus(String status) { return " + lowerBeanName + "DAO.queryByStatus(status); }");
+            classInfo.append("\tpublic List<").append(beanName).append("> queryByStatus(String status) { return ").append(lowerBeanName).append("DAO.queryByStatus(status); }");
             classInfo.append("\r\n");
-            classInfo.append("\tpublic " + beanName + " query(" + beanName + " " + lowerBeanName + ") { return " + lowerBeanName + "DAO.query(" + lowerBeanName + "); }");
+            classInfo.append("\tpublic ").append(beanName).append(" query(").append(beanName).append(" ").append(lowerBeanName).append(") { return ").append(lowerBeanName).append("DAO.query(").append(lowerBeanName).append("); }");
             classInfo.append("\r\n");
-            classInfo.append("\tpublic " + beanName + " queryById(String id) { return " + lowerBeanName + "DAO.queryById(id); }");
+            classInfo.append("\tpublic ").append(beanName).append(" queryById(String id) { return ").append(lowerBeanName).append("DAO.queryById(id); }");
             classInfo.append("\r\n");
-            classInfo.append("\tpublic List<" + beanName + "> queryByPager(Pager pager) { return " + lowerBeanName + "DAO.queryByPager(pager); }");
+            classInfo.append("\tpublic List<").append(beanName).append("> queryByPager(Pager pager) { return ").append(lowerBeanName).append("DAO.queryByPager(pager); }");
             classInfo.append("\r\n");
-            classInfo.append("\tpublic int count() { return " + lowerBeanName + "DAO.count(); }");
+            classInfo.append("\tpublic int count() { return ").append(lowerBeanName).append("DAO.count(); }");
             classInfo.append("\r\n");
-            classInfo.append("\tpublic int inactive(String id) { return " + lowerBeanName + "DAO.inactive(id); }");
+            classInfo.append("\tpublic int inactive(String id) { return ").append(lowerBeanName).append("DAO.inactive(id); }");
             classInfo.append("\r\n");
-            classInfo.append("\tpublic int active(String id) { return " + lowerBeanName + "DAO.active(id); }");
+            classInfo.append("\tpublic int active(String id) { return ").append(lowerBeanName).append("DAO.active(id); }");
             classInfo.append("\r\n");
 
             classInfo.append("\r\n");
@@ -426,15 +418,13 @@ public class CreateBatchServiceImplUtil extends JFrame {
 
 
     public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    CreateBatchServiceImplUtil frame = new CreateBatchServiceImplUtil();
-                    frame.setLocationRelativeTo(null);
-                    frame.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        EventQueue.invokeLater(() -> {
+            try {
+                CreateBatchServiceImplUtil frame = new CreateBatchServiceImplUtil();
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
     }

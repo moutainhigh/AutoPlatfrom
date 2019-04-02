@@ -24,7 +24,9 @@ import java.util.List;
 
 
 /**
- * Created by root on 2017/4/16.
+ *
+ * @author root
+ * @date 2017/4/16
  */
 @Controller
 @RequestMapping("/carBrand")
@@ -92,12 +94,13 @@ public class CarBrandController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(carBrandService.searchCount(brandName));
         List<CarBrand> carBrandList = carBrandService.searchByPager(brandName, pager);
-        return new Pager4EasyUI<CarBrand>(pager.getTotalRecords(), carBrandList);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), carBrandList);
     }
 
     /**
+     * 更新汽车品牌
      * @param carBrand
-     * @return 更新汽车品牌
+     * @return ControllerResult
      */
     @ResponseBody
     @RequestMapping(value = "uploadCarBrand", method = RequestMethod.POST)
@@ -124,9 +127,10 @@ public class CarBrandController {
     }
 
     /**
+     * 分页查询所有汽车品牌
      * @param pageNumber
      * @param pageSize
-     * @return 分页查询
+     * @return Pager4EasyUI<CarBrand>
      */
     @ResponseBody
     @RequestMapping(value = "queryByPager", method = RequestMethod.GET)
@@ -142,11 +146,12 @@ public class CarBrandController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(carBrandService.count(user));
         List<CarBrand> carBrandList = carBrandService.queryByPager(pager, user);
-        return new Pager4EasyUI<CarBrand>(pager.getTotalRecords(), carBrandList);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), carBrandList);
     }
 
     /**
-     * @return 用于显示下拉菜单
+     * 用于显示下拉菜单
+     * @return List<ComboBox4EasyUI>
      */
     @ResponseBody
     @RequestMapping(value = "car_brand_all", method = RequestMethod.GET)
@@ -154,7 +159,7 @@ public class CarBrandController {
         logger.info("查询汽车品牌");
         User user = SessionGetUtil.getUser();
         List<CarBrand> carBrands = carBrandService.queryAll(user);
-        List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<ComboBox4EasyUI>();
+        List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<>();
         for (CarBrand carBrand : carBrands) {
             ComboBox4EasyUI comboBox4EasyUI = new ComboBox4EasyUI();
             comboBox4EasyUI.setId(carBrand.getBrandId());
@@ -165,8 +170,9 @@ public class CarBrandController {
     }
 
     /**
+     * 根据汽车id查询汽车品牌
      * @param brandId
-     * @return 根据汽车id查询汽车品牌
+     * @return String
      */
     @ResponseBody
     @RequestMapping(value = "name", method = RequestMethod.GET)
@@ -180,9 +186,10 @@ public class CarBrandController {
     }
 
     /**
+     * 冻结激活
      * @param id
      * @param status
-     * @return 冻结激活
+     * @return ControllerResult
      */
     @ResponseBody
     @RequestMapping(value = "brandStatusModify", method = RequestMethod.GET)
@@ -193,10 +200,10 @@ public class CarBrandController {
         } else {
             try {
                 if (CheckRoleUtil.checkRoles(editRole)) {
-                    if (status.equals("Y")) {
+                    if ("Y".equals(status)) {
                         logger.info("品牌冻结");
                         carBrandService.inactive(id);
-                    } else if (status.equals("N")) {
+                    } else if ("N".equals(status)) {
                         logger.info("品牌激活");
                         carBrandService.active(id);
                     }
@@ -231,7 +238,7 @@ public class CarBrandController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(carBrandService.statusCount(status));
         List<CarBrand> carBrandList = carBrandService.queryByBrandPager(status, pager);
-        return new Pager4EasyUI<CarBrand>(pager.getTotalRecords(), carBrandList);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), carBrandList);
     }
 
 }

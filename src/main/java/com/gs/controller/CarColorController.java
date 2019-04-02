@@ -46,7 +46,11 @@ public class CarColorController {
     @Resource
     private CarColorService carColorService;
 
-
+    /**
+     * 添加汽车颜色
+     * @param carColor
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "insertCarColor", method = RequestMethod.POST)
     public ControllerResult insertCarColor(CarColor carColor) {
@@ -71,6 +75,13 @@ public class CarColorController {
 
     }
 
+    /**
+     * 模糊查询颜色
+     * @param colorName
+     * @param pageNumber
+     * @param pageSize
+     * @return Pager4EasyUI<CarColor>
+     */
     @ResponseBody
     @RequestMapping(value = "searchByPager", method = RequestMethod.GET)
     public Pager4EasyUI<CarColor> search(@Param("colorName") String colorName, @Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -84,9 +95,14 @@ public class CarColorController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(carColorService.searchCount(colorName));
         List<CarColor> carColorList = carColorService.searchByPager(colorName, pager);
-        return new Pager4EasyUI<CarColor>(pager.getTotalRecords(), carColorList);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), carColorList);
     }
 
+    /**
+     * 更新汽车颜色
+     * @param carColor
+     * @return ControllerResult
+     */
     @ResponseBody
     @RequestMapping(value = "uploadCarColor", method = RequestMethod.POST)
     public ControllerResult uploadCarColor(CarColor carColor) {
@@ -112,6 +128,12 @@ public class CarColorController {
 
     }
 
+    /**
+     * 分页查询所有颜色
+     * @param pageNumber
+     * @param pageSize
+     * @return Pager4EasyUI<CarColor>
+     */
     @ResponseBody
     @RequestMapping(value = "queryByPager", method = RequestMethod.GET)
     public Pager4EasyUI<CarColor> queryByPager(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -126,16 +148,20 @@ public class CarColorController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(carColorService.count(user));
         List<CarColor> carColorList = carColorService.queryByPager(pager, user);
-        return new Pager4EasyUI<CarColor>(pager.getTotalRecords(), carColorList);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), carColorList);
     }
 
+    /**
+     * 查询汽车颜色
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "car_color_all", method = RequestMethod.GET)
     public List<ComboBox4EasyUI> queryCarColorAll() {
         logger.info("查询汽车颜色");
         User user = SessionGetUtil.getUser();
         List<CarColor> carColors = carColorService.queryAll(user);
-        List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<ComboBox4EasyUI>();
+        List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<>();
         for (CarColor carColor : carColors) {
             ComboBox4EasyUI comboBox4EasyUI = new ComboBox4EasyUI();
             comboBox4EasyUI.setId(carColor.getColorId());
@@ -145,6 +171,12 @@ public class CarColorController {
         return comboBox4EasyUIs;
     }
 
+    /**
+     * 颜色状态冻结
+     * @param id
+     * @param status
+     * @return ControllerResult
+     */
     @ResponseBody
     @RequestMapping(value = "colorStatusModify", method = RequestMethod.GET)
     public ControllerResult colorStatusModify(@Param("id") String id, @Param("status") String status) {
@@ -154,10 +186,10 @@ public class CarColorController {
         } else {
             try {
                 if (CheckRoleUtil.checkRoles(editRole)) {
-                    if (status.equals("Y")) {
+                    if ("Y".equals(status)) {
                         logger.info("颜色冻结");
                         carColorService.inactive(id);
-                    } else if (status.equals("N")) {
+                    } else if ("N".equals(status)) {
                         logger.info("颜色激活");
                         carColorService.active(id);
                     }
@@ -175,6 +207,13 @@ public class CarColorController {
 
     }
 
+    /**
+     * 分页查询颜色状态
+     * @param status
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryByStatusPager", method = RequestMethod.GET)
     public Pager4EasyUI<CarColor> queryByStatusPager(@Param("status") String status, @Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -187,7 +226,7 @@ public class CarColorController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(carColorService.statusCount(status));
         List<CarColor> carColorList = carColorService.queryByColorPager(status, pager);
-        return new Pager4EasyUI<CarColor>(pager.getTotalRecords(), carColorList);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), carColorList);
     }
 
 

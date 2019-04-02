@@ -9,15 +9,15 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
-*由Wjhsmart技术支持
 *
-*@author Wjhsmart
+*
+*@author qm
 *@since 2017-04-14 16:35:15
 */
 @Repository
 public interface CarPlateDAO extends BaseDAO<String, CarPlate>{
-    public List<CarPlate> byStatusPager(@Param("status") String status, @Param("pager") Pager pager);
-    public int countStatus(String status);
-    public List<CarPlate> searchByPager(@Param("plateName")String plateName,@Param("pager")Pager pager);
-    public int searchCount(String plateName);
+     List<CarPlate> byStatusPager(@Param("status") String status, @Param("pager") Pager pager);
+     int countStatus(String status);
+     List<CarPlate> searchByPager(@Param("plateName")String plateName,@Param("pager")Pager pager);
+     int searchCount(String plateName);
 }

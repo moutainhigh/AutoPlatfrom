@@ -65,6 +65,11 @@ public class CustomerController {
             + "," + Constants.COMPANY_ADMIN + "," + Constants.COMPANY_RECEIVE
             + "," + Constants.COMPANY_ARTIFICER + "," + Constants.COMPANY_SALES;
 
+    /**
+     * 访问车主后台的主页
+     *
+     * @return
+     */
     @RequestMapping(value = "home", method = RequestMethod.GET)
     private ModelAndView home() {
         ModelAndView mav = new ModelAndView();
@@ -77,7 +82,7 @@ public class CustomerController {
         mav.setViewName("customerClient/index");
         logger.info("访问车主后台的主页");
         int count = companyService.count(user);
-        List<Integer> pageTotal = new ArrayList<Integer>();
+        List<Integer> pageTotal = new ArrayList<>();
         int forIndex = count / 3;
         if (count % 3 != 0 && count > 3) {
             forIndex += 1;
@@ -90,6 +95,12 @@ public class CustomerController {
         return mav;
     }
 
+    /**
+     * 分页查找推荐的公司
+     *
+     * @param index
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryCompany_pager", method = RequestMethod.GET)
     public List<Company> queryCompanyPager(int index) {
@@ -105,10 +116,14 @@ public class CustomerController {
         } else {
             index = 0;
         }
-        List<Company> companies = companyService.queryByTop2(index, 3);
-        return companies;
+        return companyService.queryByTop2(index, 3);
     }
 
+    /**
+     * 车主基本信息页面
+     *
+     * @return
+     */
     @RequestMapping(value = "customer_page", method = RequestMethod.GET)
     public String customerInfo() {
         if (SessionGetUtil.isUser()) {
@@ -122,9 +137,19 @@ public class CustomerController {
             return "index/notLogin";
         }
     }
+
+    /**
+     * 车主信息添加
+     *
+     * @param user
+     * @param userRole
+     * @param company
+     * @param session
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "customerInfo_insert", method = RequestMethod.POST)
-    public ControllerResult infoInsert(User user, UserRole userRole, Company company,HttpSession session){
+    public ControllerResult infoInsert(User user, UserRole userRole, Company company, HttpSession session) {
         if (SessionGetUtil.isUser()) {
             try {
                 if (CheckRoleUtil.checkRoles(queryRole)) {
@@ -152,14 +177,20 @@ public class CustomerController {
         }
     }
 
-
+    /**
+     * 手机号验证
+     *
+     * @param userPhone
+     * @param editPhone
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "customerPhone_verification", method = RequestMethod.GET)
-    public String verificationPhone(@Param("userPhone")String userPhone, @Param("editPhone") String editPhone) {
+    public String verificationPhone(@Param("userPhone") String userPhone, @Param("editPhone") String editPhone) {
         try {
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editPhone.equals(userPhone)) {
                 int count = userService.queryPhone(userPhone);
@@ -180,13 +211,20 @@ public class CustomerController {
         }
     }
 
+    /**
+     * 邮箱验证
+     *
+     * @param userEmail
+     * @param editEmail
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "customerEmail_verification", method = RequestMethod.GET)
-    public String verificationEmail(@Param("userEmail")String userEmail, @Param("editEmail") String editEmail) {
+    public String verificationEmail(@Param("userEmail") String userEmail, @Param("editEmail") String editEmail) {
         try {
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editEmail.equals(userEmail)) {
                 int count = userService.queryEmail(userEmail);
@@ -207,13 +245,20 @@ public class CustomerController {
         }
     }
 
+    /**
+     * 身份证验证
+     *
+     * @param userIdentity
+     * @param editIdentity
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "customerIdentity_verification", method = RequestMethod.GET)
-    public String verificationIdentity(@Param("userIdentity")String userIdentity, @Param("editIdentity")String editIdentity) {
+    public String verificationIdentity(@Param("userIdentity") String userIdentity, @Param("editIdentity") String editIdentity) {
         try {
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editIdentity.equals(userIdentity)) {
                 int count = userService.queryIdentity(userIdentity);
@@ -234,10 +279,16 @@ public class CustomerController {
         }
     }
 
-
+    /**
+     * 分页查询所有不可用车主
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
-    @RequestMapping(value = "customerInfo_pagerStatus", method= RequestMethod.GET)
-    public Pager4EasyUI<User> info_pagerStatus(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize){
+    @RequestMapping(value = "customerInfo_pagerStatus", method = RequestMethod.GET)
+    public Pager4EasyUI<User> infoPagerStatus(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
         if (SessionGetUtil.isUser()) {
             try {
                 if (CheckRoleUtil.checkRoles(queryRole)) {
@@ -260,9 +311,16 @@ public class CustomerController {
         }
     }
 
+    /**
+     * 分页查询所有车主
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
-    @RequestMapping(value = "customerInfo", method= RequestMethod.GET)
-    public Pager4EasyUI<User> customerInfo_pager(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize){
+    @RequestMapping(value = "customerInfo", method = RequestMethod.GET)
+    public Pager4EasyUI<User> customerInfoPager(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
         if (SessionGetUtil.isUser()) {
             try {
                 if (CheckRoleUtil.checkRoles(queryRole)) {
@@ -273,7 +331,7 @@ public class CustomerController {
                     pager.setPageSize(Integer.valueOf(pageSize));
                     pager.setTotalRecords(userService.countCustomer());
                     List<User> users = userService.queryCustomer(pager);
-                    return new Pager4EasyUI<User>(pager.getTotalRecords(), users);
+                    return new Pager4EasyUI<>(pager.getTotalRecords(), users);
                 }
                 return null;
             } catch (Exception e) {
@@ -286,9 +344,18 @@ public class CustomerController {
         }
     }
 
+    /**
+     * 条件查询所有车主信息
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param userPhone
+     * @param userName
+     * @return
+     */
     @ResponseBody
-    @RequestMapping(value = "selectCustomerInfo", method= RequestMethod.GET)
-    public Pager4EasyUI<User> selectCustomerInfo_pager(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize, @Param("userPhone")String userPhone, @Param("userName")String userName){
+    @RequestMapping(value = "selectCustomerInfo", method = RequestMethod.GET)
+    public Pager4EasyUI<User> selectCustomerInfoPager(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize, @Param("userPhone") String userPhone, @Param("userName") String userName) {
         if (SessionGetUtil.isUser()) {
             try {
                 if (CheckRoleUtil.checkRoles(queryRole)) {
@@ -301,7 +368,7 @@ public class CustomerController {
                     pager.setPageSize(Integer.valueOf(pageSize));
                     pager.setTotalRecords(userService.selectCountCustomer(user));
                     List<User> users = userService.selectCustomer(pager, user);
-                    return new Pager4EasyUI<User>(pager.getTotalRecords(), users);
+                    return new Pager4EasyUI<>(pager.getTotalRecords(), users);
                 }
                 return null;
             } catch (Exception e) {
@@ -314,10 +381,16 @@ public class CustomerController {
         }
     }
 
-
+    /**
+     * 分页查询所有可用车主
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
-    @RequestMapping(value = "customerInfo_pager", method= RequestMethod.GET)
-    public Pager4EasyUI<User> info_pager(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize){
+    @RequestMapping(value = "customerInfo_pager", method = RequestMethod.GET)
+    public Pager4EasyUI<User> infoPager(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
         if (SessionGetUtil.isUser()) {
             try {
                 if (CheckRoleUtil.checkRoles(queryRole)) {
@@ -327,7 +400,7 @@ public class CustomerController {
                     pager.setPageSize(Integer.valueOf(pageSize));
                     pager.setTotalRecords(userService.countByCustomer());
                     List<User> users = userService.queryCustomerPager(pager);
-                    return new Pager4EasyUI<User>(pager.getTotalRecords(), users);
+                    return new Pager4EasyUI<>(pager.getTotalRecords(), users);
                 }
                 return null;
             } catch (Exception e) {
@@ -340,24 +413,34 @@ public class CustomerController {
         }
     }
 
+    /**
+     * 车主信息修改
+     *
+     * @param uIcon
+     * @param user
+     * @param file
+     * @param session
+     * @return
+     * @throws IOException
+     */
     @ResponseBody
     @RequestMapping(value = "customerInfo_update", method = RequestMethod.POST)
-    public ControllerResult info_update(String uIcon, User user, MultipartFile file, HttpSession session) throws IOException {
+    public ControllerResult infoUpdate(String uIcon, User user, MultipartFile file, HttpSession session) throws IOException {
         if (SessionGetUtil.isUser()) {
             try {
                 if (CheckRoleUtil.checkRoles(queryRole)) {
                     logger.info("车主信息修改");
-                    if(file != null){
-                        String fileName = UUID.randomUUID().toString() + file.getOriginalFilename() ;
-                        String filePath = FileUtil.uploadPath(session,"\\" + fileName);
-                        String icon = "/uploads/"+ fileName;
-                        if(!file.isEmpty()){
+                    if (file != null) {
+                        String fileName = UUID.randomUUID().toString() + file.getOriginalFilename();
+                        String filePath = FileUtil.uploadPath(session, "\\" + fileName);
+                        String icon = "/uploads/" + fileName;
+                        if (!file.isEmpty()) {
                             file.transferTo(new File(filePath));
                             user.setUserIcon(icon);
-                        }else{
+                        } else {
                             user.setUserIcon("/img/default.png");
                         }
-                    }else{
+                    } else {
                         user.setUserIcon(uIcon);
                     }
                     userService.update(user);
@@ -374,16 +457,23 @@ public class CustomerController {
         }
     }
 
+    /**
+     * 状态修改
+     *
+     * @param id
+     * @param status
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "customerInfo_status", method = RequestMethod.GET)
-    public ControllerResult info_status(@Param("id")String id, @Param("status")String status){
+    public ControllerResult infoStatus(@Param("id") String id, @Param("status") String status) {
         if (SessionGetUtil.isUser()) {
             try {
                 if (CheckRoleUtil.checkRoles(queryRole)) {
                     logger.info("状态修改");
-                    if(status.equals("Y")){
+                    if ("Y".equals(status)) {
                         userService.inactive(id);
-                    }else{
+                    } else {
                         userService.active(id);
                     }
                     return ControllerResult.getSuccessResult("修改状态成功");

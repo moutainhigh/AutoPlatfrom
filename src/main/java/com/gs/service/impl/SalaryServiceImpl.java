@@ -13,9 +13,9 @@ import com.gs.common.bean.Pager;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 由Wjhsmart技术支持
  *
- * @author Wjhsmart
+ *
+ * @author qm
  * @since 2017-04-14 16:58:54
  */
 @Service
@@ -24,67 +24,83 @@ public class SalaryServiceImpl implements SalaryService {
     @Resource
     private SalaryDAO salaryDAO;
 
+    @Override
     public int insert(Salary salary) {
         return salaryDAO.insert(salary);
     }
 
+    @Override
     public int batchInsert(List<Salary> list) {
         return salaryDAO.batchInsert(list);
     }
 
+    @Override
     public int delete(Salary salary) {
         return salaryDAO.delete(salary);
     }
 
+    @Override
     public int deleteById(String id) {
         return salaryDAO.deleteById(id);
     }
 
+    @Override
     public int batchDelete(List<Salary> list) {
         return salaryDAO.batchDelete(list);
     }
 
+    @Override
     public int update(Salary salary) {
         return salaryDAO.update(salary);
     }
 
+    @Override
     public int batchUpdate(List<Salary> list) {
         return salaryDAO.batchUpdate(list);
     }
 
+    @Override
     public List<Salary> queryAll(User user) {
         return salaryDAO.queryAll(user);
     }
 
 
-    public List<Salary> queryByStatus(String status,User user) {
+    @Override
+    public List<Salary> queryByStatus(String status, User user) {
         return salaryDAO.queryByStatus(status,user);
     }
 
-    public Salary query(Salary salary,User user) {
+    @Override
+    public Salary query(Salary salary, User user) {
         return salaryDAO.query(salary,user);
     }
 
+    @Override
     public Salary queryById(String id) {
         return salaryDAO.queryById(id);
     }
 
-    public List<Salary> queryByPager(Pager pager,User user) {
+    @Override
+    public List<Salary> queryByPager(Pager pager, User user) {
         return salaryDAO.queryByPager(pager,user);
     }
 
+    @Override
     public int count(User user) {
         return salaryDAO.count(user);
     }
 
+    @Override
     public int inactive(String id) {
         return salaryDAO.inactive(id);
     }
 
+    @Override
     public int active(String id) {
         return salaryDAO.active(id);
     }
 
+    @Override
     public List<Salary> queryByUserId(Pager pager, String userId) {
         return salaryDAO.queryByUserId(pager, userId);
     }
@@ -95,7 +111,8 @@ public class SalaryServiceImpl implements SalaryService {
     }
 
 
-    @Transactional
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean saveBatchInsert(List<Salary> salaries) {
         boolean flag = false;
         if (salaries != null) {

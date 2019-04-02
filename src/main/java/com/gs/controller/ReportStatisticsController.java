@@ -10,7 +10,10 @@ import ch.qos.logback.classic.Logger;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- * Created by xiao-kang on 2017/4/22.
+ *
+ * @author xiao-kang
+ * @date 2017/4/22
+ * 报表统计
  */
 @Controller
 @RequestMapping("/reportStatistics")
@@ -18,17 +21,18 @@ public class ReportStatisticsController {
 
     private Logger logger = (Logger) LoggerFactory.getLogger(ReportStatisticsController.class);
 
-    // 可以查看的角色：董事长、财务员、超级管理员、普通管理员
+    /**
+     * 可以查看的角色：董事长、财务员、超级管理员、普通管理员
+     */
     private String queryRoleFinance = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_ACCOUNTING + ","
             + Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN;
 
-    // 可以查看的角色：董事长、采购员、超级管理员、普通管理员、销售员、库管
+    /**
+     * 可以查看的角色：董事长、采购员、超级管理员、普通管理员、销售员、库管
+     */
     private String queryRoleAcc = Constants.COMPANY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN + ","
             + Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.COMPANY_BUYER+ ","
             + Constants.COMPANY_SALES + "," + Constants.COMPANY_REPERTORY;
-
-    // 可以查看的角色：车主
-    private String queryRoleCustomer = Constants.CAR_OWNER;
 
     @RequestMapping(value = "finance_page", method = RequestMethod.GET)
     public String showInOutPage() {
@@ -44,6 +48,10 @@ public class ReportStatisticsController {
         }
     }
 
+    /**
+     * 显示员工工单统计页面
+     * @return
+     */
     @RequestMapping(value = "staff_page", method = RequestMethod.GET)
     public String showStaff() {
         if(SessionGetUtil.isUser()) {
@@ -58,6 +66,10 @@ public class ReportStatisticsController {
         }
     }
 
+    /**
+     * 显示下单统计页面
+     * @return
+     */
     @RequestMapping(value = "order_page", method = RequestMethod.GET)
     public String showOrder() {
         if(SessionGetUtil.isUser()) {
@@ -72,6 +84,10 @@ public class ReportStatisticsController {
         }
     }
 
+    /**
+     * 显示支付统计页面
+     * @return
+     */
     @RequestMapping(value = "pay_page", method = RequestMethod.GET)
     public String showPay() {
         if(SessionGetUtil.isUser()) {
@@ -86,9 +102,15 @@ public class ReportStatisticsController {
         }
     }
 
+    /**
+     * 显示消费统计页面
+     * @return
+     */
     @RequestMapping(value = "consumption_page", method = RequestMethod.GET)
     public String showConsumption() {
         if(SessionGetUtil.isUser()) {
+            //可以查看的角色：车主
+            String queryRoleCustomer = Constants.CAR_OWNER;
             if(CheckRoleUtil.checkRoles(queryRoleCustomer)) {
                 logger.info("显示消费统计页面");
                 return "customer/consumption_statistics";
@@ -100,6 +122,10 @@ public class ReportStatisticsController {
         }
     }
 
+    /**
+     * 显示维修保养统计页面
+     * @return
+     */
     @RequestMapping(value = "maintenance_page", method = RequestMethod.GET)
     public String showMaintenance() {
         if(SessionGetUtil.isUser()) {
@@ -114,6 +140,10 @@ public class ReportStatisticsController {
         }
     }
 
+    /**
+     * 显示维修保养项目统计页面
+     * @return
+     */
     @RequestMapping(value = "maintenanceItems_page", method = RequestMethod.GET)
     public String showMaintenanceItems() {
         if(SessionGetUtil.isUser()) {
@@ -128,6 +158,10 @@ public class ReportStatisticsController {
         }
     }
 
+    /**
+     * 显示库存统计页面
+     * @return
+     */
     @RequestMapping(value = "stock_page", method = RequestMethod.GET)
     public String showStock() {
         if(SessionGetUtil.isUser()) {
@@ -142,6 +176,10 @@ public class ReportStatisticsController {
         }
     }
 
+    /**
+     * 显示配件使用统计页面
+     * @return
+     */
     @RequestMapping(value = "accessories_page", method = RequestMethod.GET)
     public String showAccessories() {
         if(SessionGetUtil.isUser()) {

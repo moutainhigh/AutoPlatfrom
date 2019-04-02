@@ -27,7 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Asa on 2017/4/14.
+ * @author Asa
+ * @date 2017/4/14
  */
 @Controller
 @RequestMapping("supplyType")
@@ -42,6 +43,11 @@ public class SupplyTypeController {
 
     private String editRole = Constants.COMPANY_ADMIN;
 
+    /**
+     * 进入供应商分类页
+     *
+     * @return
+     */
     @RequestMapping("/type")
     public String supplierType() {
         if (SessionGetUtil.isUser()) {
@@ -53,41 +59,49 @@ public class SupplyTypeController {
         } else {
             logger.info("Session已失效，请重新登入");
             return "index/notLogin";
-         }
+        }
     }
 
+    /**
+     * 分页查询供应商分类
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param status
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryByPager", method = RequestMethod.GET)
-    public Pager4EasyUI<SupplyType> queryByPager(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize, @Param("status")String status) {
-       if (SessionGetUtil.isUser()) {
-//           try {
-               if (CheckRoleUtil.checkRoles(queryRole)) {
-                   logger.info("分页查询供应商分类");
-                   User user = SessionGetUtil.getUser();
-                   Pager pager = new Pager();
-                   pager.setPageNo(Integer.valueOf(pageNumber));
-                   pager.setPageSize(Integer.valueOf(pageSize));
-                   List<SupplyType> supplyTypes = new ArrayList<SupplyType>();
-                   if (status.equals("ALL")) {
-                       pager.setTotalRecords(supplyTypeService.count(user));
-                       supplyTypes = supplyTypeService.queryByPager(pager, user);
-                   } else {
-                       pager.setTotalRecords(supplyTypeService.countByStatus(status, user));
-                       supplyTypes = supplyTypeService.queryPagerByStatus(pager, status, user);
-                   }
-                   return new Pager4EasyUI<SupplyType>(pager.getTotalRecords(), supplyTypes);
-               }
-               return null;
-//           } catch (Exception e) {
-//               logger.info("查询失败，出现了异常");
-//               return null;
-//           }
-       } else {
-           logger.info("Session已失效，请重新登入");
-           return null;
-       }
+    public Pager4EasyUI<SupplyType> queryByPager(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize, @Param("status") String status) {
+        if (SessionGetUtil.isUser()) {
+            if (CheckRoleUtil.checkRoles(queryRole)) {
+                logger.info("分页查询供应商分类");
+                User user = SessionGetUtil.getUser();
+                Pager pager = new Pager();
+                pager.setPageNo(Integer.valueOf(pageNumber));
+                pager.setPageSize(Integer.valueOf(pageSize));
+                List<SupplyType> supplyTypes = new ArrayList<>();
+                if ("ALL".equals(status)) {
+                    pager.setTotalRecords(supplyTypeService.count(user));
+                    supplyTypes = supplyTypeService.queryByPager(pager, user);
+                } else {
+                    pager.setTotalRecords(supplyTypeService.countByStatus(status, user));
+                    supplyTypes = supplyTypeService.queryPagerByStatus(pager, status, user);
+                }
+                return new Pager4EasyUI<>(pager.getTotalRecords(), supplyTypes);
+            }
+            return null;
+        } else {
+            logger.info("Session已失效，请重新登入");
+            return null;
+        }
     }
 
+    /**
+     * 添加供应商分类
+     * @param supplyType
+     * @return
+     */
     @ResponseBody
     @RequestMapping("add")
     public ControllerResult add(SupplyType supplyType) {
@@ -101,7 +115,7 @@ public class SupplyTypeController {
                     return ControllerResult.getSuccessResult("添加供应商分类成功");
                 }
                 return ControllerResult.getFailResult("添加供应商分类失败，没有该权限操作");
-            }catch (Exception e) {
+            } catch (Exception e) {
                 logger.info("添加供应商分类失败，出现了一个错误");
                 return ControllerResult.getFailResult("添加供应商分类失败，出现了一个错误");
             }
@@ -111,37 +125,45 @@ public class SupplyTypeController {
         }
     }
 
+    /**
+     * 根据条件分页查询供应商分类
+     * @param pageNumber
+     * @param pageSize
+     * @param supplyTypeName
+     * @param companyId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "conditionPager", method = RequestMethod.GET)
-    public Pager4EasyUI<SupplyType> queryPagerByCondition(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize,
-                                                       @Param("supplyTypeName")String supplyTypeName, @Param("companyId")String companyId) {
+    public Pager4EasyUI<SupplyType> queryPagerByCondition(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize,
+                                                          @Param("supplyTypeName") String supplyTypeName, @Param("companyId") String companyId) {
         if (SessionGetUtil.isUser()) {
-//            try {
-                if (CheckRoleUtil.checkRoles(queryRole)) {
-                    logger.info("根据条件分页查询供应商分类");
-                    User user = SessionGetUtil.getUser();
-                    SupplyType supplyType = new SupplyType();
-                    supplyType.setSupplyTypeName(supplyTypeName);
-                    supplyType.setCompanyId(companyId);
-                    Pager pager = new Pager();
-                    pager.setPageNo(Integer.valueOf(pageNumber));
-                    pager.setPageSize(Integer.valueOf(pageSize));
-                    List<SupplyType> supplyTypes = new ArrayList<SupplyType>();
-                    pager.setTotalRecords(supplyTypeService.countByCondition(supplyType, user));
-                    supplyTypes = supplyTypeService.queryPagerByCondition(pager, supplyType, user);
-                    return new Pager4EasyUI<SupplyType>(pager.getTotalRecords(), supplyTypes);
-                }
-                return null;
-//            } catch (Exception e) {
-//                logger.info("查询失败，出现了异常");
-//                return null;
-//            }
+            if (CheckRoleUtil.checkRoles(queryRole)) {
+                logger.info("根据条件分页查询供应商分类");
+                User user = SessionGetUtil.getUser();
+                SupplyType supplyType = new SupplyType();
+                supplyType.setSupplyTypeName(supplyTypeName);
+                supplyType.setCompanyId(companyId);
+                Pager pager = new Pager();
+                pager.setPageNo(Integer.valueOf(pageNumber));
+                pager.setPageSize(Integer.valueOf(pageSize));
+                List<SupplyType> supplyTypes = new ArrayList<>();
+                pager.setTotalRecords(supplyTypeService.countByCondition(supplyType, user));
+                supplyTypes = supplyTypeService.queryPagerByCondition(pager, supplyType, user);
+                return new Pager4EasyUI<>(pager.getTotalRecords(), supplyTypes);
+            }
+            return null;
         } else {
             logger.info("Session已失效，请重新登入");
             return null;
         }
     }
 
+    /**
+     * 修改供应商分类
+     * @param supplyType
+     * @return
+     */
     @ResponseBody
     @RequestMapping("edit")
     public ControllerResult edit(SupplyType supplyType) {
@@ -155,7 +177,7 @@ public class SupplyTypeController {
                     return ControllerResult.getSuccessResult("修改供应商分类成功");
                 }
                 return ControllerResult.getFailResult("修改供应商分类失败，没有该权限操作");
-            }catch (Exception e) {
+            } catch (Exception e) {
                 logger.info("修改供应商分类失败，出现了一个错误");
                 return ControllerResult.getFailResult("添加供应商分类失败，出现了一个错误");
             }
@@ -165,16 +187,22 @@ public class SupplyTypeController {
         }
     }
 
+    /**
+     * 更新供应商分类状态
+     * @param id
+     * @param status
+     * @return
+     */
     @ResponseBody
-    @RequestMapping(value =  "updateStatus", method = RequestMethod.GET)
-    public ControllerResult updateStatus(@Param("id")String id, @Param("status")String status) {
+    @RequestMapping(value = "updateStatus", method = RequestMethod.GET)
+    public ControllerResult updateStatus(@Param("id") String id, @Param("status") String status) {
         if (SessionGetUtil.isUser()) {
             try {
                 if (CheckRoleUtil.checkRoles(editRole)) {
                     logger.info("更新供应商分类状态");
-                    if (status.equals("Y")) {
+                    if ("Y".equals(status)) {
                         supplyTypeService.active(id);
-                    } else if (status.equals("N")) {
+                    } else if ("N".equals(status)) {
                         supplyTypeService.inactive(id);
                     }
                     return ControllerResult.getSuccessResult("更新供应商分类状态成功");
@@ -190,26 +218,25 @@ public class SupplyTypeController {
         }
     }
 
+    /**
+     * 查询供应商分类
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryAll", method = RequestMethod.GET)
     public List<ComboBox4EasyUI> queryAll() {
         if (SessionGetUtil.isUser()) {
-//            try {
-                logger.info("查询供应商分类");
-                User user = SessionGetUtil.getUser();
-                List<SupplyType> supplyTypeList = supplyTypeService.queryAll(user);
-                List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<ComboBox4EasyUI>();
-                for (SupplyType supplyTypes : supplyTypeList) {
-                    ComboBox4EasyUI comboBox4EasyUI = new ComboBox4EasyUI();
-                    comboBox4EasyUI.setId(supplyTypes.getSupplyTypeId());
-                    comboBox4EasyUI.setText(supplyTypes.getSupplyTypeName());
-                    comboBox4EasyUIs.add(comboBox4EasyUI);
-                }
-                return comboBox4EasyUIs;
-//           comboBox4EasyUIs } catch (Exception e) {
-//                logger.info("查询失败，出现了异常");
-//                return null;
-//            }
+            logger.info("查询供应商分类");
+            User user = SessionGetUtil.getUser();
+            List<SupplyType> supplyTypeList = supplyTypeService.queryAll(user);
+            List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<>();
+            for (SupplyType supplyTypes : supplyTypeList) {
+                ComboBox4EasyUI comboBox4EasyUI = new ComboBox4EasyUI();
+                comboBox4EasyUI.setId(supplyTypes.getSupplyTypeId());
+                comboBox4EasyUI.setText(supplyTypes.getSupplyTypeName());
+                comboBox4EasyUIs.add(comboBox4EasyUI);
+            }
+            return comboBox4EasyUIs;
         } else {
             logger.info("Session已失效，请重新登入");
             return null;

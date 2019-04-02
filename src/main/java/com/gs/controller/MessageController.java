@@ -36,6 +36,10 @@ public class MessageController {
     @Resource
     private UserService userService;
 
+    /**
+     * 个人基本信息页面
+     * @return String
+     */
     @RequestMapping(value = "personal_message", method = RequestMethod.GET)
     private String personalMessage() {
         if (SessionGetUtil.isUser()) {
@@ -47,6 +51,16 @@ public class MessageController {
         }
     }
 
+    /**
+     * 信息修改
+     * @param uIcon
+     * @param address
+     * @param user
+     * @param file
+     * @param session
+     * @return
+     * @throws IOException
+     */
     @ResponseBody
     @RequestMapping(value = "queryBy_self", method = RequestMethod.POST)
     public ControllerResult querySelf(String uIcon, String address, User user, MultipartFile file, HttpSession session) throws IOException {

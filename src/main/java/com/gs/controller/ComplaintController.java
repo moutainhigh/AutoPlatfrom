@@ -42,6 +42,11 @@ public class ComplaintController {
 
     private String editRole1 = Constants.CAR_OWNER;
     private String queryRole1 = Constants.CAR_OWNER;
+
+    /**
+     * 显示投诉页面
+     * @return
+     */
     @RequestMapping(value = "show_complaint", method = RequestMethod.GET)
     public String complaint() {
         logger.info("显示投诉页面");
@@ -57,6 +62,12 @@ public class ComplaintController {
 
     }
 
+    /**
+     * 分页查询所有投诉
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="query_pager",method= RequestMethod.GET)
     public Pager4EasyUI<Complaint> queryPager(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize){
@@ -79,12 +90,17 @@ public class ComplaintController {
             complaintList = complaintService.queryByPagerUser(user, pager);
         }
 
-        return new Pager4EasyUI<Complaint>(pager.getTotalRecords(), complaintList);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), complaintList);
     }
 
+    /**
+     * 用户添加投诉
+     * @param complaint
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="add_customer", method=RequestMethod.POST)
-    public ControllerResult ConplaintAdd(Complaint complaint) {
+    public ControllerResult conplaintAdd(Complaint complaint) {
         if (!SessionGetUtil.isUser()) {
             logger.info("登陆已失效，请重新登入");
             return ControllerResult.getNotLoginResult("登入信息已失效，请重新登入");
@@ -105,9 +121,14 @@ public class ComplaintController {
         }
     }
 
+    /**
+     * 用户修改投诉
+     * @param complaint
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="edit_complaintContent", method=RequestMethod.POST)
-    public ControllerResult EditcomplaintContent(Complaint complaint) {
+    public ControllerResult editcomplaintContent(Complaint complaint) {
         if (!SessionGetUtil.isUser()) {
             logger.info("登陆已失效，请重新登入");
             return ControllerResult.getNotLoginResult("登入信息已失效，请重新登入");
@@ -126,9 +147,15 @@ public class ComplaintController {
         }
     }
 
+    /**
+     * 员工回复
+     * @param complaint
+     * @param session
+     * @return ControllerResult
+     */
     @ResponseBody
     @RequestMapping(value="add_admin", method=RequestMethod.POST)
-    public ControllerResult ConplaintReply(Complaint complaint, HttpSession session) {
+    public ControllerResult conplaintReply(Complaint complaint, HttpSession session) {
         if (!SessionGetUtil.isUser()) {
             logger.info("登陆已失效，请重新登入");
             return ControllerResult.getNotLoginResult("登入信息已失效，请重新登入");

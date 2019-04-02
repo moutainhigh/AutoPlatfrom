@@ -490,7 +490,7 @@ public class AccessoriesBuyController {
         if (SessionGetUtil.isUser()) {
             try {
                 if (CheckRoleUtil.checkRoles(queryRole)) {
-                    if (!status.equals("Y")) {
+                    if (!"Y".equals(status)) {
                         accessoriesBuyService.updateAccBuyCheck("Y", accBuyId);
                         return ControllerResult.getSuccessResult("操作成功");
                     } else {
@@ -516,10 +516,10 @@ public class AccessoriesBuyController {
         if (SessionGetUtil.isUser()) {
 
                 logger.info("默认查询本月下单统计报表显示");
-                List<LineBasic> lineBasics = new ArrayList<LineBasic>();
+                List<LineBasic> lineBasics = new ArrayList<>();
                 LineBasic lineBasic = new LineBasic();
                 User user = SessionGetUtil.getUser();
-                if (user.getCompanyId() != null && !user.getCompanyId().equals("")) {
+                if (user.getCompanyId() != null && !"".equals(user.getCompanyId())) {
                     companyId = user.getCompanyId();
                 }
                 lineBasic.setName("下单");
@@ -544,33 +544,33 @@ public class AccessoriesBuyController {
         if (SessionGetUtil.isUser()) {
 
                 logger.info("根据年，月，季度，周，日查询所有下单报表显示");
-                List<LineBasic> lineBasics = new ArrayList<LineBasic>();
+                List<LineBasic> lineBasics = new ArrayList<>();
                 LineBasic lineBasic = new LineBasic();
                 lineBasic.setName("下单");
                 User user = SessionGetUtil.getUser();
-                if (user.getCompanyId() != null && !user.getCompanyId().equals("")) {
+                if (user.getCompanyId() != null && !"".equals(user.getCompanyId())) {
                     companyId = user.getCompanyId();
                 }
-                if (start != null && !start.equals("") && end != null && !end.equals("") && type != null && !type.equals("")) {
-                    if (type.equals("year")) {
+                if (start != null && !"".equals(start) && end != null && !"".equals(end) && type != null && !"".equals(type)) {
+                    if ("year".equals(type)) {
                         HighchartsData.setStrYear(start, end);
                         dataCondition(start, end, "count", type, "year", "two", companyId);
                         lineBasic.setData(HighchartsData.doubleYearTwo);
                         lineBasic.setCategories(HighchartsData.strYear);
-                    } else if (type.equals("quarter")) {
+                    } else if ("quarter".equals(type)) {
                         dataCondition(start, end, "count", type, "quarter", "two", companyId);
                         lineBasic.setData(HighchartsData.doubleQuarterTwo);
                         lineBasic.setCategories(HighchartsData.strQuarter);
-                    } else if (type.equals("month")) {
+                    } else if ("month".equals(type)) {
                         dataCondition(start, end, "count", type, "month", "two", companyId);
                         lineBasic.setData(HighchartsData.doubleMonthTwo);
                         lineBasic.setCategories(HighchartsData.strMonth);
-                    } else if (type.equals("week")) {
+                    } else if ("week".equals(type)) {
                         HighchartsData.setStrWeek(start, end);
                         dataCondition(start, end, "count", type, "week", "two", companyId);
                         lineBasic.setData(HighchartsData.doubleWeekTwo);
                         lineBasic.setCategories(HighchartsData.strWeek);
-                    } else if (type.equals("day")) {
+                    } else if ("day".equals(type)) {
                         dataCondition(start, end, "count", type, "day", "two", companyId);
                         lineBasic.setData(HighchartsData.doubleDayTwo);
                         lineBasic.setCategories(HighchartsData.strDay);
@@ -592,10 +592,10 @@ public class AccessoriesBuyController {
         if (SessionGetUtil.isUser()) {
 
                 logger.info("默认查询本月支付统计报表显示");
-                List<LineBasic> lineBasics = new ArrayList<LineBasic>();
+                List<LineBasic> lineBasics = new ArrayList<>();
                 LineBasic lineBasic = new LineBasic();
                 User user = SessionGetUtil.getUser();
-                if (user.getCompanyId() != null && !user.getCompanyId().equals("")) {
+                if (user.getCompanyId() != null && !"".equals(user.getCompanyId())) {
                     companyId = user.getCompanyId();
                 }
                 lineBasic.setName("支付");
@@ -620,33 +620,33 @@ public class AccessoriesBuyController {
         if (SessionGetUtil.isUser()) {
 
                 logger.info("根据年，月，季度，周，日查询所有支付报表显示");
-                List<LineBasic> lineBasics = new ArrayList<LineBasic>();
+                List<LineBasic> lineBasics = new ArrayList<>();
                 LineBasic lineBasic = new LineBasic();
                 lineBasic.setName("支付");
                 User user = SessionGetUtil.getUser();
-                if (user.getCompanyId() != null && !user.getCompanyId().equals("")) {
+                if (user.getCompanyId() != null && !"".equals(user.getCompanyId())) {
                     companyId = user.getCompanyId();
                 }
-                if (start != null && !start.equals("") && end != null && !end.equals("") && type != null && !type.equals("")) {
-                    if (type.equals("year")) {
+                if (start != null && !"".equals(start) && end != null && !"".equals(end) && type != null && !"".equals(type)) {
+                    if ("year".equals(type)) {
                         HighchartsData.setStrYear(start, end);
                         dataCondition(start, end, "pay", type, "year", "one", companyId);
                         lineBasic.setData(HighchartsData.doubleYearOne);
                         lineBasic.setCategories(HighchartsData.strYear);
-                    } else if (type.equals("quarter")) {
+                    } else if ("quarter".equals(type)) {
                         dataCondition(start, end, "pay", type, "quarter", "one", companyId);
                         lineBasic.setData(HighchartsData.doubleQuarterOne);
                         lineBasic.setCategories(HighchartsData.strQuarter);
-                    } else if (type.equals("month")) {
+                    } else if ("month".equals(type)) {
                         dataCondition(start, end, "pay", type, "month", "one", companyId);
                         lineBasic.setData(HighchartsData.doubleMonthOne);
                         lineBasic.setCategories(HighchartsData.strMonth);
-                    } else if (type.equals("week")) {
+                    } else if ("week".equals(type)) {
                         HighchartsData.setStrWeek(start, end);
                         dataCondition(start, end, "pay", type, "week", "one", companyId);
                         lineBasic.setData(HighchartsData.doubleWeekOne);
                         lineBasic.setCategories(HighchartsData.strWeek);
-                    } else if (type.equals("day")) {
+                    } else if ("day".equals(type)) {
                         dataCondition(start, end, "pay", type, "day", "one", companyId);
                         lineBasic.setData(HighchartsData.doubleDayOne);
                         lineBasic.setCategories(HighchartsData.strDay);
@@ -667,9 +667,9 @@ public class AccessoriesBuyController {
     public void dateDay(String companyId, String type) {
         HighchartsData.doubleDayOne = new double[31];
         List<AccessoriesBuy> accessoriesBuys = null;
-        if (type.equals("count")) {
+        if ("count".equals(type)) {
             accessoriesBuys = accessoriesBuyService.queryByDefaultCount(companyId);
-        } else if (type.equals("pay")) {
+        } else if ("pay".equals(type)) {
             accessoriesBuys = accessoriesBuyService.queryByDefaultPay(companyId);
         }
 
@@ -677,9 +677,9 @@ public class AccessoriesBuyController {
         double[] doubles = new double[accessoriesBuys.size()];
         String[] strs = new String[accessoriesBuys.size()];
         for (AccessoriesBuy io : accessoriesBuys) {
-            if (type.equals("count")) {
+            if ("count".equals(type)) {
                 doubles[i] = io.getCoont();
-            } else if (type.equals("pay")) {
+            } else if ("pay".equals(type)) {
                 doubles[i] = io.getAccBuyMoney();
             }
 
@@ -689,9 +689,9 @@ public class AccessoriesBuyController {
         for (int j = 0, len = HighchartsData.strDay.length; j < len; j++) {
             for (int k = 0; k < strs.length; k++) {
                 if (HighchartsData.strDay[j].equals(strs[k])) {
-                    if (type.equals("count")) {
+                    if ("count".equals(type)) {
                         HighchartsData.doubleDayOne[j] = doubles[k];
-                    } else if (type.equals("pay")) {
+                    } else if ("pay".equals(type)) {
                         HighchartsData.doubleDayTwo[j] = doubles[k];
                     }
                 }
@@ -713,10 +713,10 @@ public class AccessoriesBuyController {
         HighchartsData.doubleYearTwo = new double[HighchartsData.yearLen];
         HighchartsData.doubleWeekOne = new double[HighchartsData.weekLen];
         HighchartsData.doubleWeekTwo = new double[HighchartsData.weekLen];
-        List<AccessoriesBuy> accessoriesBuys = new ArrayList<AccessoriesBuy>();
-        if (species.equals("count")) {
+        List<AccessoriesBuy> accessoriesBuys = new ArrayList<>();
+        if ("count".equals(species)) {
             accessoriesBuys = accessoriesBuyService.queryByConditionCount(start, end, type, companyId);
-        } else if (species.equals("pay")) {
+        } else if ("pay".equals(species)) {
             accessoriesBuys = accessoriesBuyService.queryByConditionPay(start, end, type, companyId);
         }
         int i = 0;
@@ -724,9 +724,9 @@ public class AccessoriesBuyController {
         String[] strs = new String[accessoriesBuys.size()];
         HighchartsData.len = 0;
         for (AccessoriesBuy io : accessoriesBuys) {
-            if (species.equals("count")) {
+            if ("count".equals(species)) {
                 doubles[i] = io.getCoont();
-            } else if (species.equals("pay")) {
+            } else if ("pay".equals(species)) {
                 doubles[i] = io.getAccBuyMoney();
             }
             if (date.equals("month")) {

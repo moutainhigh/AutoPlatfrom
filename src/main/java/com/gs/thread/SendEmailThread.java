@@ -14,7 +14,9 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Created by Administrator on 2017-05-04. 发送邮件的线程
+ *
+ * @author Administrator
+ * @date 2017-05-04
  */
 public class SendEmailThread implements Runnable {
 

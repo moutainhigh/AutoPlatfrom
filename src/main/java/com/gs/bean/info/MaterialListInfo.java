@@ -3,7 +3,9 @@ package com.gs.bean.info;
 import java.util.Date;
 
 /**
- * Created by Xiao-Qiang on 2017/4/26.
+ *
+ * @author Xiao-Qiang
+ * @date 2017/4/26
  */
 public class MaterialListInfo {
     private String materialId;

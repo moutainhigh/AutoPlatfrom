@@ -62,13 +62,21 @@ public class SalaryController {
     private IncomingOutgoingService incomingOutgoingService;
 
 
-    // 可以查看的角色：董事长、财务员、超级管理员、普通管理员
+    /**
+     * 可以查看的角色：董事长、财务员、超级管理员、普通管理员
+     */
     private String queryRole = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_ACCOUNTING + ","
             + Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN;
 
-    // 可以修改的角色：董事长、财务员
+    /**
+     * 可以修改的角色：董事长、财务员
+     */
     private String editRole = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_ACCOUNTING;
 
+    /**
+     * 工资管理页面
+     * @return
+     */
     @RequestMapping(value = "show_salary", method = RequestMethod.GET)
     public String salary() {
         if(SessionGetUtil.isUser()) {
@@ -83,6 +91,12 @@ public class SalaryController {
         }
     }
 
+    /**
+     * 分页查询所有工资
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="query_pager",method= RequestMethod.GET)
     public Pager4EasyUI<Salary> queryPager(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize){
@@ -104,6 +118,11 @@ public class SalaryController {
         }
     }
 
+    /**
+     * 添加工资
+     * @param salary
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="add_salary", method=RequestMethod.POST)
     public ControllerResult incomingTypeAdd(Salary salary){
@@ -131,6 +150,11 @@ public class SalaryController {
         }
     }
 
+    /**
+     * 更新工资
+     * @param salary
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="update_salary", method=RequestMethod.POST)
     public ControllerResult incomingUpdate(Salary salary){
@@ -149,6 +173,14 @@ public class SalaryController {
         }
     }
 
+    /**
+     * 根据条件分页查询所有工资
+     * @param pageNumber
+     * @param pageSize
+     * @param userName
+     * @param salaryRange
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="query_search",method= RequestMethod.GET)
     public Pager4EasyUI<Salary> queryPagerSearch(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize,
@@ -180,6 +212,10 @@ public class SalaryController {
         }
     }
 
+    /**
+     * 导出工资
+     * @param response
+     */
     @RequestMapping(value = "export",method=RequestMethod.GET)
     public void exportExcel(HttpServletResponse response) {
         if(SessionGetUtil.isUser()) {
@@ -191,10 +227,9 @@ public class SalaryController {
                     List<Salary> salarylist = salaryService.queryAll(user);
                     String title = "员工工资信息";
                     String[] rowsName = new String[]{"工资编号", "员工名称", "奖金", "罚款", "总工资", "工资描述", "发放时间"};
-                    List<Object[]> dataList = new ArrayList<Object[]>();
+                    List<Object[]> dataList = new ArrayList<>();
                     Object[] objs = null;
-                    for (int i = 0; i < salarylist.size(); i++) {
-                        Salary salary = salarylist.get(i);
+                    for (Salary salary : salarylist) {
                         objs = new Object[rowsName.length];
                         objs[0] = salary.getSalaryId();
                         objs[1] = salary.getUser().getUserName();
@@ -217,6 +252,13 @@ public class SalaryController {
             logger.info("Session已失效，请重新登入");
         }
     }
+
+    /**
+     * 导入工资
+     * @param fileSalary
+     * @return
+     * @throws IOException
+     */
     @ResponseBody
     @RequestMapping(value="readExcel",method=RequestMethod.POST)
     public ControllerResult readExcel(MultipartFile fileSalary) throws IOException{
@@ -239,8 +281,8 @@ public class SalaryController {
                 Salary salary = null;
                 User sessionUser = SessionGetUtil.getUser();
                 //list中存的就是excel中的数据，可以根据excel中每一列的值转换成你所需要的值（从0开始），如：
-                List<Salary> salaries = new ArrayList<Salary>();
-                List<IncomingOutgoing> incomingOutgoings = new ArrayList<IncomingOutgoing>();
+                List<Salary> salaries = new ArrayList<>();
+                List<IncomingOutgoing> incomingOutgoings = new ArrayList<>();
                 OutgoingType outgoingType = outgoingTypeService.queryByName(Constants.SALARY_OUT);
 
                 for (ArrayList<String> arr : list) {

@@ -14,9 +14,9 @@ import java.util.Date;
 import java.util.Properties;
 
 /**
- *由Wjhsmart技术支持
  *
- *@author Wjhsmart
+ *
+ *@author qm
  *@since 2017-04-12 08:08:20
  */
 public class CreateDAOUtil extends JFrame {
@@ -267,9 +267,9 @@ public class CreateDAOUtil extends JFrame {
         StringBuilder classInfo = new StringBuilder("/**\r\n*");
         StringBuilder importBean = new StringBuilder("import " + clazz + ";\r\n");
         importBean.append("import org.springframework.stereotype.Repository;\r\n");
-        classInfo.append("由Wjhsmart技术支持\r\n*");
+        classInfo.append("\r\n*");
         classInfo.append("\r\n");
-        classInfo.append("*@author Wjhsmart\r\n");
+        classInfo.append("*@author qm\r\n");
         classInfo.append("*@since ");
         classInfo.append(sdf.format(new Date()));
         classInfo.append("\r\n");

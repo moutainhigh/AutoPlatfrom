@@ -8,9 +8,9 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
-*由Wjhsmart技术支持
 *
-*@author Wjhsmart
+*
+*@author qm
 *@since 2017-04-14 16:36:52
 */
 public interface WorkInfoService extends BaseService<String, WorkInfo>{

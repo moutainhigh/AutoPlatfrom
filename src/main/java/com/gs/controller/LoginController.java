@@ -41,6 +41,8 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.util.regex.Pattern.*;
+
 /**
  * Created by Xiao-Qiang on 2017/5/2.
  */
@@ -69,11 +71,17 @@ public class LoginController {
 
     private String phoneCode;
 
+    /**
+     * 登录
+     * @param number
+     * @param pwd
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "login", method = RequestMethod.POST)
     public ControllerResult login(@Param("number")String number, @Param("pwd")String pwd) {
-        logger.info("登陆");
-        if (number != null && !number.equals("") && pwd != null && !pwd.equals("")) {
+        logger.info("登录");
+        if (number != null && !"".equals(number) && pwd != null && !"".equals(pwd)) {
             Subject subject = SecurityUtils.getSubject();
             User user = new User();
             user.setUserEmail(number);
@@ -81,7 +89,7 @@ public class LoginController {
             user.setUserPwd(EncryptUtil.md5Encrypt(pwd));
             User u = userService.queryLogin(user);
             if (u != null) {
-                if (u.getUserStatus().equals("Y")) {
+                if ("Y".equals(u.getUserStatus())) {
                     Role role = roleService.queryByUserId(u.getUserId());
                     if (!role.getRoleName().equals(Constants.CAR_OWNER)) {
                         userService.updateLoginTime(u.getUserId());
@@ -109,13 +117,21 @@ public class LoginController {
         }
     }
 
+    /**
+     * 车主注册
+     * @param number
+     * @param pwd
+     * @param password
+     * @param code
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "register", method = RequestMethod.POST)
     public ControllerResult register(@Param("number")String number, @Param("pwd")String pwd, @Param("password") String password, @Param("code") String code) {
         logger.info("车主注册");
-        if (number != null && !number.equals("") && pwd != null && !pwd.equals("") && password != null && !password.equals("")) {
+        if (number != null && !"".equals(number) && pwd != null && !"".equals(pwd) && password != null && !"".equals(password)) {
             if (pwd.equals(password)) {
-                Pattern p = Pattern.compile("^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\\.([a-zA-Z0-9_-])+)+$");
+                Pattern p = compile("^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\\.([a-zA-Z0-9_-])+)+$");
                 Matcher m = p.matcher(number);
                 boolean email = m.matches();
 
@@ -134,7 +150,7 @@ public class LoginController {
                     if (userService.queryPhone(number) > 0) {
                         return ControllerResult.getFailResult("注册失败，该手机号已经存在");
                     } else {
-                        if (code == null || code.equals("")) {
+                        if (code == null || "".equals(code)) {
                             return ControllerResult.getFailResult("注册失败，请输入验证码");
                         } else {
                             if (!code.equals(phoneCode)) {
@@ -193,19 +209,29 @@ public class LoginController {
         }
     }
 
+    /**
+     * 获取短信验证码
+     * @param userPhone
+     * @param session
+     * @return
+     */
     @ResponseBody
     @RequestMapping("sendCode")
     public ControllerResult sendCode(@Param("userPhone") String userPhone,HttpSession session) {
         logger.info("获取短信验证码");
         phoneCode = GetCodeUtil.getCode(6,0);
         session.setAttribute(userPhone,phoneCode);
-        String to = userPhone;
         String smsContent = "【创意科技】您的验证码为" + phoneCode + "，请于30分钟内正确输入，如非本人操作，请忽略此短信。";
-        IndustrySMS is = new IndustrySMS(to, smsContent);
+        IndustrySMS is = new IndustrySMS(userPhone, smsContent);
         is.execute();
         return ControllerResult.getSuccessResult("验证码发送成功，请注意查收");
     }
 
+    /**
+     * 验证成功
+     * @param userId
+     * @return
+     */
     @RequestMapping("ok")
     public ModelAndView ok(String userId) {
         logger.info("验证成功");
@@ -218,6 +244,11 @@ public class LoginController {
         return mav;
     }
 
+    /**
+     * 注销
+     * @param session
+     * @return
+     */
     @RequestMapping("logout")
     public String logout(HttpSession session) {
         logger.info("注销");

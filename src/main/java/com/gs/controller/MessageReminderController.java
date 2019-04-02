@@ -46,8 +46,12 @@ public class MessageReminderController {
             + Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN;;
     private String editRole = Constants.COMPANY_ADMIN + ","+ Constants.COMPANY_RECEIVE;
 
+    /**
+     * 显示维修保养提醒页面
+     * @return
+     */
     @RequestMapping(value = "show_MessageReminder", method = RequestMethod.GET)
-    public String MessageReminder() {
+    public String messageReminder() {
         if (!SessionGetUtil.isUser()) {
             logger.info("登陆已失效，请重新登入");
             return "index/notLogin";
@@ -59,6 +63,12 @@ public class MessageReminderController {
         return "customer/maintenance_reminder";
     }
 
+    /**
+     * 分页查询所有提醒
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="query_pager",method= RequestMethod.GET)
     public Pager4EasyUI<MaintainRemind> queryPager(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize){
@@ -67,15 +77,20 @@ public class MessageReminderController {
             logger.info("登陆已失效，请重新登入");
             return null;
         }
-        User Loginuser = SessionGetUtil.getUser();
+        User loginUser = SessionGetUtil.getUser();
         Pager pager = new Pager();
         pager.setPageNo(Integer.valueOf(pageNumber));
         pager.setPageSize(Integer.valueOf(pageSize));
-        pager.setTotalRecords(maintainRemindService.count(Loginuser));
-        List<MaintainRemind> maintainRemindList = maintainRemindService.queryByPager(pager,Loginuser);
-        return new Pager4EasyUI<MaintainRemind>(pager.getTotalRecords(), maintainRemindList);
+        pager.setTotalRecords(maintainRemindService.count(loginUser));
+        List<MaintainRemind> maintainRemindList = maintainRemindService.queryByPager(pager,loginUser);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), maintainRemindList);
     }
 
+    /**
+     * 更新维修保养提醒
+     * @param maintainRemind
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="edit", method=RequestMethod.POST)
     public ControllerResult editMainteranceRecord(MaintainRemind maintainRemind) {
@@ -89,7 +104,6 @@ public class MessageReminderController {
             return ControllerResult.getFailResult("更新失败，没有该权限操作");
         }
         try {
-        /*maintainRemind.setRemindId("1e8f6410-24f5-11e7-8ee3-00909e9aaeb9");*/
             maintainRemindService.update(maintainRemind);
             return ControllerResult.getSuccessResult("更新成功");
         } catch (Exception e) {
@@ -97,6 +111,15 @@ public class MessageReminderController {
             return ControllerResult.getFailResult("更新失败，出现了一个错误");
         }
     }
+
+    /**
+     * 根据条件分页查询维修保养记录提醒
+     * @param pageNumber
+     * @param pageSize
+     * @param userName
+     * @param searchRemindType
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "condition_pager", method = RequestMethod.GET)
     public Pager4EasyUI<MaintainRemind> queryPagerByCondition(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize,
@@ -112,12 +135,12 @@ public class MessageReminderController {
             Pager pager = new Pager();
             pager.setPageNo(Integer.valueOf(pageNumber));
             pager.setPageSize(Integer.valueOf(pageSize));
-            List<MaintainRemind> reminds = new ArrayList<MaintainRemind>();
-            User LoginUser = SessionGetUtil.getUser();
-            pager.setTotalRecords(maintainRemindService.countByCondition(remind,LoginUser));
-            reminds = maintainRemindService.queryPagerByCondition(pager, remind,LoginUser);
+            List<MaintainRemind> reminds = new ArrayList<>();
+            User loginUser = SessionGetUtil.getUser();
+            pager.setTotalRecords(maintainRemindService.countByCondition(remind,loginUser));
+            reminds = maintainRemindService.queryPagerByCondition(pager, remind,loginUser);
 
-            return new Pager4EasyUI<MaintainRemind>(pager.getTotalRecords(), reminds);
+            return new Pager4EasyUI<>(pager.getTotalRecords(), reminds);
         } else {
             logger.info("Session已失效，请重新登入");
             return null;

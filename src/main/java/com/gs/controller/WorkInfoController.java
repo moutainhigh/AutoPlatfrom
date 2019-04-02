@@ -51,13 +51,21 @@ public class WorkInfoController {
 
     private String queryRole2 = Constants.COMPANY_ARTIFICER;
 
-    // 可以修改的角色：董事长、技师、接待员
+    /**
+     * 可以修改的角色：董事长、技师、接待员
+     */
     private String editRole = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_RECEIVE + "," + Constants.COMPANY_ARTIFICER;
 
-    // 可以查看的角色：董事长、财务员、超级管理员、普通管理员
+    /**
+     * 可以查看的角色：董事长、财务员、超级管理员、普通管理员
+     */
     private String queryRole1 = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_ACCOUNTING + ","
             + Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN;
 
+    /**
+     * 工单显示
+     * @return
+     */
     @RequestMapping(value = "work", method = RequestMethod.GET)
     private String workInfo() {
         if (SessionGetUtil.isUser()) {
@@ -72,10 +80,16 @@ public class WorkInfoController {
         }
     }
 
-
+    /**
+     * 分页查询所有工单
+     * @param pageNumber
+     * @param pageSize
+     * @param session
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "workInfo_pager", method= RequestMethod.GET)
-    public Pager4EasyUI<WorkInfo> info_pager(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize,HttpSession session){
+    public Pager4EasyUI<WorkInfo> infoPager(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize,HttpSession session){
         if (SessionGetUtil.isUser()) {
             try {
                 if (CheckRoleUtil.checkRoles(queryRole)) {
@@ -86,7 +100,7 @@ public class WorkInfoController {
                     pager.setPageSize(Integer.valueOf(pageSize));
                     pager.setTotalRecords(workInfoService.count(user));
                     List<WorkInfo> workInfo = workInfoService.queryByPager(pager, user);
-                    return new Pager4EasyUI<WorkInfo>(pager.getTotalRecords(), workInfo);
+                    return new Pager4EasyUI<>(pager.getTotalRecords(), workInfo);
                 } else if (CheckRoleUtil.checkRoles(queryRole2)){
                     logger.info("技师查询自己的工单");
                     User user = (User)session.getAttribute("user");
@@ -95,7 +109,7 @@ public class WorkInfoController {
                     pager.setPageSize(Integer.valueOf(pageSize));
                     pager.setTotalRecords(workInfoService.countWorkUserId(user.getUserId()));
                     List<WorkInfo> workInfos = workInfoService.queryWorkUserId(pager,user.getUserId());
-                    return new Pager4EasyUI<WorkInfo>(pager.getTotalRecords(), workInfos);
+                    return new Pager4EasyUI<>(pager.getTotalRecords(), workInfos);
                 }
                 return null;
             } catch (Exception e) {
@@ -108,10 +122,16 @@ public class WorkInfoController {
         }
     }
 
-
+    /**
+     * 分页查询所有可用工单
+     * @param pageNumber
+     * @param pageSize
+     * @param session
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "workInfo_Status_Y", method= RequestMethod.GET)
-    public Pager4EasyUI<WorkInfo> info_pager_Y(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize,HttpSession session){
+    public Pager4EasyUI<WorkInfo> infoPagerY(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize,HttpSession session){
         if (SessionGetUtil.isUser()) {
             try {
                 if (CheckRoleUtil.checkRoles(queryRole)) {
@@ -122,7 +142,7 @@ public class WorkInfoController {
                     pager.setPageSize(Integer.valueOf(pageSize));
                     pager.setTotalRecords(workInfoService.count_Y(user));
                     List<WorkInfo> workInfo = workInfoService.queryByPager_Y(pager, user);
-                    return new Pager4EasyUI<WorkInfo>(pager.getTotalRecords(), workInfo);
+                    return new Pager4EasyUI<>(pager.getTotalRecords(), workInfo);
                 } else if (CheckRoleUtil.checkRoles(queryRole2)){
                     logger.info("技师查询自己可用的工单");
                     User user = (User)session.getAttribute("user");
@@ -131,7 +151,7 @@ public class WorkInfoController {
                     pager.setPageSize(Integer.valueOf(pageSize));
                     pager.setTotalRecords(workInfoService.countWorkUserId_Y(user.getUserId()));
                     List<WorkInfo> workInfos = workInfoService.queryWorkUserId_Y(pager,user.getUserId());
-                    return new Pager4EasyUI<WorkInfo>(pager.getTotalRecords(), workInfos);
+                    return new Pager4EasyUI<>(pager.getTotalRecords(), workInfos);
                 }
                 return null;
             } catch (Exception e) {
@@ -144,12 +164,16 @@ public class WorkInfoController {
         }
     }
 
-
-
-
+    /**
+     * 分页查询所有不可用工单
+     * @param pageNumber
+     * @param pageSize
+     * @param session
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "workInfo_Status_N", method= RequestMethod.GET)
-    public Pager4EasyUI<WorkInfo> info_pager_N(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize,HttpSession session){
+    public Pager4EasyUI<WorkInfo> infoPagerN(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize,HttpSession session){
         if (SessionGetUtil.isUser()) {
             try {
                 if (CheckRoleUtil.checkRoles(queryRole)) {
@@ -160,7 +184,7 @@ public class WorkInfoController {
                     pager.setPageSize(Integer.valueOf(pageSize));
                     pager.setTotalRecords(workInfoService.count_N(user));
                     List<WorkInfo> workInfo = workInfoService.queryByPager_N(pager, user);
-                    return new Pager4EasyUI<WorkInfo>(pager.getTotalRecords(), workInfo);
+                    return new Pager4EasyUI<>(pager.getTotalRecords(), workInfo);
                 } else if (CheckRoleUtil.checkRoles(queryRole2)){
                     logger.info("技师查询自己不可用的工单");
                     User user = (User)session.getAttribute("user");
@@ -169,7 +193,7 @@ public class WorkInfoController {
                     pager.setPageSize(Integer.valueOf(pageSize));
                     pager.setTotalRecords(workInfoService.countWorkUserId_N(user.getUserId()));
                     List<WorkInfo> workInfos = workInfoService.queryWorkUserId_N(pager,user.getUserId());
-                    return new Pager4EasyUI<WorkInfo>(pager.getTotalRecords(), workInfos);
+                    return new Pager4EasyUI<>(pager.getTotalRecords(), workInfos);
                 }
                 return null;
             } catch (Exception e) {
@@ -182,10 +206,15 @@ public class WorkInfoController {
         }
     }
 
-
+    /**
+     * 指派员工
+     * @param workInfo
+     * @param maintainRecord
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "workInfo_update", method = RequestMethod.POST)
-    public ControllerResult info_update(WorkInfo workInfo,MaintainRecord maintainRecord){
+    public ControllerResult infoUpdate(WorkInfo workInfo,MaintainRecord maintainRecord){
         if (SessionGetUtil.isUser()) {
             try {
                 if (CheckRoleUtil.checkRoles(editRole)) {
@@ -206,6 +235,10 @@ public class WorkInfoController {
         }
     }
 
+    /**
+     * 根据工单Id查询
+     * @param workInfo
+     */
     @ResponseBody
     @RequestMapping(value = "workInfo_byId", method = RequestMethod.GET)
     public void workById(WorkInfo workInfo) {
@@ -216,16 +249,22 @@ public class WorkInfoController {
         }
     }
 
+    /**
+     * 状态修改
+     * @param id
+     * @param status
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "workInfo_status", method = RequestMethod.GET)
-    public ControllerResult info_status(@Param("id")String id, @Param("status")String status){
+    public ControllerResult infoStatus(@Param("id")String id, @Param("status")String status){
         if (SessionGetUtil.isUser()) {
             try {
                 if (CheckRoleUtil.checkRoles(editRole)) {
                     logger.info("状态修改");
-                    if(status.equals("Y")){
+                    if("Y".equals(status)){
                         workInfoService.inactive(id);
-                    } else if (status.equals("N")) {
+                    } else if ("N".equals(status)) {
                         workInfoService.active(id);
                     }
                     return ControllerResult.getSuccessResult("修改状态成功");
@@ -248,17 +287,22 @@ public class WorkInfoController {
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
     }
 
+    /**
+     * 默认查询本月工单报表显示
+     * @param companyId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="query_default",method= RequestMethod.GET)
     public List<LineBasic> queryAll(@Param("companyId")String companyId){
        if(SessionGetUtil.isUser()) {
            if(CheckRoleUtil.checkRoles(queryRole1)) {
                logger.info("默认查询本月工单报表显示");
-               List<LineBasic> lineBasics = new ArrayList<LineBasic>();
+               List<LineBasic> lineBasics = new ArrayList<>();
                LineBasic lineBasic = new LineBasic();
                LineBasic lineBasic1 = new LineBasic();
                User user = SessionGetUtil.getUser();
-               if(user.getCompanyId() != null && !user.getCompanyId().equals("")){
+               if(user.getCompanyId() != null && !"".equals(user.getCompanyId())){
                    companyId = user.getCompanyId();
                }
                lineBasic.setName("保养");
@@ -281,6 +325,15 @@ public class WorkInfoController {
 
     }
 
+    /**
+     * 根据年，月，季度，周，日查询所有工单显示
+     * @param start
+     * @param end
+     * @param type
+     * @param companyId
+     * @return
+     */
+
     @ResponseBody
     @RequestMapping(value="query_condition",method= RequestMethod.GET)
     public List<LineBasic> queryCondition(@Param("start")String start,@Param("end")String end,
@@ -288,17 +341,17 @@ public class WorkInfoController {
         if(SessionGetUtil.isUser()) {
             if(CheckRoleUtil.checkRoles(queryRole1)) {
                 logger.info("根据年，月，季度，周，日查询所有工单显示");
-                List<LineBasic> lineBasics = new ArrayList<LineBasic>();
+                List<LineBasic> lineBasics = new ArrayList<>();
                 LineBasic lineBasic = new LineBasic();
                 LineBasic lineBasic1 = new LineBasic();
                 lineBasic.setName("保养");
                 lineBasic1.setName("维修");
                 User user = SessionGetUtil.getUser();
-                if (user.getCompanyId() != null && !user.getCompanyId().equals("")) {
+                if (user.getCompanyId() != null && !"".equals(user.getCompanyId())) {
                     companyId = user.getCompanyId();
                 }
-                if (start != null && !start.equals("") && end != null && !end.equals("") && type != null && !type.equals("")) {
-                    if (type.equals("year")) {
+                if (start != null && !"".equals(start) && end != null && !"".equals(end) && type != null && !"".equals(type)) {
+                    if ("year".equals(type)) {
                         HighchartsData.setStrYear(start, end);
                         dataCondition(start, end, "保养", type, "year", "one", companyId);
                         lineBasic.setData(HighchartsData.doubleYearOne);
@@ -306,21 +359,21 @@ public class WorkInfoController {
                         lineBasic1.setData(HighchartsData.doubleYearTwo);
                         lineBasic.setCategories(HighchartsData.strYear);
                         lineBasic1.setCategories(HighchartsData.strYear);
-                    } else if (type.equals("quarter")) {
+                    } else if ("quarter".equals(type)) {
                         dataCondition(start, end, "保养", type, "quarter", "one", companyId);
                         lineBasic.setData(HighchartsData.doubleQuarterOne);
                         dataCondition(start, end, "维修", type, "quarter", "two", companyId);
                         lineBasic1.setData(HighchartsData.doubleQuarterTwo);
                         lineBasic.setCategories(HighchartsData.strQuarter);
                         lineBasic1.setCategories(HighchartsData.strQuarter);
-                    } else if (type.equals("month")) {
+                    } else if ("month".equals(type)) {
                         dataCondition(start, end, "保养", type, "month", "one", companyId);
                         lineBasic.setData(HighchartsData.doubleMonthOne);
                         dataCondition(start, end, "维修", type, "month", "two", companyId);
                         lineBasic1.setData(HighchartsData.doubleMonthTwo);
                         lineBasic.setCategories(HighchartsData.strMonth);
                         lineBasic1.setCategories(HighchartsData.strMonth);
-                    } else if (type.equals("week")) {
+                    } else if ("week".equals(type)) {
                         HighchartsData.setStrWeek(start, end);
                         dataCondition(start, end, "保养", type, "week", "one", companyId);
                         lineBasic.setData(HighchartsData.doubleWeekOne);
@@ -328,7 +381,7 @@ public class WorkInfoController {
                         lineBasic1.setData(HighchartsData.doubleWeekTwo);
                         lineBasic.setCategories(HighchartsData.strWeek);
                         lineBasic1.setCategories(HighchartsData.strWeek);
-                    } else if (type.equals("day")) {
+                    } else if ("day".equals(type)) {
                         dataCondition(start, end, "保养", type, "day", "one", companyId);
                         lineBasic.setData(HighchartsData.doubleDayOne);
                         dataCondition(start, end, "维修", type, "day", "two", companyId);
@@ -348,16 +401,18 @@ public class WorkInfoController {
         }
     }
 
-
-    /*  默认查询本月的工单
-    * */
+    /**
+     * 默认查询本月的工单
+     * @param type
+     * @param companyId
+     */
     public void dateDay(String type,String companyId){
         HighchartsData.doubleDayTwo = new double[31];
         HighchartsData.doubleDayOne = new double[31];
         List<WorkInfo> workInfos = null;
-        if(type.equals("one")){
+        if("one".equals(type)){
             workInfos = workInfoService.queryByDefault("保养",companyId);
-        }else if(type.equals("two")){
+        }else if("two".equals(type)){
             workInfos = workInfoService.queryByDefault("维修",companyId);
         }
         int i = 0;
@@ -371,9 +426,9 @@ public class WorkInfoController {
         for(int j = 0,len = HighchartsData.strDay.length; j <len ; j++){
             for(int k = 0; k < strs.length; k++){
                 if(HighchartsData.strDay[j].equals(strs[k])){
-                    if(type.equals("two")){
+                    if("two".equals(type)){
                         HighchartsData.doubleDayTwo[j] = doubles[k];
-                    }else if(type.equals("one")){
+                    }else if("one".equals(type)){
                         HighchartsData.doubleDayOne[j] = doubles[k];
                     }
 
@@ -383,9 +438,17 @@ public class WorkInfoController {
 
 
     }
-    /*
-    *  按年，季度，月，周，日，查询 工单
-    * */
+
+    /**
+     * 按年，季度，月，周，日，查询 工单
+     * @param start
+     * @param end
+     * @param maintainOrFix
+     * @param type
+     * @param date
+     * @param species
+     * @param companyId
+     */
     public void dataCondition(String start,String end,String maintainOrFix,String type,String date,String species,String companyId){
         HighchartsData.doubleDayTwo = new double[31];
         HighchartsData.doubleDayOne = new double[31];
@@ -404,33 +467,33 @@ public class WorkInfoController {
         HighchartsData.len = 0;
         for(WorkInfo io: workInfos) {
             doubles[i] = io.getCoont();
-            if(date.equals("month")) {
+            if("month".equals(date)) {
                 strs[i] = HighchartsData.dateFormat(io.getWorkCreatedTime(), "month");
                 HighchartsData.len = HighchartsData.strMonth.length;
-            }else if(date.equals("day")){
+            }else if("day".equals(date)){
                 strs[i] = HighchartsData.dateFormat(io.getWorkCreatedTime(), "day");
                 HighchartsData.len = HighchartsData.strDay.length;
-            }else if(date.equals("quarter")){
+            }else if("quarter".equals(date)){
                 strs[i] = HighchartsData.dateFormat(io.getWorkCreatedTime(), "quarter");
                 HighchartsData.len = HighchartsData.strQuarter.length;
-            }else if(date.equals("year")){
+            }else if("year".equals(date)){
                 strs[i] = HighchartsData.dateFormat(io.getWorkCreatedTime(),"year");
                 HighchartsData.len = HighchartsData.strYear.length;
-            }else if(date.equals("week")){
+            }else if("week".equals(date)){
                 strs[i] = "第"+String.valueOf(HighchartsData.getWeek(HighchartsData.dateFormat(io.getWorkCreatedTime())))+"周";
                 HighchartsData.len = HighchartsData.strWeek.length;
             }
             i++;
         }
-        if(date.equals("quarter")) {
+        if("quarter".equals(date)) {
             HighchartsData.getQuarter(strs,doubles,species);
-        }else if(date.equals("month")){
+        }else if("month".equals(date)){
             HighchartsData.getMonth(strs,doubles,species);
-        }else if(date.equals("day")){
+        }else if("day".equals(date)){
             HighchartsData.getDay(strs,doubles,species);
-        }else if(date.equals("year")){
+        }else if("year".equals(date)){
             HighchartsData. getYear(strs,doubles,species);
-        }else if(date.equals("week")){
+        }else if("week".equals(date)){
             HighchartsData.getWeek(strs,doubles,species);
         }
     }

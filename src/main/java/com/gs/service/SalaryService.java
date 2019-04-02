@@ -7,18 +7,18 @@ import com.gs.common.bean.Pager;
 import java.util.List;
 
 /**
-*由Wjhsmart技术支持
 *
-*@author Wjhsmart
+*
+*@author qm
 *@since 2017-04-14 16:36:52
 */
 public interface SalaryService extends BaseService<String, Salary>{
 
-    public List<Salary> queryByUserId(Pager pager, String userId);
-    public int countByUserId(String userId);
+     List<Salary> queryByUserId(Pager pager, String userId);
+     int countByUserId(String userId);
 
-    public boolean saveBatchInsert(List<Salary> salarys);
+     boolean saveBatchInsert(List<Salary> salarys);
 
-    public List<Salary> queryByPagerSearch(Pager pager,Salary salary,User user);
-    public int countSearch(Salary salary,User user);
+     List<Salary> queryByPagerSearch(Pager pager,Salary salary,User user);
+     int countSearch(Salary salary,User user);
 }

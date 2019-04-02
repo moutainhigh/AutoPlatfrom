@@ -9,15 +9,15 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
-*由Wjhsmart技术支持
 *
-*@author Wjhsmart
+*
+*@author qm
 *@since 2017-04-14 16:35:15
 */
 @Repository
 public interface CarColorDAO extends BaseDAO<String, CarColor>{
-    public List<CarColor> queryByColorPager(@Param("status")String status, @Param("pager")Pager pager);
-    public int statusCount(String status);
-    public List<CarColor> searchByPager(@Param("colorName")String colorName, @Param("pager")Pager pager);
-    public int searchCount(String colorName);
+     List<CarColor> queryByColorPager(@Param("status")String status, @Param("pager")Pager pager);
+     int statusCount(String status);
+     List<CarColor> searchByPager(@Param("colorName")String colorName, @Param("pager")Pager pager);
+     int searchCount(String colorName);
 }

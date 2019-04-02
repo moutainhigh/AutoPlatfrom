@@ -29,6 +29,12 @@ public class VilidateController {
     @Resource
     private VilidateService vilidateService;
 
+    /**
+     * 手机号验证
+     * @param userPhone
+     * @param editPhone
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryIsExist_userPhone", method = RequestMethod.GET)
     public String queryIsExistUserPhone(@Param("userPhone")String userPhone, @Param("editPhone") String editPhone) {
@@ -36,7 +42,7 @@ public class VilidateController {
             logger.info("手机号验证");
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editPhone.equals(userPhone)) {
                 int isExist = vilidateService.queryDataIsExistUserPhone(userPhone);
@@ -57,6 +63,12 @@ public class VilidateController {
         }
     }
 
+    /**
+     * 邮箱验证
+     * @param userEmail
+     * @param editEmail
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryIsExist_userEmail", method = RequestMethod.GET)
     public String queryIsExistUserEmail(@Param("userEmail")String userEmail, @Param("editEmail") String editEmail) {
@@ -64,7 +76,7 @@ public class VilidateController {
             logger.info("邮箱验证");
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editEmail.equals(userEmail)) {
                 int isExist = vilidateService.queryDataIsExistUserEmail(userEmail);
@@ -85,6 +97,12 @@ public class VilidateController {
         }
     }
 
+    /**
+     * 身份证验证
+     * @param userIdentity
+     * @param editIdentity
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryIsExist_userIdentity", method = RequestMethod.GET)
     public String queryIsExistUserIdentity(@Param("userIdentity")String userIdentity, @Param("editIdentity") String editIdentity) {
@@ -92,7 +110,7 @@ public class VilidateController {
             logger.info("身份证验证");
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editIdentity.equals(userIdentity)) {
                 int isExist = vilidateService.queryDataIsExistUserIdentity(userIdentity);
@@ -113,6 +131,11 @@ public class VilidateController {
         }
     }
 
+    /**
+     * 角色英文名称验证
+     * @param roleName
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryIsExist_roleName", method = RequestMethod.GET)
     public String queryIsExistRoleName(String roleName) {
@@ -120,7 +143,7 @@ public class VilidateController {
             logger.info("角色英文名称验证");
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             int isExist = vilidateService.queryDataIsExistRoleName(roleName);
             if (isExist > 0) {
@@ -139,6 +162,12 @@ public class VilidateController {
         }
     }
 
+    /**
+     * 角色中文名称验证
+     * @param roleDes
+     * @param editDes
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryIsExist_roleDes", method = RequestMethod.GET)
     public String queryIsExistRoleDes(@Param("roleDes") String roleDes, @Param("editDes") String editDes) {
@@ -146,7 +175,7 @@ public class VilidateController {
             logger.info("角色中文名称验证");
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editDes.equals(roleDes)) {
                 int isExist = vilidateService.queryDataIsExistRoleDes(roleDes);
@@ -167,6 +196,12 @@ public class VilidateController {
         }
     }
 
+    /**
+     * 模块名称验证
+     * @param moduleName
+     * @param editName
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryIsExist_moduleName", method = RequestMethod.GET)
     public String queryIsExistModuleName(@Param("moduleName") String moduleName, @Param("editName") String editName) {
@@ -174,7 +209,7 @@ public class VilidateController {
             logger.info("模块名称验证");
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editName.equals(moduleName)) {
                 int isExist = vilidateService.queryDataIsExistModuleName(moduleName);
@@ -195,6 +230,12 @@ public class VilidateController {
         }
     }
 
+    /**
+     * 权限中文名称验证
+     * @param permissionZHName
+     * @param editZhName
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryIsExist_PZHN", method = RequestMethod.GET)
     public String queryIsExistPermissionZHName(@Param("permissionZHName") String permissionZHName, @Param("editZhName") String editZhName) {
@@ -202,7 +243,7 @@ public class VilidateController {
             logger.info("权限中文名称验证");
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editZhName.equals(permissionZHName)) {
                 int isExist = vilidateService.queryDataIsExistPermissionZHName(permissionZHName);
@@ -223,6 +264,12 @@ public class VilidateController {
         }
     }
 
+    /**
+     * 权限名称验证
+     * @param permissionName
+     * @param editPName
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryIsExist_PN", method = RequestMethod.GET)
     public String queryIsExistPermissionName(@Param("permissionName") String permissionName, @Param("editPName") String editPName) {
@@ -230,7 +277,7 @@ public class VilidateController {
             logger.info("权限名称验证");
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editPName.equals(permissionName)) {
                 int isExist = vilidateService.queryDataIsExistPermissionName(permissionName);
@@ -251,6 +298,12 @@ public class VilidateController {
         }
     }
 
+    /**
+     * 供应商中文名称验证
+     * @param supplyName
+     * @param editSupplyName
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryIsExist_supplyName", method = RequestMethod.GET)
     public String queryIsExistSupplyName(@Param("supplyName") String supplyName, @Param("editSupplyName") String editSupplyName) {
@@ -258,7 +311,7 @@ public class VilidateController {
             logger.info("供应商中文名称验证");
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editSupplyName.equals(supplyName)) {
                 int isExist = vilidateService.queryDataIsExistSupplyName(supplyName, SessionGetUtil.getUser());
@@ -279,6 +332,12 @@ public class VilidateController {
         }
     }
 
+    /**
+     * 供应商分类中文名称验证
+     * @param supplyTypeName
+     * @param editSupplyTypeName
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryIsExist_supplyTypeName", method = RequestMethod.GET)
     public String queryIsExistSupplyTypeName(@Param("supplyTypeName") String supplyTypeName, @Param("editSupplyTypeName") String editSupplyTypeName) {
@@ -286,7 +345,7 @@ public class VilidateController {
             logger.info("供应商分类中文名称验证");
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editSupplyTypeName.equals(supplyTypeName)) {
                 int isExist = vilidateService.queryDataIsExistSupplyTypeName(supplyTypeName, SessionGetUtil.getUser());
@@ -307,6 +366,12 @@ public class VilidateController {
         }
     }
 
+    /**
+     * 公司名称验证
+     * @param companyName
+     * @param editName
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryIsExist_companyName", method = RequestMethod.GET)
     public String queryIsExistCompanyName(@Param("companyName") String companyName, @Param("editName") String editName) {
@@ -314,7 +379,7 @@ public class VilidateController {
             logger.info("公司名称验证");
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editName.equals(companyName)) {
                 int isExist = vilidateService.queryDataIsExistCompanyName(companyName);
@@ -335,6 +400,12 @@ public class VilidateController {
         }
     }
 
+    /**
+     * 公司电话验证
+     * @param companyTel
+     * @param editCompanyTel
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryIsExist_companyTel", method = RequestMethod.GET)
     public String queryIsExistCompany(@Param("companyTel") String companyTel, @Param("editCompanyTel") String editCompanyTel) {
@@ -342,7 +413,7 @@ public class VilidateController {
             logger.info("公司电话验证");
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editCompanyTel.equals(companyTel)) {
                 int isExist = vilidateService.queryDataIsExistCompanyTel(companyTel);
@@ -363,6 +434,12 @@ public class VilidateController {
         }
     }
 
+    /**
+     * 公司负责人手机号验证
+     * @param companyPricipalPhone
+     * @param editPhone
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryIsExist_companyPP", method = RequestMethod.GET)
     public String queryIsExistCompanyPP(@Param("companyPricipalPhone")String companyPricipalPhone, @Param("editPhone") String editPhone) {
@@ -370,7 +447,7 @@ public class VilidateController {
             logger.info("公司负责人手机号验证");
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editPhone.equals(companyPricipalPhone)) {
                 int isExist = vilidateService.queryDataIsExistUserPhone(companyPricipalPhone);
@@ -391,6 +468,12 @@ public class VilidateController {
         }
     }
 
+    /**
+     * 公司官网验证
+     * @param companyWebsite
+     * @param editWebsite
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryIsExist_companyWebsite", method = RequestMethod.GET)
     public String queryIsExistCompanyWebsite(@Param("companyWebsite") String companyWebsite, @Param("editWebsite") String editWebsite) {
@@ -398,7 +481,7 @@ public class VilidateController {
             logger.info("公司官网验证");
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editWebsite.equals(companyWebsite)) {
                 int isExist = vilidateService.queryDataIsExistCompanyWebsite(companyWebsite);
@@ -419,6 +502,12 @@ public class VilidateController {
         }
     }
 
+    /**
+     * 颜色名称验证
+     * @param colorName
+     * @param editColorName
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryIsExist_ColorName", method = RequestMethod.GET)
     public String queryIsExistColorName(@Param("colorName") String colorName, @Param("editColorName") String editColorName) {
@@ -426,7 +515,7 @@ public class VilidateController {
             logger.info("颜色名称验证");
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editColorName.equals(colorName)) {
                 int isExist = vilidateService.queryDataIsExistColorName(colorName);
@@ -447,6 +536,12 @@ public class VilidateController {
         }
     }
 
+    /**
+     * 品牌名称验证
+     * @param brandName
+     * @param editBrandName
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryIsExist_BrandName", method = RequestMethod.GET)
     public String queryIsExistBrandName(@Param("brandName") String brandName, @Param("editBrandName") String editBrandName) {
@@ -454,7 +549,7 @@ public class VilidateController {
             logger.info("品牌名称验证");
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editBrandName.equals(brandName)) {
                 int isExist = vilidateService.queryDataIsExistBrandName(brandName);
@@ -475,6 +570,12 @@ public class VilidateController {
         }
     }
 
+    /**
+     * 车牌名称验证
+     * @param plateName
+     * @param editPlateName
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryIsExist_PlateName", method = RequestMethod.GET)
     public String queryIsExistPlateName(@Param("plateName") String plateName, @Param("editPlateName") String editPlateName) {
@@ -482,7 +583,7 @@ public class VilidateController {
             logger.info("车牌名称验证");
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editPlateName.equals(plateName)) {
                 int isExist = vilidateService.queryDataIsExistPlateName(plateName);
@@ -503,6 +604,13 @@ public class VilidateController {
         }
     }
 
+    /**
+     * 车型名称验证
+     * @param modelName
+     * @param editModelName
+     * @return
+     */
+
     @ResponseBody
     @RequestMapping(value = "queryIsExist_ModelName", method = RequestMethod.GET)
     public String queryIsExistModelName(@Param("modelName") String modelName, @Param("editModelName") String editModelName) {
@@ -510,7 +618,7 @@ public class VilidateController {
             logger.info("车型名称验证");
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editModelName.equals(modelName)) {
                 int isExist = vilidateService.queryDataIsExistModelName(modelName);
@@ -531,6 +639,12 @@ public class VilidateController {
         }
     }
 
+    /**
+     * 配件分类名称验证
+     * @param accTypeName
+     * @param editTypeName
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryIsExist_accTypeName", method = RequestMethod.GET)
     public String queryIsExistAccTypeName(@Param("accTypeName") String accTypeName, @Param("editTypeName") String editTypeName) {
@@ -538,7 +652,7 @@ public class VilidateController {
             logger.info("配件分类名称验证");
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editTypeName.equals(accTypeName)) {
                 int isExist = vilidateService.queryDataIsExistAccTypeName(accTypeName, SessionGetUtil.getUser());
@@ -559,6 +673,12 @@ public class VilidateController {
         }
     }
 
+    /**
+     * 配件名称验证
+     * @param accName
+     * @param editName
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryIsExist_accName", method = RequestMethod.GET)
     public String queryIsExistAccName(@Param("accName") String accName, @Param("editName") String editName) {
@@ -566,7 +686,7 @@ public class VilidateController {
             logger.info("配件名称验证");
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editName.equals(accName)) {
                 int isExist = vilidateService.queryDataIsExistAccTypeName(accName, SessionGetUtil.getUser());
@@ -587,6 +707,12 @@ public class VilidateController {
         }
     }
 
+    /**
+     * 收入类型名称验证
+     * @param inTypeName
+     * @param editTypeName
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryIsExist_inTypeName", method = RequestMethod.GET)
     public String queryIsExistInTypeName(@Param("inTypeName") String inTypeName, @Param("editTypeName") String editTypeName) {
@@ -594,7 +720,7 @@ public class VilidateController {
             logger.info("收入类型名称验证");
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editTypeName.equals(inTypeName)) {
                 int isExist = vilidateService.queryDataIsExistInTypeName(inTypeName, SessionGetUtil.getUser());
@@ -615,6 +741,12 @@ public class VilidateController {
         }
     }
 
+    /**
+     * 支出类型名称验证
+     * @param outTypeName
+     * @param editTypeName
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryIsExist_outTypeName", method = RequestMethod.GET)
     public String queryIsExistOutTypeName(@Param("outTypeName") String outTypeName, @Param("editTypeName") String editTypeName) {
@@ -622,7 +754,7 @@ public class VilidateController {
             logger.info("支出类型名称验证");
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editTypeName.equals(outTypeName)) {
                 int isExist = vilidateService.queryDataIsExistOuTypeName(outTypeName, SessionGetUtil.getUser());

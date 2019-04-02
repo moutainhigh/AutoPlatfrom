@@ -6,7 +6,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by WangGenshen on 6/2/16.
+ *
+ * @author WangGenshen
+ * @date 6/2/16
  */
 public class DateParseUtil {
 

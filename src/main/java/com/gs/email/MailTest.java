@@ -37,7 +37,7 @@ public class MailTest {
 		// 使用默认的配置文件
 		com.gs.email.MailSender mailSender = new com.gs.email.MailSender();
 		com.gs.email.Mail mail = new com.gs.email.Mail();
-		mail.setRecipients("gzwjhsmart@126.com");
+		mail.setRecipients("gzqm@126.com");
 		mail.setSubject("邮件的主题");
 		mail.setType(Mail.HTML);
 		Multipart multipart = new MimeMultipart();
@@ -53,7 +53,7 @@ public class MailTest {
 			e.printStackTrace();
 		}
 		mail.setMultipart(multipart);
-		mailSender.sendEmailByType("163", mail, "gzwjhsmart@163.com", "gzwjhsmart163");
+		mailSender.sendEmailByType("163", mail, "gzqm@163.com", "gzqm163");
 		
 	}
 }

@@ -19,8 +19,14 @@ import org.springframework.web.multipart.MultipartFile;
  *
  */
 public class ExcelRead {
-    public int totalRows; //sheet中总行数
-    public static int totalCells; //每一行总单元格数
+    /**
+     * sheet中总行数
+     */
+    public int totalRows;
+    /**
+     * 每一行总单元格数
+     */
+    public static int totalCells;
     /**
      * read the Excel .xlsx,.xls
      * @param file jsp中的上传文件
@@ -52,7 +58,7 @@ public class ExcelRead {
      */
     @SuppressWarnings("deprecation")
     public List<ArrayList<String>> readXlsx(MultipartFile file){
-        List<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
+        List<ArrayList<String>> list = new ArrayList<>();
         // IO流读取文件
         InputStream input = null;
         XSSFWorkbook wb = null;
@@ -92,7 +98,9 @@ public class ExcelRead {
             e.printStackTrace();
         } finally{
             try {
-                input.close();
+                if (input != null) {
+                    input.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -107,7 +115,7 @@ public class ExcelRead {
      * @throws IOException
      */
     public List<ArrayList<String>> readXls(MultipartFile file){
-        List<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
+        List<ArrayList<String>> list = new ArrayList<>();
         // IO流读取文件
         InputStream input = null;
         HSSFWorkbook wb = null;
@@ -147,7 +155,9 @@ public class ExcelRead {
             e.printStackTrace();
         } finally{
             try {
-                input.close();
+                if (input != null) {
+                    input.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

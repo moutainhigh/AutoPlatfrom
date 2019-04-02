@@ -41,6 +41,10 @@ public class ModuleController {
     private String queryRole = Constants.SYSTEM_SUPER_ADMIN + "," + Constants.SYSTEM_ORDINARY_ADMIN;
     private String editRole = Constants.SYSTEM_SUPER_ADMIN + "," + Constants.SYSTEM_ORDINARY_ADMIN;
 
+    /**
+     * 显示模块信息
+     * @return
+     */
     @RequestMapping(value = "info", method = RequestMethod.GET)
     public String showModuleInfo() {
         if (!SessionGetUtil.isUser()) {
@@ -55,6 +59,12 @@ public class ModuleController {
         return "system/module";
     }
 
+    /**
+     * 分页查询所有模块
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "query_pager", method = RequestMethod.GET)
     public Pager4EasyUI<Module> queryPager(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -68,10 +78,14 @@ public class ModuleController {
         pager.setPageNo(Integer.valueOf(pageNumber));
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(moduleService.count(user));
-        List<Module> Modules = moduleService.queryByPager(pager, user);
-        return new Pager4EasyUI<Module>(pager.getTotalRecords(), Modules);
+        List<Module> modules = moduleService.queryByPager(pager, user);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), modules);
     }
 
+    /**
+     * 查询所有模块
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "query_all", method = RequestMethod.GET)
     public List<ComboBox4EasyUI> queryAll() {
@@ -83,7 +97,7 @@ public class ModuleController {
             logger.info("查询所有模块");
             User user = SessionGetUtil.getUser();
             List<Module> modules = moduleService.queryAll(user);
-            List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<ComboBox4EasyUI>();
+            List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<>();
             for (Module m : modules) {
                 ComboBox4EasyUI comboBox4EasyUI = new ComboBox4EasyUI();
                 comboBox4EasyUI.setId(m.getModuleId());
@@ -97,6 +111,11 @@ public class ModuleController {
         }
     }
 
+    /**
+     * 添加模块
+     * @param module
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "add_module", method = RequestMethod.POST)
     public ControllerResult addModule(Module module) {
@@ -119,6 +138,11 @@ public class ModuleController {
         }
     }
 
+    /**
+     * 更新模块
+     * @param module
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "update_module", method = RequestMethod.POST)
     public ControllerResult updateModule(Module module) {
@@ -141,6 +165,12 @@ public class ModuleController {
         }
     }
 
+    /**
+     * 更新模块状态
+     * @param id
+     * @param status
+     * @return ControllerResult
+     */
     @ResponseBody
     @RequestMapping(value = "update_status", method = RequestMethod.GET)
     public ControllerResult updateStatus(@Param("id") String id, @Param("status") String status) {
@@ -154,9 +184,9 @@ public class ModuleController {
                 return ControllerResult.getFailResult("更新状态失败，没有该权限操作");
             }
             logger.info("更新模块状态");
-            if (status.equals("Y")) {
+            if ("Y".equals(status)) {
                 moduleService.active(id);
-            } else if (status.equals("N")) {
+            } else if ("N".equals(status)) {
                 moduleService.inactive(id);
             }
             return ControllerResult.getSuccessResult("更新成功");
@@ -166,6 +196,13 @@ public class ModuleController {
         }
     }
 
+    /**
+     * 通过状态查询模块
+     * @param status
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryByStatus_module", method = RequestMethod.GET)
     public Pager4EasyUI<Module> queryByStatusModule(@Param("status") String status, @Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -173,7 +210,7 @@ public class ModuleController {
             logger.info("Session已失效或权限不足，无法查看！");
             return null;
         }
-        if (status.equals("Y")) {
+        if ("Y".equals(status)) {
             logger.info("分页查询可用的模块");
         } else {
             logger.info("分页查询不可用的模块");
@@ -183,6 +220,6 @@ public class ModuleController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(moduleService.countByStatus(status));
         List<Module> modules = moduleService.queryByStatusPager(status, pager);
-        return new Pager4EasyUI<Module>(pager.getTotalRecords(), modules);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), modules);
     }
 }

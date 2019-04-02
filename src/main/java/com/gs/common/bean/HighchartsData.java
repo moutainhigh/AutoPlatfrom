@@ -8,7 +8,9 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Created by xiao-kang on 2017/5/8.
+ *
+ * @author xiao-kang
+ * @date 2017/5/8
  */
 public class HighchartsData {
     public  static final String[] strDay = new String[]{"01","02","03","04","05","06","07","08","09",

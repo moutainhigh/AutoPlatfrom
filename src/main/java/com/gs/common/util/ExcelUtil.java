@@ -47,9 +47,9 @@ public class ExcelUtil {
      */
     @SuppressWarnings({"static-access", "deprecation"})
     public static String getHValue(HSSFCell hssfCell) {
-        if (hssfCell.getCellType() == hssfCell.CELL_TYPE_BOOLEAN) {
+        if (hssfCell.getCellType() == HSSFCell.CELL_TYPE_BOOLEAN) {
             return String.valueOf(hssfCell.getBooleanCellValue());
-        } else if (hssfCell.getCellType() == hssfCell.CELL_TYPE_NUMERIC) {
+        } else if (hssfCell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
             String cellValue = "";
             if (HSSFDateUtil.isCellDateFormatted(hssfCell)) {
                 Date date = HSSFDateUtil.getJavaDate(hssfCell.getNumericCellValue());
@@ -58,7 +58,7 @@ public class ExcelUtil {
                 DecimalFormat df = new DecimalFormat("#.##");
                 cellValue = df.format(hssfCell.getNumericCellValue());
                 String strArr = cellValue.substring(cellValue.lastIndexOf(POINT) + 1, cellValue.length());
-                if (strArr.equals("00")) {
+                if ("00".equals(strArr)) {
                     cellValue = cellValue.substring(0, cellValue.lastIndexOf(POINT));
                 }
             }
@@ -86,7 +86,7 @@ public class ExcelUtil {
                 DecimalFormat df = new DecimalFormat("#.##");
                 cellValue = df.format(xssfCell.getNumericCellValue());
                 String strArr = cellValue.substring(cellValue.lastIndexOf(POINT) + 1, cellValue.length());
-                if (strArr.equals("00")) {
+                if ("00".equals(strArr)) {
                     cellValue = cellValue.substring(0, cellValue.lastIndexOf(POINT));
                 }
             }

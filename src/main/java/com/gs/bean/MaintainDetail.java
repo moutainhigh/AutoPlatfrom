@@ -3,9 +3,9 @@ package com.gs.bean;
 import java.util.Date;
 
 /**
-*由Wjhsmart技术支持
 *
-*@author Wjhsmart
+*
+*@author qm
 *@since 2017-04-24 11:38:22 维修保养明细表
 */
 public class MaintainDetail{

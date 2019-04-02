@@ -20,9 +20,7 @@ public class EncryptUtil {
         String encryptStr = null;
         try {
             encryptStr = oneWayEncrypt(str, MD5);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         return encryptStr;
@@ -32,9 +30,7 @@ public class EncryptUtil {
         String encryptStr = null;
         try {
             encryptStr = oneWayEncrypt(str, SHA);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         return encryptStr;

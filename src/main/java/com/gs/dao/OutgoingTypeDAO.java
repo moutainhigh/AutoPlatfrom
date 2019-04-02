@@ -10,22 +10,22 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
-*由Wjhsmart技术支持
 *
-*@author Wjhsmart
+*
+*@author qm
 *@since 2017-04-14 16:35:15
 */
 @Repository
 public interface OutgoingTypeDAO extends BaseDAO<String, OutgoingType>{
 
-    public OutgoingType queryByName(@Param("outTypeName") String outTypeName);
+     OutgoingType queryByName(@Param("outTypeName") String outTypeName);
 
-    public List<OutgoingType> queryPagerStatus(@Param("status")String status, @Param("pager")Pager pager,@Param("user")User user);
-    public int countStatus(@Param("status") String status,@Param("user")User user);
+     List<OutgoingType> queryPagerStatus(@Param("status")String status, @Param("pager")Pager pager,@Param("user")User user);
+     int countStatus(@Param("status") String status,@Param("user")User user);
 
-    public List<OutgoingType> queryByPagerCondition(@Param("companyId")String companyId,
+     List<OutgoingType> queryByPagerCondition(@Param("companyId")String companyId,
                                                     @Param("inTypeName") String inTypeName,
                                                     @Param("pager")Pager pager);
 
-    public int countCondition(@Param("companyId")String companyId,@Param("inTypeName")String inTypeName);
+     int countCondition(@Param("companyId")String companyId,@Param("inTypeName")String inTypeName);
 }

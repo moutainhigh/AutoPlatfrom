@@ -4,7 +4,9 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Created by WangGenshen on 5/16/16.
+ *
+ * @author WangGenshen
+ * @date 5/16/16
  */
 public class DateUtil {
 

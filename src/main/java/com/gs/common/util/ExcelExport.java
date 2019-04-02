@@ -15,17 +15,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExcelExport {
-
-    private String title; // 导出表格的表名
-
-    private String[] rowName;// 导出表格的列名
-
-    private List<Object[]>  dataList = new ArrayList<Object[]>(); // 对象数组的List集合
+    /**
+     * 导出表格的表名
+     */
+    private String title;
+    /**
+     * 导出表格的列名
+     */
+    private String[] rowName;
+    /**
+     *对象数组的List集合
+     */
+    private List<Object[]>  dataList = new ArrayList<>();
 
     private HttpServletResponse  response;
 
 
-    // 传入要导入的数据
+    /**
+     * 传入要导入的数据
+     * @param title
+     * @param rowName
+     * @param dataList
+     * @param response
+     */
     public ExcelExport(String title, String[] rowName, List<Object[]>  dataList, HttpServletResponse  response){
         this.title=title;
         this.rowName=rowName;

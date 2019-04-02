@@ -38,7 +38,9 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by JangoGuo on 2017/4/18. 维修保养记录控制器
+ *
+ * @author JangoGuo
+ * @date 2017/4/18
  */
 @Controller
 @RequestMapping("record")
@@ -55,26 +57,39 @@ public class RecordController {
     @Resource
     private WorkInfoService workInfoService;
 
-    // 可以查看的角色：董事长、接待员、普通管理员、超级管理员、技师
+    /**
+     * 可以查看的角色：董事长、接待员、普通管理员、超级管理员、技师
+     */
     private String queryRole = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_RECEIVE + ","
             + Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN + "," + Constants.COMPANY_ARTIFICER;
 
-    // 可以操作的角色：董事长、接待员、技师
+    /**
+     * 可以操作的角色：董事长、接待员、技师
+     */
     private String editRole = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_RECEIVE + "," + Constants.COMPANY_ARTIFICER;
 
 
-    // 可以查看的角色：董事长、财务员、超级管理员、普通管理员
+    /**
+     * 可以查看的角色：董事长、财务员、超级管理员、普通管理员
+     */
     private String queryRole1 = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_ACCOUNTING + ","
             + Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN;
 
-    // 可以查看的角色：董事长、技师、 库管、超级管理员、普通管理员
+    /**
+     * 可以查看的角色：董事长、技师、 库管、超级管理员、普通管理员
+     */
     private String queryRole2 = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_ARTIFICER + ","
             + Constants.COMPANY_REPERTORY + "," + Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN;
 
-    // 可以操作的角色：董事长、库管
+    //
+    /**
+     * 可以操作的角色：董事长、库管
+     */
     private String editRole1 = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_REPERTORY;
 
-    // 可以操作的角色：董事长、库管、技师
+    /**
+     * 可以操作的角色：董事长、库管、技师
+     */
     private String editRole2 = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_REPERTORY + "," + Constants.COMPANY_ARTIFICER;
 
     @RequestMapping(value = "record_page", method = RequestMethod.GET)
@@ -102,8 +117,8 @@ public class RecordController {
                     Pager pager = new Pager();
                     pager.setPageNo(Integer.valueOf(pageNumber));
                     pager.setPageSize(Integer.valueOf(pageSize));
-                    List<MaintainRecord> maintainRecordList = new ArrayList<MaintainRecord>();
-                    if (status.equals("ALL")) {
+                    List<MaintainRecord> maintainRecordList = new ArrayList<>();
+                    if ("ALL".equals(status)) {
                         pager.setTotalRecords(maintainRecordService.count(user));
                         maintainRecordList = maintainRecordService.queryByPager(pager, user);
                     } else {
@@ -147,7 +162,7 @@ public class RecordController {
                     Pager pager = new Pager();
                     pager.setPageNo(Integer.valueOf(pageNumber));
                     pager.setPageSize(Integer.valueOf(pageSize));
-                    List<MaintainRecord> maintainRecordList = new ArrayList<MaintainRecord>();
+                    List<MaintainRecord> maintainRecordList = new ArrayList<>();
                     pager.setTotalRecords(maintainRecordService.countByTrackStatus("N", user));
                     maintainRecordList = maintainRecordService.queryPagerByTrackStatus(pager, "N", user);
                     return new Pager4EasyUI<MaintainRecord>(pager.getTotalRecords(), maintainRecordList);
@@ -167,23 +182,18 @@ public class RecordController {
     @RequestMapping(value="pager_message",method= RequestMethod.GET)
     public Pager4EasyUI<MaintainRecord> queryPagerBymessage(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize){
         if (SessionGetUtil.isUser()) {
-         //   try {
                 if (CheckRoleUtil.checkRoles(queryRole)) {
                     logger.info("分页查询维修保养过用户");
                     User user = SessionGetUtil.getUser();
                     Pager pager = new Pager();
                     pager.setPageNo(Integer.valueOf(pageNumber));
                     pager.setPageSize(Integer.valueOf(pageSize));
-                    List<MaintainRecord> maintainRecordList = new ArrayList<MaintainRecord>();
+                    List<MaintainRecord> maintainRecordList = new ArrayList<>();
                     pager.setTotalRecords(maintainRecordService.countByStatus("Y", user));
                     maintainRecordList = maintainRecordService.queryPagerByStatus(pager, "Y", user);
-                    return new Pager4EasyUI<MaintainRecord>(pager.getTotalRecords(), maintainRecordList);
+                    return new Pager4EasyUI<>(pager.getTotalRecords(), maintainRecordList);
                 }
                 return null;
-           /* } catch (Exception e) {
-                logger.info("分页查询维修保养过用户失败，出现了一个异常");
-                return null;
-            }*/
         } else {
             logger.info("Session已失效，请重新登入");
             return null;
@@ -212,11 +222,11 @@ public class RecordController {
                     Pager pager = new Pager();
                     pager.setPageNo(Integer.valueOf(pageNumber));
                     pager.setPageSize(Integer.valueOf(pageSize));
-                    List<MaintainRecord> records = new ArrayList<MaintainRecord>();
+                    List<MaintainRecord> records = new ArrayList<>();
                     pager.setTotalRecords(maintainRecordService.countByCondition(record, user));
                     records = maintainRecordService.queryPagerByCondition(pager, record, user);
 
-                    return new Pager4EasyUI<MaintainRecord>(pager.getTotalRecords(), records);
+                    return new Pager4EasyUI<>(pager.getTotalRecords(), records);
                 }
                 return null;
             } catch (Exception e) {
@@ -254,11 +264,11 @@ public class RecordController {
                     Pager pager = new Pager();
                     pager.setPageNo(Integer.valueOf(pageNumber));
                     pager.setPageSize(Integer.valueOf(pageSize));
-                    List<MaintainRecord> maintainRecordList = new ArrayList<MaintainRecord>();
+                    List<MaintainRecord> maintainRecordList = new ArrayList<>();
                     String[] ss = speedStatus.split(",");
                     pager.setTotalRecords(maintainRecordService.countBySpeedStatus(ss, user));
                     maintainRecordList = maintainRecordService.queryPagerBySpeedStatus(pager, ss, user);
-                    return new Pager4EasyUI<MaintainRecord>(pager.getTotalRecords(), maintainRecordList);
+                    return new Pager4EasyUI<>(pager.getTotalRecords(), maintainRecordList);
                 }
                 return null;
             } catch (Exception e) {
@@ -271,7 +281,10 @@ public class RecordController {
         }
     }
 
-    //擦看个人预约
+    /**
+     * 查看个人预约
+     * @return
+     */
     @RequestMapping(value = "my_reminder", method = RequestMethod.GET)
     private ModelAndView carOwerreminder() {
         ModelAndView mav = new ModelAndView();
@@ -297,7 +310,7 @@ public class RecordController {
                     Pager pager = new Pager();
                     pager.setPageNo(Integer.valueOf(pageNumber));
                     pager.setPageSize(Integer.valueOf(pageSize));
-                    List<MaintainRecord> maintainRecordList = new ArrayList<MaintainRecord>();
+                    List<MaintainRecord> maintainRecordList = new ArrayList<>();
                     String[] ss = speedStatus.split(",");
                     if (!CheckRoleUtil.checkRoles(Constants.COMPANY_ARTIFICER)) {
                         String pickingStatus = Constants.NOT_APPLY;
@@ -332,7 +345,7 @@ public class RecordController {
                     Pager pager = new Pager();
                     pager.setPageNo(Integer.valueOf(pageNumber));
                     pager.setPageSize(Integer.valueOf(pageSize));
-                    List<MaintainRecord> maintainRecordList = new ArrayList<MaintainRecord>();
+                    List<MaintainRecord> maintainRecordList = new ArrayList<>();
                     String[] ss = speedStatus.split(",");
                     if (!CheckRoleUtil.checkRoles(Constants.COMPANY_ARTIFICER)) {
 
@@ -363,9 +376,9 @@ public class RecordController {
             try {
                 if (CheckRoleUtil.checkRoles(editRole)) {
                     logger.info("更新维修保养记录状态");
-                    if (status.equals("Y")) {
+                    if ("Y".equals(status)) {
                         maintainRecordService.inactive(id);
-                    } else if (status.equals("N")) {
+                    } else if ("N".equals(status)) {
                         maintainRecordService.active(id);
 
                     }
@@ -428,7 +441,7 @@ public class RecordController {
                             IndustrySMS is = new IndustrySMS(to, smsContent);
                             is.execute();
 
-                            if (user.getUserEmail() != null && !user.getUserEmail().equals("")) {
+                            if (user.getUserEmail() != null && !"".equals(user.getUserEmail())) {
                                 Mail mail = new Mail();
                                 mail.setRecipients(user.getUserEmail());
                                 mail.setSubject(sendRemind.getRemindTitle());
@@ -447,7 +460,7 @@ public class RecordController {
                                 }
                             }
                         } else {
-                            if (remindMethod[0].equals("email")) {
+                            if ("email".equals(remindMethod[0])) {
                                 logger.info("发送邮箱提醒");
                                 if (user.getUserEmail() != null && !user.getUserEmail().equals("")) {
                                     Mail mail = new Mail();
@@ -467,7 +480,7 @@ public class RecordController {
                                         return ControllerResult.getFailResult("邮箱提醒发送失败");
                                     }
                                 }
-                            } else if (remindMethod[0].equals("message")) {
+                            } else if ("message".equals(remindMethod[0])) {
                                 logger.info("发送短信提醒");
                                 String to = user.getUserPhone();
                                 String smsContent = "尊敬的" + user.getUserName() + "车主，车牌号为" + carPlates[i] + ",您的爱车已经整装待发，如果您有时间，请来领它回家哦^_^";
@@ -481,7 +494,7 @@ public class RecordController {
                     for (int i = userIds.length; i < recordIds.length; i++) {
                         logger.info("给未注册用户发送短信提醒");
                         MaintainRecord record = maintainRecordService.queryById(recordIds[i]);
-                        if (remindMethod[0].equals("message")) {
+                        if ("message".equals(remindMethod[0])) {
                             logger.info("发送短信提醒");
                             String to = record.getCheckin().getUserPhone();
                             String smsContent = "尊敬的" + record.getCheckin().getUserName() + "车主，车牌号为" + record.getCheckin().getPlate().getPlateName() + "-" + record.getCheckin().getCarPlate() + ",您的爱车已经整装待发，如果您有时间，请来领它回家哦^_^";
@@ -506,17 +519,22 @@ public class RecordController {
 
     }
 
+    /**
+     * 默认查询本月维修保养记录报表显示
+     * @param companyId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="query_default",method= RequestMethod.GET)
     public List<LineBasic> queryAll(@Param("companyId")String companyId){
         if(SessionGetUtil.isUser()) {
             if(CheckRoleUtil.checkRoles(queryRole1)) {
                 logger.info("默认查询本月维修保养记录报表显示");
-                List<LineBasic> lineBasics = new ArrayList<LineBasic>();
+                List<LineBasic> lineBasics = new ArrayList<>();
                 LineBasic lineBasic = new LineBasic();
                 LineBasic lineBasic1 = new LineBasic();
                 User user = SessionGetUtil.getUser();
-                if(user.getCompanyId() != null && !user.getCompanyId().equals("")){
+                if(user.getCompanyId() != null && !"".equals(user.getCompanyId())){
                     companyId = user.getCompanyId();
                 }
                 lineBasic.setName("保养");
@@ -539,6 +557,14 @@ public class RecordController {
 
     }
 
+    /**
+     * 根据年，月，季度，周，日查询所有维修保养记录显示
+     * @param start
+     * @param end
+     * @param type
+     * @param companyId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="query_condition",method= RequestMethod.GET)
     public List<LineBasic> queryCondition(@Param("start")String start,@Param("end")String end,
@@ -552,11 +578,11 @@ public class RecordController {
                 lineBasic.setName("保养");
                 lineBasic1.setName("维修");
                 User user = SessionGetUtil.getUser();
-                if (user.getCompanyId() != null && !user.getCompanyId().equals("")) {
+                if (user.getCompanyId() != null && !"".equals(user.getCompanyId())) {
                     companyId = user.getCompanyId();
                 }
-                if (start != null && !start.equals("") && end != null && !end.equals("") && type != null && !type.equals("")) {
-                    if (type.equals("year")) {
+                if (start != null && !"".equals(start) && end != null && !"".equals(end) && type != null && !type.equals("")) {
+                    if ("year".equals(type)) {
                         HighchartsData.setStrYear(start, end);
                         dataCondition(start, end, "保养", type, "year", "one", companyId);
                         lineBasic.setData(HighchartsData.doubleYearOne);
@@ -564,21 +590,21 @@ public class RecordController {
                         lineBasic1.setData(HighchartsData.doubleYearTwo);
                         lineBasic.setCategories(HighchartsData.strYear);
                         lineBasic1.setCategories(HighchartsData.strYear);
-                    } else if (type.equals("quarter")) {
+                    } else if ("quarter".equals(type)) {
                         dataCondition(start, end, "保养", type, "quarter", "one", companyId);
                         lineBasic.setData(HighchartsData.doubleQuarterOne);
                         dataCondition(start, end, "维修", type, "quarter", "two", companyId);
                         lineBasic1.setData(HighchartsData.doubleQuarterTwo);
                         lineBasic.setCategories(HighchartsData.strQuarter);
                         lineBasic1.setCategories(HighchartsData.strQuarter);
-                    } else if (type.equals("month")) {
+                    } else if ("month".equals(type)) {
                         dataCondition(start, end, "保养", type, "month", "one", companyId);
                         lineBasic.setData(HighchartsData.doubleMonthOne);
                         dataCondition(start, end, "维修", type, "month", "two", companyId);
                         lineBasic1.setData(HighchartsData.doubleMonthTwo);
                         lineBasic.setCategories(HighchartsData.strMonth);
                         lineBasic1.setCategories(HighchartsData.strMonth);
-                    } else if (type.equals("week")) {
+                    } else if ("week".equals(type)) {
                         HighchartsData.setStrWeek(start, end);
                         dataCondition(start, end, "保养", type, "week", "one", companyId);
                         lineBasic.setData(HighchartsData.doubleWeekOne);
@@ -586,7 +612,7 @@ public class RecordController {
                         lineBasic1.setData(HighchartsData.doubleWeekTwo);
                         lineBasic.setCategories(HighchartsData.strWeek);
                         lineBasic1.setCategories(HighchartsData.strWeek);
-                    } else if (type.equals("day")) {
+                    } else if ("day".equals(type)) {
                         dataCondition(start, end, "保养", type, "day", "one", companyId);
                         lineBasic.setData(HighchartsData.doubleDayOne);
                         dataCondition(start, end, "维修", type, "day", "two", companyId);
@@ -607,15 +633,18 @@ public class RecordController {
     }
 
 
-    /*  默认查询本月的工单
-    * */
+    /**
+     * 默认查询本月的工单
+     * @param type
+     * @param companyId
+     */
     public void dateDay(String type,String companyId){
         HighchartsData.doubleDayTwo = new double[31];
         HighchartsData.doubleDayOne = new double[31];
         List<MaintainRecord> maintainRecords = null;
-        if(type.equals("one")){
+        if("one".equals(type)){
             maintainRecords = maintainRecordService.queryByDefault("保养",companyId);
-        }else if(type.equals("two")){
+        }else if("two".equals(type)){
             maintainRecords = maintainRecordService.queryByDefault("维修",companyId);
         }
         int i = 0;
@@ -629,9 +658,9 @@ public class RecordController {
         for(int j = 0,len = HighchartsData.strDay.length; j <len ; j++){
             for(int k = 0; k < strs.length; k++){
                 if(HighchartsData.strDay[j].equals(strs[k])){
-                    if(type.equals("two")){
+                    if("two".equals(type)){
                         HighchartsData.doubleDayTwo[j] = doubles[k];
-                    }else if(type.equals("one")){
+                    }else if("one".equals(type)){
                         HighchartsData.doubleDayOne[j] = doubles[k];
                     }
 
@@ -641,9 +670,17 @@ public class RecordController {
 
 
     }
-    /*
-    *  按年，季度，月，周，日，查询 工单
-    * */
+
+    /**
+     * 按年，季度，月，周，日，查询 工单
+     * @param start
+     * @param end
+     * @param maintainOrFix
+     * @param type
+     * @param date
+     * @param species
+     * @param companyId
+     */
     public void dataCondition(String start,String end,String maintainOrFix,String type,String date,String species,String companyId){
         HighchartsData.doubleDayTwo = new double[31];
         HighchartsData.doubleDayOne = new double[31];
@@ -662,37 +699,42 @@ public class RecordController {
         HighchartsData.len = 0;
         for(MaintainRecord io: maintainRecords) {
             doubles[i] = io.getCoont();
-            if(date.equals("month")) {
+            if("month".equals(date)) {
                 strs[i] = HighchartsData.dateFormat(io.getRecordCreatedTime(), "month");
                 HighchartsData.len = HighchartsData.strMonth.length;
-            }else if(date.equals("day")){
+            }else if("day".equals(date)){
                 strs[i] = HighchartsData.dateFormat(io.getRecordCreatedTime(), "day");
                 HighchartsData.len = HighchartsData.strDay.length;
-            }else if(date.equals("quarter")){
+            }else if("quarter".equals(date)){
                 strs[i] = HighchartsData.dateFormat(io.getRecordCreatedTime(), "quarter");
                 HighchartsData.len = HighchartsData.strQuarter.length;
-            }else if(date.equals("year")){
+            }else if("year".equals(date)){
                 strs[i] = HighchartsData.dateFormat(io.getRecordCreatedTime(),"year");
                 HighchartsData.len = HighchartsData.strYear.length;
-            }else if(date.equals("week")){
+            }else if("week".equals(date)){
                 strs[i] = "第"+String.valueOf(HighchartsData.getWeek(HighchartsData.dateFormat(io.getRecordCreatedTime())))+"周";
                 HighchartsData.len = HighchartsData.strWeek.length;
             }
             i++;
         }
-        if(date.equals("quarter")) {
+        if("quarter".equals(date)) {
             HighchartsData.getQuarter(strs,doubles,species);
-        }else if(date.equals("month")){
+        }else if("month".equals(date)){
             HighchartsData.getMonth(strs,doubles,species);
-        }else if(date.equals("day")){
+        }else if("day".equals(date)){
             HighchartsData.getDay(strs,doubles,species);
-        }else if(date.equals("year")){
+        }else if("year".equals(date)){
             HighchartsData. getYear(strs,doubles,species);
-        }else if(date.equals("week")){
+        }else if("week".equals(date)){
             HighchartsData.getWeek(strs,doubles,species);
         }
     }
 
+    /**
+     * 更新维修保养进度
+     * @param recordId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "achieve_record", method = RequestMethod.GET)
     public ControllerResult achieveRecord(String recordId) {

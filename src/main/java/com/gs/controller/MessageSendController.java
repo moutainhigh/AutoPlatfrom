@@ -56,6 +56,10 @@ public class MessageSendController {
 
     private String strPhone;
 
+    /**
+     * 显示短信发送页面
+     * @return
+     */
     @RequestMapping(value = "show_MessageSend", method = RequestMethod.GET)
     public String messageSend() {
         if (!SessionGetUtil.isUser()) {
@@ -70,6 +74,12 @@ public class MessageSendController {
         return "customer/message_send";
     }
 
+    /**
+     * 分页查询所有短信
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="query_pager",method= RequestMethod.GET)
     public Pager4EasyUI<MessageSend> queryPager(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize){
@@ -79,16 +89,21 @@ public class MessageSendController {
             return null;
         }
 
-        User LoginUser = SessionGetUtil.getUser();
+        User loginUser = SessionGetUtil.getUser();
         Pager pager = new Pager();
         pager.setPageNo(Integer.valueOf(pageNumber));
         pager.setPageSize(Integer.valueOf(pageSize));
-        pager.setTotalRecords(messageSendService.count(LoginUser));
-        List<MessageSend> complaintList = messageSendService.queryByPager(pager,LoginUser);
-        return new Pager4EasyUI<MessageSend>(pager.getTotalRecords(), complaintList);
+        pager.setTotalRecords(messageSendService.count(loginUser));
+        List<MessageSend> complaintList = messageSendService.queryByPager(pager,loginUser);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), complaintList);
     }
 
-    /*多条更新*/
+    /**
+     * 更新短信发送
+     * @param idList
+     * @param sendMsg
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "update_messageSend", method = RequestMethod.GET)
     public ControllerResult updateMessageSend(@Param("idList")String[] idList, @Param("sendMsg")String sendMsg){
@@ -111,7 +126,11 @@ public class MessageSendController {
         }
     }
 
-    /*多条发送*/
+    /**
+     * 一键短信发送
+     * @param idList
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "update_success", method = RequestMethod.GET)
     public ControllerResult updateMessageSend(String[] idList){
@@ -129,8 +148,7 @@ public class MessageSendController {
            messageSendService.batchUpdateBySuccess(idList);
            String content = "尊敬的用户，您已经成功入驻我们的平台，您可以使用您的手机号进行登入我们的系统了哦，登入密码为默认密码";
            String to = strPhone;
-           String smsContent = content;
-           IndustrySMS is = new IndustrySMS(to, smsContent);
+           IndustrySMS is = new IndustrySMS(to, content);
            is.execute();
             return ControllerResult.getSuccessResult("发送成功");
         } catch (Exception e) {
@@ -139,7 +157,11 @@ public class MessageSendController {
         }
     }
 
-    /*提供所有Id号*/
+
+    /**
+     * 提供所有Id号
+     * @return List<MessageSend>
+     */
     @ResponseBody
     @RequestMapping(value = "queryAllId", method = RequestMethod.GET)
     public List<MessageSend> queryAllId(){
@@ -148,11 +170,11 @@ public class MessageSendController {
             logger.info("登陆已失效，请重新登入");
             return null;
         }
-        User LoginUser = SessionGetUtil.getUser();
-        List<MessageSend> mesList  = messageSendService.queryAll(LoginUser);
+        User loginUser = SessionGetUtil.getUser();
+        List<MessageSend> mesList  = messageSendService.queryAll(loginUser);
         strPhone = "";
         for(MessageSend ms: mesList){
-            if(strPhone.equals("")){
+            if("".equals(strPhone)){
                 strPhone = ms.getUser().getUserPhone();
             }else {
                 strPhone +=  "," + ms.getUser().getUserPhone();
@@ -161,7 +183,11 @@ public class MessageSendController {
         return mesList;
     }
 
-    /*插入messageId*/
+    /**
+     * 添加messageId
+     * @param userId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "addMessageId", method = RequestMethod.GET)
     public ControllerResult addMessageId(String[] userId) {
@@ -175,12 +201,12 @@ public class MessageSendController {
             return ControllerResult.getFailResult("添加失败，没有该权限操作");
         }
         try {
-            List<MessageSend> msList = new ArrayList<MessageSend>();
+            List<MessageSend> msList = new ArrayList<>();
             User user = SessionGetUtil.getUser();
-            for (int i = 0; i < userId.length; i++) {
+            for (String anUserId : userId) {
                 MessageSend m = new MessageSend();
                 m.setCompanyId(user.getCompanyId());
-                m.setUserId(userId[i]);
+                m.setUserId(anUserId);
                 msList.add(m);
             }
             messageSendService.addMessageId(msList);

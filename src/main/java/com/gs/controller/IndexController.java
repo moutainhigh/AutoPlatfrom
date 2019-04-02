@@ -28,7 +28,9 @@ import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
- * Created by WangGenshen on 5/17/16.
+ *
+ * @author WangGenshen
+ * @date 5/17/16
  */
 @Controller
 @RequestMapping("/")
@@ -43,6 +45,11 @@ public class IndexController {
     @Resource
     private UserService userService;
 
+    /**
+     * 进入首页
+     * @param session
+     * @return
+     */
     @RequestMapping(value = "index", method = RequestMethod.GET)
     public ModelAndView index(HttpSession session) {
         logger.info("进入首页");
@@ -61,6 +68,10 @@ public class IndexController {
         return mav;
     }
 
+    /**
+     * 进入管理员后台主页
+     * @return
+     */
     @RequestMapping(value = "adminHome", method = RequestMethod.GET)
     public String adminHome() {
         if (!SessionGetUtil.isUser()) {
@@ -71,6 +82,10 @@ public class IndexController {
         return "index/home";
     }
 
+    /**
+     * 进入车主后台主页
+     * @return
+     */
     @RequestMapping(value = "customerHome", method = RequestMethod.GET)
     public String customerHome() {
         if (!SessionGetUtil.isUser()) {
@@ -81,6 +96,11 @@ public class IndexController {
         return "customerClient/home";
     }
 
+    /**
+     * 订阅提醒
+     * @param email
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "sub_me", method = RequestMethod.GET)
     public ControllerResult subscribeMe(String email) {

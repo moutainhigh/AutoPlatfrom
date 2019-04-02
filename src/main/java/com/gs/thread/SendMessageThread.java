@@ -5,13 +5,19 @@ import com.gs.common.message.IndustrySMS;
 import java.util.List;
 
 /**
- * Created by Administrator on 2017-05-19. 发送短信的线程
+ *
+ * @author Administrator
+ * @date 2017-05-19
  */
 public class SendMessageThread implements Runnable  {
-
-    private String phone; // 要发送的手机号‘，’号隔开
-
-    private String content; // 短信的内容
+    /**
+     * 要发送的手机号‘，’号隔开
+     */
+    private String phone;
+    /**
+     * 短信的内容
+     */
+    private String content;
 
     public SendMessageThread(String phone, String content) {
         this.phone = phone;

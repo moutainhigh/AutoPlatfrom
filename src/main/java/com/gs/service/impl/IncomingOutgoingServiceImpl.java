@@ -12,9 +12,9 @@ import com.gs.service.IncomingOutgoingService;
 import com.gs.common.bean.Pager;
 
 /**
- * 由Wjhsmart技术支持
  *
- * @author Wjhsmart
+ *
+ * @author qm
  * @since 2017-04-14 16:58:54
  */
 @Service
@@ -23,74 +23,92 @@ public class IncomingOutgoingServiceImpl implements IncomingOutgoingService {
     @Resource
     private IncomingOutgoingDAO incomingOutgoingDAO;
 
+    @Override
     public int insert(IncomingOutgoing incomingOutgoing) {
         return incomingOutgoingDAO.insert(incomingOutgoing);
     }
 
+    @Override
     public int batchInsert(List<IncomingOutgoing> list) {
         return incomingOutgoingDAO.batchInsert(list);
     }
 
+    @Override
     public int delete(IncomingOutgoing incomingOutgoing) {
         return incomingOutgoingDAO.delete(incomingOutgoing);
     }
 
+    @Override
     public int deleteById(String id) {
         return incomingOutgoingDAO.deleteById(id);
     }
 
+    @Override
     public int batchDelete(List<IncomingOutgoing> list) {
         return incomingOutgoingDAO.batchDelete(list);
     }
 
+    @Override
     public int update(IncomingOutgoing incomingOutgoing) {
         return incomingOutgoingDAO.update(incomingOutgoing);
     }
 
+    @Override
     public int batchUpdate(List<IncomingOutgoing> list) {
         return incomingOutgoingDAO.batchUpdate(list);
     }
 
+    @Override
     public List<IncomingOutgoing> queryAll(User user) {
         return incomingOutgoingDAO.queryAll(user);
     }
 
-    public List<IncomingOutgoing> queryByStatus(String status,User user) {
+    @Override
+    public List<IncomingOutgoing> queryByStatus(String status, User user) {
         return incomingOutgoingDAO.queryByStatus(status,user);
     }
 
-    public IncomingOutgoing query(IncomingOutgoing incomingOutgoing,User user) {
+    @Override
+    public IncomingOutgoing query(IncomingOutgoing incomingOutgoing, User user) {
         return incomingOutgoingDAO.query(incomingOutgoing,user);
     }
 
+    @Override
     public IncomingOutgoing queryById(String id) {
         return incomingOutgoingDAO.queryById(id);
     }
 
-    public List<IncomingOutgoing> queryByPager(Pager pager,User user) {
+    @Override
+    public List<IncomingOutgoing> queryByPager(Pager pager, User user) {
         return incomingOutgoingDAO.queryByPager(pager,user);
     }
 
+    @Override
     public int count(User user) {
         return incomingOutgoingDAO.count(user);
     }
 
+    @Override
     public int inactive(String id) {
         return incomingOutgoingDAO.inactive(id);
     }
 
+    @Override
     public int active(String id) {
         return incomingOutgoingDAO.active(id);
     }
 
-    public List<IncomingOutgoing> queryByInOutType(Pager pager, IncomingOutgoing incomingOutgoing,User user) {
+    @Override
+    public List<IncomingOutgoing> queryByInOutType(Pager pager, IncomingOutgoing incomingOutgoing, User user) {
         return incomingOutgoingDAO.queryByInOutType(pager, incomingOutgoing,user);
     }
 
-    public int countByInOutType(IncomingOutgoing incomingOutgoing,User user) {
+    @Override
+    public int countByInOutType(IncomingOutgoing incomingOutgoing, User user) {
         return incomingOutgoingDAO.countByInOutType(incomingOutgoing,user);
     }
 
+    @Override
     public List<IncomingOutgoing> queryByDefault(int inOutType, String companyId) {
         return incomingOutgoingDAO.queryByDefault(inOutType, companyId);
     }

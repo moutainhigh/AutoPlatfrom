@@ -3,9 +3,9 @@ package com.gs.bean;
 import java.util.Date;
 
 /**
- *由Wjhsmart技术支持
  *
- *@author Wjhsmart
+ *
+ *@author qm
  *@since 2017-05-17 20:30:41 意向公司表
  */
 public class IntentionCompany{

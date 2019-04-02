@@ -38,7 +38,9 @@ import java.util.*;
 /**
  * 温鑫
  * 人员基本信息
- * Created by Star on 2017/4/17.
+ *
+ * @author Star
+ * @date 2017/4/17
  */
 
 @Controller
@@ -66,8 +68,6 @@ public class PeopleInfoController {
             + "," + Constants.COMPANY_REPERTORY + "," + Constants.COMPANY_ARTIFICER;
 
     private String editRole = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_HUMAN_MANAGER;
-
-    private String editRole1 = Constants.COMPANY_ADMIN;
 
     @RequestMapping(value = "people_info", method = RequestMethod.GET)
     private String peopleInfo() {
@@ -121,7 +121,7 @@ public class PeopleInfoController {
         try {
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editPhone.equals(userPhone)) {
                 int count = userService.queryPhone(userPhone);
@@ -148,7 +148,7 @@ public class PeopleInfoController {
         try {
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editEmail.equals(userEmail)) {
                 int count = userService.queryEmail(userEmail);
@@ -175,7 +175,7 @@ public class PeopleInfoController {
         try {
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             if (!editIdentity.equals(userIdentity)) {
                 int count = userService.queryIdentity(userIdentity);
@@ -198,7 +198,7 @@ public class PeopleInfoController {
 
     @ResponseBody
     @RequestMapping(value = "peopleInfo_pager", method= RequestMethod.GET)
-    public Pager4EasyUI<User> info_pager(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize){
+    public Pager4EasyUI<User> infoPager(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize){
         if (SessionGetUtil.isUser()) {
             try {
                 if (CheckRoleUtil.checkRoles(queryRole)) {
@@ -225,7 +225,7 @@ public class PeopleInfoController {
 
     @ResponseBody
     @RequestMapping(value = "peopleInfo_pagerStatus", method= RequestMethod.GET)
-    public Pager4EasyUI<User> infoStatus_pager(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize){
+    public Pager4EasyUI<User> infoStatusPager(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize){
         if (SessionGetUtil.isUser()) {
             try {
                 if (CheckRoleUtil.checkRoles(queryRole)) {
@@ -252,7 +252,7 @@ public class PeopleInfoController {
 
     @ResponseBody
     @RequestMapping(value = "peopleInfoAll", method= RequestMethod.GET)
-    public Pager4EasyUI<User> infoAll_pager(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize, HttpSession session){
+    public Pager4EasyUI<User> infoAllPager(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize, HttpSession session){
         if (SessionGetUtil.isUser()) {
             try {
                 if (CheckRoleUtil.checkRoles(queryRole)) {
@@ -263,7 +263,7 @@ public class PeopleInfoController {
                     pager.setPageSize(Integer.valueOf(pageSize));
                     pager.setTotalRecords(userService.countAllEmp(user));
                     List<User> users = userService.queryPeoplePagerAll(pager, user);
-                    return new Pager4EasyUI<User>(pager.getTotalRecords(), users);
+                    return new Pager4EasyUI<>(pager.getTotalRecords(), users);
                 }
                 return null;
             } catch (Exception e) {
@@ -279,7 +279,7 @@ public class PeopleInfoController {
 
     @ResponseBody
     @RequestMapping(value = "selectPeopleInfo", method= RequestMethod.GET)
-    public Pager4EasyUI<User> selectInfo_pager(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize, @Param("userPhone")String userPhone, @Param("userName")String userName, @Param("userEmail")String userEmail, @Param("roleName")String roleName, @Param("companyName")String companyName){
+    public Pager4EasyUI<User> selectInfoPager(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize, @Param("userPhone")String userPhone, @Param("userName")String userName, @Param("userEmail")String userEmail, @Param("roleName")String roleName, @Param("companyName")String companyName){
         if (SessionGetUtil.isUser()) {
             try {
                 if (CheckRoleUtil.checkRoles(queryRole)) {
@@ -297,7 +297,7 @@ public class PeopleInfoController {
                     pager.setPageSize(Integer.valueOf(pageSize));
                     pager.setTotalRecords(userService.countSelectQueryEmp(user, role, company));
                     List<User> users = userService.selectQueryEmp(pager, user, role, company);
-                    return new Pager4EasyUI<User>(pager.getTotalRecords(), users);
+                    return new Pager4EasyUI<>(pager.getTotalRecords(), users);
                 }
                 return null;
             } catch (Exception e) {
@@ -313,7 +313,7 @@ public class PeopleInfoController {
 
     @ResponseBody
     @RequestMapping(value = "peopleInfo_update", method = RequestMethod.POST)
-    public ControllerResult info_update(String uIcon, User user, MultipartFile file, HttpSession session, HttpServletRequest request, Company company) throws IOException {
+    public ControllerResult infoUpdate(String uIcon, User user, MultipartFile file, HttpSession session, HttpServletRequest request, Company company) throws IOException {
         if (SessionGetUtil.isUser()) {
             try {
                 if (CheckRoleUtil.checkRoles(editRole)) {
@@ -367,12 +367,13 @@ public class PeopleInfoController {
 
     @ResponseBody
     @RequestMapping(value = "peopleInfo_status", method = RequestMethod.GET)
-    public ControllerResult info_status(@Param("id")String id, @Param("status")String status){
+    public ControllerResult infoStatus(@Param("id")String id, @Param("status")String status){
         if (SessionGetUtil.isUser()) {
             try {
+                String editRole1 = Constants.COMPANY_ADMIN;
                 if (CheckRoleUtil.checkRoles(editRole1)) {
                     logger.info("状态修改");
-                    if(status.equals("Y")){
+                    if("Y".equals(status)){
                         userService.inactive(id);
                     } else {
                         userService.active(id);
@@ -397,7 +398,7 @@ public class PeopleInfoController {
             logger.info("查询员工");
             User user1 = SessionGetUtil.getUser();
             List<User> users = userService.queryAll(user1);
-            List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<ComboBox4EasyUI>();
+            List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<>();
             for (User user : users) {
                 ComboBox4EasyUI comboBox4EasyUI = new ComboBox4EasyUI();
                 comboBox4EasyUI.setId(user.getUserId());
@@ -418,7 +419,7 @@ public class PeopleInfoController {
             logger.info("查询全部公司");
             User user = SessionGetUtil.getUser();
             List<Company> roles = companyService.queryAll(user);
-            List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<ComboBox4EasyUI>();
+            List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<>();
             for (Company company : roles) {
                 ComboBox4EasyUI comboBox4EasyUI = new ComboBox4EasyUI();
                 comboBox4EasyUI.setId(company.getCompanyId());
@@ -439,7 +440,7 @@ public class PeopleInfoController {
             logger.info("查询本公司员工");
             User user1 = SessionGetUtil.getUser();
             List<User> users = userService.queryByCompanyRole(user1);
-            List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<ComboBox4EasyUI>();
+            List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<>();
             for (User user : users) {
                 ComboBox4EasyUI comboBox4EasyUI = new ComboBox4EasyUI();
                 comboBox4EasyUI.setId(user.getUserId());
@@ -459,7 +460,7 @@ public class PeopleInfoController {
         try {
             logger.info("查询所有公司角色");
             List<Role> roles = roleService.queryRole();
-            List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<ComboBox4EasyUI>();
+            List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<>();
             for (Role role : roles) {
                 ComboBox4EasyUI comboBox4EasyUI = new ComboBox4EasyUI();
                 comboBox4EasyUI.setId(role.getRoleId());
@@ -479,7 +480,7 @@ public class PeopleInfoController {
         try {
             logger.info("查询部分公司角色");
             List<Role> roles = roleService.queryByCompanyRole();
-            List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<ComboBox4EasyUI>();
+            List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<>();
             for (Role role : roles) {
                 ComboBox4EasyUI comboBox4EasyUI = new ComboBox4EasyUI();
                 comboBox4EasyUI.setId(role.getRoleId());
@@ -500,7 +501,7 @@ public class PeopleInfoController {
         try {
             logger.info("查询公司角色");
             List<Role> roles = roleService.queryByCompanyRoleAll();
-            List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<ComboBox4EasyUI>();
+            List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<>();
             for (Role role : roles) {
                 ComboBox4EasyUI comboBox4EasyUI = new ComboBox4EasyUI();
                 comboBox4EasyUI.setId(role.getRoleId());
@@ -525,7 +526,7 @@ public class PeopleInfoController {
         User user = (User)session.getAttribute("user");
         pager.setTotalRecords(userService.countByUser(user.getCompanyId()));
         List<User> users =  userService.queryByUser(pager, user.getCompanyId());
-        return new Pager4EasyUI<User>(pager.getTotalRecords(), users);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), users);
     }
 
     @InitBinder

@@ -45,6 +45,10 @@ public class PeopleSalaryController {
             + "," + Constants.COMPANY_ACCOUNTING + "," + Constants.COMPANY_BUYER
             + "," + Constants.COMPANY_EMP;
 
+    /**
+     * 员工工资查看页面
+     * @return
+     */
     @RequestMapping(value = "salary", method = RequestMethod.GET)
     public String customerInfo() {
         if (SessionGetUtil.isUser()) {
@@ -59,6 +63,13 @@ public class PeopleSalaryController {
         }
     }
 
+    /**
+     * 查询工资
+     * @param pageNumber
+     * @param pageSize
+     * @param session
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="peopleSalary",method= RequestMethod.GET)
     public Pager4EasyUI<Salary> queryPager( @Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize,HttpSession session){

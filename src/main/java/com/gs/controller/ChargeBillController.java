@@ -55,20 +55,32 @@ public class ChargeBillController {
     @Resource
     private IncomingOutgoingService incomingOutgoingService;
 
-    // 可以查看的角色：董事长、接待员、超级管理员、普通管理员
+    /**
+     * 可以查看的角色：董事长、接待员、超级管理员、普通管理员
+     */
     private String queryRole = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_RECEIVE + ","
             + Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN + "," + Constants.CAR_OWNER;
 
-    // 可以操作的角色：董事长、接待员
+    /**
+     * 可以操作的角色：董事长、接待员
+     */
     private String editRole = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_RECEIVE;
 
-    // 可以查看对账单的角色：董事长、财务、超级管理员、普通管理员
+    /**
+     * 可以查看对账单的角色：董事长、财务、超级管理员、普通管理员
+     */
     private String queryRole1 = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_ACCOUNTING + ","
             + Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN;
 
-    // 只有车主本人才可以查看消费统计
+    /**
+     * 车主本人才可以查看消费统计
+     */
     private String queryRoleCustomer = Constants.CAR_OWNER;
 
+    /**
+     * 访问收费单据页面
+     * @return
+     */
     @RequestMapping(value = "bill_page", method = RequestMethod.GET)
     public String chargeBillPage() {
         if (SessionGetUtil.isUser()) {
@@ -83,6 +95,10 @@ public class ChargeBillController {
         }
     }
 
+    /**
+     * 访问对账单页面
+     * @return
+     */
     @RequestMapping(value = "statement_page", method = RequestMethod.GET)
     public String statementPage() {
         if (SessionGetUtil.isUser()) {
@@ -97,7 +113,10 @@ public class ChargeBillController {
         }
     }
 
-    //擦看个人预约
+    /**
+     * 车主用户查看我的收费单据
+     * @return ModelAndView
+     */
     @RequestMapping(value = "my_bill", method = RequestMethod.GET)
     private ModelAndView carOwerChargeBill() {
         ModelAndView mav = new ModelAndView();
@@ -112,6 +131,13 @@ public class ChargeBillController {
         return mav;
     }
 
+    /**
+     * 分页查询指定状态的收费单据数据
+     * @param pageNumber
+     * @param pageSize
+     * @param status
+     * @return Pager4EasyUI<ChargeBill>
+     */
     @ResponseBody
     @RequestMapping(value="pager",method= RequestMethod.GET)
     public Pager4EasyUI<ChargeBill> queryPager(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize, @Param("status") String status){
@@ -123,8 +149,8 @@ public class ChargeBillController {
                     Pager pager = new Pager();
                     pager.setPageNo(Integer.valueOf(pageNumber));
                     pager.setPageSize(Integer.valueOf(pageSize));
-                    List<ChargeBill> chargeBillList = new ArrayList<ChargeBill>();
-                    if (status.equals("ALL")) {
+                    List<ChargeBill> chargeBillList = new ArrayList<>();
+                    if ("ALL".equals(status)) {
                         pager.setTotalRecords(chargeBillService.count(user));
                         chargeBillList = chargeBillService.queryByPager(pager, user);
                     } else {
@@ -144,6 +170,16 @@ public class ChargeBillController {
         }
     }
 
+    /**
+     * 根据条件分页查询收费单据记录
+     * @param pageNumber
+     * @param pageSize
+     * @param userName
+     * @param userPhone
+     * @param paymentMethod
+     * @param companyId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "condition_pager", method = RequestMethod.GET)
     public Pager4EasyUI<ChargeBill> queryPagerByCondition(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize,
@@ -166,11 +202,11 @@ public class ChargeBillController {
                 Pager pager = new Pager();
                 pager.setPageNo(Integer.valueOf(pageNumber));
                 pager.setPageSize(Integer.valueOf(pageSize));
-                List<ChargeBill> chargeBills = new ArrayList<ChargeBill>();
+                List<ChargeBill> chargeBills = new ArrayList<>();
                 pager.setTotalRecords(chargeBillService.countByCondition(chargeBill, user));
                 chargeBills = chargeBillService.queryPagerByCondition(pager, chargeBill, user);
 
-                return new Pager4EasyUI<ChargeBill>(pager.getTotalRecords(), chargeBills);
+                return new Pager4EasyUI<>(pager.getTotalRecords(), chargeBills);
             }
             return null;
         } else {
@@ -179,6 +215,12 @@ public class ChargeBillController {
         }
     }
 
+    /**
+     * 更新收费单据记录的状态
+     * @param id
+     * @param status
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "update_status", method = RequestMethod.GET)
     public ControllerResult updateChargeBillStatus(String id, String status) {
@@ -186,7 +228,7 @@ public class ChargeBillController {
             try {
                 if (CheckRoleUtil.checkRoles(editRole)) {
                     logger.info("更新收费单据记录的状态");
-                    if (status.equals("Y")) {
+                    if ("Y".equals(status)) {
                         chargeBillService.inactive(id);
                     } else {
                         chargeBillService.active(id);
@@ -204,6 +246,15 @@ public class ChargeBillController {
         }
     }
 
+    /**
+     * 结算提车，生成收费单据，生成维修保养提醒记录
+     * @param chargeBill
+     * @param userId
+     * @param carMileage
+     * @param maintainOrFix
+     * @param checkinId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public ControllerResult addChargeBill(@Param("chargeBill") ChargeBill chargeBill, @Param("userId") String userId, @Param("carMileage") String carMileage,
@@ -214,7 +265,7 @@ public class ChargeBillController {
                     logger.info("结算提车，生成收费单据，生成维修保养提醒记录");
                     User loginUser = SessionGetUtil.getUser();
 
-                    if (maintainOrFix.equals("保养")) {
+                    if ("保养".equals(maintainOrFix)) {
                         Calendar calendar = Calendar.getInstance();
                         Date lastMaintainTime = new Date();
                         calendar.setTime(lastMaintainTime);
@@ -255,6 +306,11 @@ public class ChargeBillController {
         }
     }
 
+    /**
+     * 修改收费单据
+     * @param chargeBill
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "edit", method = RequestMethod.POST)
     public ControllerResult editChargeBill(ChargeBill chargeBill) {
@@ -276,6 +332,11 @@ public class ChargeBillController {
         }
     }
 
+    /**
+     * 收费单据导出
+     * @param request
+     * @param response
+     */
     @RequestMapping(value="export_excel", method = RequestMethod.GET)
     public void exportExcel(HttpServletRequest request, HttpServletResponse response) {
         try {
@@ -288,7 +349,7 @@ public class ChargeBillController {
                         "汽车车型", "汽车颜色", "汽车车牌", "车牌号码", "维修保养记录提车时间",
                         "维修保养记录描述", "付款方式", "总金额", "实际付款", "收费时间", "收费单据创建时间",
                         "收费单据描述", "收费单据状态"};
-                List<Object[]> dataList = new ArrayList<Object[]>();
+                List<Object[]> dataList = new ArrayList<>();
                 for (ChargeBill c : chargeBills) {
                     Object[] objs = new Object[rowsName.length];
                     objs[0] = c.getChargeBillId();
@@ -318,14 +379,17 @@ public class ChargeBillController {
         }
     }
 
-
+    /**
+     * 默认查询本月车主用户消费统计，报表显示
+     * @return List<LineBasic>
+     */
     @ResponseBody
     @RequestMapping(value="query_default",method= RequestMethod.GET)
     public List<LineBasic> queryAll(){
         if(SessionGetUtil.isUser()) {
             if(CheckRoleUtil.checkRoles(queryRoleCustomer)) {
                 logger.info("默认查询本月车主用户消费统计，报表显示");
-                List<LineBasic> lineBasics = new ArrayList<LineBasic>();
+                List<LineBasic> lineBasics = new ArrayList<>();
                 User user = SessionGetUtil.getUser();
                 LineBasic lineBasic = new LineBasic();
                 LineBasic lineBasic1 = new LineBasic();
@@ -349,6 +413,13 @@ public class ChargeBillController {
 
     }
 
+    /**
+     * 根据年，月，季度，周，日查询所有车主用户消费统计，报表显示
+     * @param start
+     * @param end
+     * @param type
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="query_condition",method= RequestMethod.GET)
     public List<LineBasic> queryCondition(@Param("start")String start,@Param("end")String end,
@@ -356,14 +427,14 @@ public class ChargeBillController {
         if(SessionGetUtil.isUser()) {
             if(CheckRoleUtil.checkRoles(queryRoleCustomer)) {
                 logger.info("根据年，月，季度，周，日查询所有车主用户消费统计，报表显示");
-                List<LineBasic> lineBasics = new ArrayList<LineBasic>();
+                List<LineBasic> lineBasics = new ArrayList<>();
                 LineBasic lineBasic = new LineBasic();
                 LineBasic lineBasic1 = new LineBasic();
                 lineBasic.setName("保养");
                 lineBasic1.setName("维修");
                 User user = SessionGetUtil.getUser();
-                if (start != null && !start.equals("") && end != null && !end.equals("") && type != null && !type.equals("")) {
-                    if (type.equals("year")) {
+                if (start != null && !"".equals(start) && end != null && !"".equals(end) && type != null && !"".equals(type)) {
+                    if ("year".equals(type)) {
                         HighchartsData.setStrYear(start, end);
                         dataCondition(start, end, "保养", type, "year", "one", user.getUserId());
                         lineBasic.setData(HighchartsData.doubleYearOne);
@@ -371,21 +442,21 @@ public class ChargeBillController {
                         lineBasic1.setData(HighchartsData.doubleYearTwo);
                         lineBasic.setCategories(HighchartsData.strYear);
                         lineBasic1.setCategories(HighchartsData.strYear);
-                    } else if (type.equals("quarter")) {
+                    } else if ("quarter".equals(type)) {
                         dataCondition(start, end, "保养", type, "quarter", "one", user.getUserId());
                         lineBasic.setData(HighchartsData.doubleQuarterOne);
                         dataCondition(start, end, "维修", type, "quarter", "two", user.getUserId());
                         lineBasic1.setData(HighchartsData.doubleQuarterTwo);
                         lineBasic.setCategories(HighchartsData.strQuarter);
                         lineBasic1.setCategories(HighchartsData.strQuarter);
-                    } else if (type.equals("month")) {
+                    } else if ("month".equals(type)) {
                         dataCondition(start, end, "保养", type, "month", "one", user.getUserId());
                         lineBasic.setData(HighchartsData.doubleMonthOne);
                         dataCondition(start, end, "维修", type, "month", "two", user.getUserId());
                         lineBasic1.setData(HighchartsData.doubleMonthTwo);
                         lineBasic.setCategories(HighchartsData.strMonth);
                         lineBasic1.setCategories(HighchartsData.strMonth);
-                    } else if (type.equals("week")) {
+                    } else if ("week".equals(type)) {
                         HighchartsData.setStrWeek(start, end);
                         dataCondition(start, end, "保养", type, "week", "one", user.getUserId());
                         lineBasic.setData(HighchartsData.doubleWeekOne);
@@ -393,7 +464,7 @@ public class ChargeBillController {
                         lineBasic1.setData(HighchartsData.doubleWeekTwo);
                         lineBasic.setCategories(HighchartsData.strWeek);
                         lineBasic1.setCategories(HighchartsData.strWeek);
-                    } else if (type.equals("day")) {
+                    } else if ("day".equals(type)) {
                         dataCondition(start, end, "保养", type, "day", "one", user.getUserId());
                         lineBasic.setData(HighchartsData.doubleDayOne);
                         dataCondition(start, end, "维修", type, "day", "two", user.getUserId());
@@ -413,32 +484,42 @@ public class ChargeBillController {
         }
     }
 
-
-    /*  默认查询本月的车主消费
-    * */
+    /**
+     * 默认查询本月的车主消费
+     * @param type
+     * @param userId
+     */
     public void dateDay(String type,String userId){
         HighchartsData.doubleDayTwo = new double[31];
         HighchartsData.doubleDayOne = new double[31];
         List<ChargeBill> chargeBills = null;
-        if(type.equals("one")){
+        if("one".equals(type)){
             chargeBills = chargeBillService.queryByDefault("保养",userId);
-        }else if(type.equals("two")){
+        }else if("two".equals(type)){
             chargeBills = chargeBillService.queryByDefault("维修",userId);
         }
         int i = 0;
-        double[] doubles = new double[chargeBills.size()];
-        String[] strs = new String[chargeBills.size()];
-        for(ChargeBill io: chargeBills) {
-            doubles[i] = io.getActualPayment();
-            strs[i] = HighchartsData.dateFormat(io.getChargeCreatedTime(),"day");
-            i++;
+        double[] doubles = new double[0];
+        if (chargeBills != null) {
+            doubles = new double[chargeBills.size()];
+        }
+        String[] strs = new String[0];
+        if (chargeBills != null) {
+            strs = new String[chargeBills.size()];
+        }
+        if (chargeBills != null) {
+            for(ChargeBill io: chargeBills) {
+                doubles[i] = io.getActualPayment();
+                strs[i] = HighchartsData.dateFormat(io.getChargeCreatedTime(),"day");
+                i++;
+            }
         }
         for(int j = 0,len = HighchartsData.strDay.length; j <len ; j++){
             for(int k = 0; k < strs.length; k++){
                 if(HighchartsData.strDay[j].equals(strs[k])){
-                    if(type.equals("two")){
+                    if("two".equals(type)){
                         HighchartsData.doubleDayTwo[j] = doubles[k];
-                    }else if(type.equals("one")){
+                    }else if("one".equals(type)){
                         HighchartsData.doubleDayOne[j] = doubles[k];
                     }
 
@@ -448,9 +529,17 @@ public class ChargeBillController {
 
 
     }
-    /*
-    *  按年，季度，月，周，日，查询 车主消费
-    * */
+
+    /**
+     * 按年，季度，月，周，日，查询 车主消费
+     * @param start
+     * @param end
+     * @param maintainOrFix
+     * @param type
+     * @param date
+     * @param species
+     * @param userId
+     */
     public void dataCondition(String start,String end,String maintainOrFix,String type,String date,String species,String userId){
         HighchartsData.doubleDayTwo = new double[31];
         HighchartsData.doubleDayOne = new double[31];
@@ -469,33 +558,33 @@ public class ChargeBillController {
         HighchartsData.len = 0;
         for(ChargeBill io: chargeBills) {
             doubles[i] = io.getActualPayment();
-            if(date.equals("month")) {
+            if("month".equals(date)) {
                 strs[i] = HighchartsData.dateFormat(io.getChargeCreatedTime(), "month");
                 HighchartsData.len = HighchartsData.strMonth.length;
-            }else if(date.equals("day")){
+            }else if("day".equals(date)){
                 strs[i] = HighchartsData.dateFormat(io.getChargeCreatedTime(), "day");
                 HighchartsData.len = HighchartsData.strDay.length;
-            }else if(date.equals("quarter")){
+            }else if("quarter".equals(date)){
                 strs[i] = HighchartsData.dateFormat(io.getChargeCreatedTime(), "quarter");
                 HighchartsData.len = HighchartsData.strQuarter.length;
-            }else if(date.equals("year")){
+            }else if("year".equals(date)){
                 strs[i] = HighchartsData.dateFormat(io.getChargeCreatedTime(),"year");
                 HighchartsData.len = HighchartsData.strYear.length;
-            }else if(date.equals("week")){
+            }else if("week".equals(date)){
                 strs[i] = "第"+String.valueOf(HighchartsData.getWeek(HighchartsData.dateFormat(io.getChargeCreatedTime())))+"周";
                 HighchartsData.len = HighchartsData.strWeek.length;
             }
             i++;
         }
-        if(date.equals("quarter")) {
+        if("quarter".equals(date)) {
             HighchartsData.getQuarter(strs,doubles,species);
-        }else if(date.equals("month")){
+        }else if("month".equals(date)){
             HighchartsData.getMonth(strs,doubles,species);
-        }else if(date.equals("day")){
+        }else if("day".equals(date)){
             HighchartsData.getDay(strs,doubles,species);
-        }else if(date.equals("year")){
+        }else if("year".equals(date)){
             HighchartsData. getYear(strs,doubles,species);
-        }else if(date.equals("week")){
+        }else if("week".equals(date)){
             HighchartsData.getWeek(strs,doubles,species);
         }
     }

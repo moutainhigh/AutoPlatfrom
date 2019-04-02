@@ -12,9 +12,9 @@ import java.util.Date;
 import java.util.Properties;
 
 /**
- *由Wjhsmart技术支持
  *
- *@author Wjhsmart
+ *
+ *@author qm
  *@since 2017-04-12 08:08:20
  */
 public class CreateMapperUtil extends JFrame {

@@ -9,7 +9,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-//本类专门用来连接数据库,可以作为固定的工具类使用(记下来即可)
+/**
+ * 本类专门用来连接数据库,可以作为固定的工具类使用(记下来即可)
+ */
 public class DBManager {
     // 定义一个静态的连接对象用来连接数据库
     // private static Connection conn = null;
@@ -32,15 +34,12 @@ public class DBManager {
             // 2、连接到数据库（获得连接对象）
             // 通过连接管理器(DriverManager)类的一个方法来获得连接对象，里面的参数表示我们连接到数据源bookdemo
             conn = DriverManager.getConnection(url, user, pass);
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             // 以堆栈的方式将错误信息打印出来
             e.printStackTrace();
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
-
-        return conn; // 将连接对象返回
+        // 将连接对象返回
+        return conn;
     }
 
     /**
@@ -116,7 +115,9 @@ public class DBManager {
             e.printStackTrace();
         } finally {
             try {
-                stmt.close();
+                if (stmt != null) {
+                    stmt.close();
+                }
             } catch (SQLException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

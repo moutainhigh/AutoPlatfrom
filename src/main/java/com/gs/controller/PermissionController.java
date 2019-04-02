@@ -49,6 +49,10 @@ public class PermissionController {
     private String queryRole = Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN;
     private String editRole = Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN;
 
+    /**
+     *
+     * @return
+     */
     @RequestMapping(value = "info", method = RequestMethod.GET)
     public ModelAndView showPermissionInfo() {
         ModelAndView mav = new ModelAndView();
@@ -74,6 +78,12 @@ public class PermissionController {
         return mav;
     }
 
+    /**
+     * 分页查询所有权限
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "query_pager", method = RequestMethod.GET)
     public Pager4EasyUI<Permission> queryPager(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -88,9 +98,16 @@ public class PermissionController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(permissionService.count(user));
         List<Permission> permissions = permissionService.queryByPager(pager, user);
-        return new Pager4EasyUI<Permission>(pager.getTotalRecords(), permissions);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), permissions);
     }
 
+    /**
+     * 根据模块来分页查询权限
+     * @param pageNumber
+     * @param pageSize
+     * @param moduleId
+     * @return Pager4EasyUI<Permission>
+     */
     @ResponseBody
     @RequestMapping(value = "module_pager", method = RequestMethod.GET)
     public Pager4EasyUI<Permission> queryByModulePager(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize, @Param("moduleId") String moduleId) {
@@ -104,9 +121,16 @@ public class PermissionController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(permissionService.countModule(moduleId));
         List<Permission> permissions = permissionService.queryByModulePager(moduleId, pager);
-        return new Pager4EasyUI<Permission>(pager.getTotalRecords(), permissions);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), permissions);
     }
 
+    /**
+     * 分页查询可用的权限
+     * @param pageNumber
+     * @param pageSize
+     * @param status
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "status_pager", method = RequestMethod.GET)
     public Pager4EasyUI<Permission> queryByStatusPager(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize, @Param("moduleId") String status) {
@@ -114,7 +138,7 @@ public class PermissionController {
             logger.info("Session已失效或权限不足，无法查看！");
             return null;
         }
-        if (status.equals("Y")) {
+        if ("Y".equals(status)) {
             logger.info("分页查询可用的权限");
         } else {
             logger.info("分页查询不可用的权限");
@@ -124,9 +148,15 @@ public class PermissionController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(permissionService.countStatus(status));
         List<Permission> permissions = permissionService.queryByStatusPager(status, pager);
-        return new Pager4EasyUI<Permission>(pager.getTotalRecords(), permissions);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), permissions);
     }
 
+    /**
+     * 更新权限状态
+     * @param id
+     * @param status
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "update_status", method = RequestMethod.GET)
     public ControllerResult updateStatus(@Param("id") String id, @Param("status") String status) {
@@ -140,9 +170,9 @@ public class PermissionController {
                 return ControllerResult.getFailResult("更新状态失败，没有该权限操作");
             }
             logger.info("更新权限状态");
-            if (status.equals("Y")) {
+            if ("Y".equals(status)) {
                 permissionService.active(id);
-            } else if (status.equals("N")) {
+            } else if ("N".equals(status)) {
                 permissionService.inactive(id);
             }
             return ControllerResult.getSuccessResult("更新成功");
@@ -152,6 +182,11 @@ public class PermissionController {
         }
     }
 
+    /**
+     * 添加权限
+     * @param permission
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "add_permission", method = RequestMethod.POST)
     public ControllerResult addPermission(Permission permission) {
@@ -173,6 +208,11 @@ public class PermissionController {
         }
     }
 
+    /**
+     * 修改权限
+     * @param permission
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "update_permission", method = RequestMethod.POST)
     public ControllerResult updatePermission(Permission permission) {
@@ -199,6 +239,12 @@ public class PermissionController {
         }
     }
 
+    /**
+     * 根据角色和模块查询拥有的权限
+     * @param roleId
+     * @param moduleId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "roleIdOrModuleId_permission", method = RequestMethod.GET)
     public List<PermissionInfo> queryByRoleIdOrModuleId(@Param("roleId") String roleId, @Param("moduleId") String moduleId) {
@@ -209,7 +255,7 @@ public class PermissionController {
         logger.info("根据角色和模块查询拥有的权限");
         List<Permission> permissions = permissionService.queryByModuleId(moduleId);
         List<String> str = rolePermissionService.queryByRoleIdOrMeduleId(roleId, moduleId);
-        List<PermissionInfo> pis = new ArrayList<PermissionInfo>();
+        List<PermissionInfo> pis = new ArrayList<>();
         for (Permission p : permissions) {
             int i = 0;
             PermissionInfo pi = new PermissionInfo();
@@ -230,6 +276,12 @@ public class PermissionController {
         return pis;
     }
 
+    /**
+     * 添加角色权限
+     * @param permissionIds
+     * @param roleId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "addByRole_permission", method = RequestMethod.GET)
     public ControllerResult addPermission(@Param("permissionIds") String[] permissionIds, @Param("roleId") String roleId) {
@@ -262,6 +314,12 @@ public class PermissionController {
         }
     }
 
+    /**
+     * 删除权限
+     * @param permissionIds
+     * @param roleId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "delByRole_permission", method = RequestMethod.GET)
     public ControllerResult delPermission(@Param("permissionIds") String[] permissionIds, @Param("roleId") String roleId) {

@@ -12,18 +12,46 @@ import javax.mail.internet.InternetAddress;
  *
  */
 public class Mail {
-
-	public static final String HTML = "text/html;charset=utf-8"; // 邮件类型是HTML类型
-	public static final String TEXT = "text/plain;charset=utf-8"; // 邮件类型是普通的文本类型
-
-	private String from; // 发送人
-	private String recipients; // 接收人
-	private String ccRecipients; // 抄送人
-	private String bccRecipients; // 密送人
-	private String subject; // 邮件主题
-	private String content; // 邮件内容
-	private String type; // 邮件类型
-	private Multipart multipart; // 附件
+	/**
+	 * 邮件类型是HTML类型
+	 */
+	public static final String HTML = "text/html;charset=utf-8";
+	/**
+	 * 邮件类型是普通的文本类型
+	 */
+	public static final String TEXT = "text/plain;charset=utf-8"; //
+	/**
+	 * 发送人
+	 */
+	private String from;
+	/**
+	 * 接收人
+	 */
+	private String recipients;
+	/**
+	 * 抄送人
+	 */
+	private String ccRecipients;
+	/**
+	 * 密送人
+	 */
+	private String bccRecipients;
+	/**
+	 * 邮件主题
+	 */
+	private String subject;
+	/**
+	 * 邮件内容
+	 */
+	private String content;
+	/**
+	 * 邮件类型
+	 */
+	private String type;
+	/**
+	 * 附件
+	 */
+	private Multipart multipart;
 
 	public Address getFrom() {
 		if (from != null) {

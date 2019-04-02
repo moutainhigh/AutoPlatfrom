@@ -50,13 +50,22 @@ public class MaintainDetailController {
     @Resource
     private MaintainRecordService maintainRecordService;
 
-    // 可以查看的角色：董事长、接待员、普通管理员、超级管理员、技师
+    /**
+     * 可以查看的角色：董事长、接待员、普通管理员、超级管理员、技师
+     */
     private String queryRole = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_RECEIVE + ","
             + Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN + "," + Constants.COMPANY_ARTIFICER + "," + Constants.CAR_OWNER;
 
-    // 可以操作的角色：董事长、技师、接待员、车主用于用户前置
+    /**
+     * 可以操作的角色：董事长、技师、接待员、车主用于用户前置
+     */
     private String editRole = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_ARTIFICER + "," + Constants.CAR_OWNER + "," + Constants.COMPANY_RECEIVE ;
 
+    /**
+     * 添加维修保养明细
+     * @param detail
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public ControllerResult addMaintainDetail(MaintainDetail detail) {
@@ -79,6 +88,13 @@ public class MaintainDetailController {
         }
     }
 
+    /**
+     * 分页查询指定维修保养记录的所有明细
+     * @param pageNumber
+     * @param pageSize
+     * @param recordId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="pager",method= RequestMethod.GET)
     public Pager4EasyUI<MaintainDetail> queryPager(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize, @Param("recordId") String recordId){
@@ -102,6 +118,11 @@ public class MaintainDetailController {
         }
     }
 
+    /**
+     * 修改维修保养明细记录
+     * @param detail
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "edit", method = RequestMethod.POST)
     public ControllerResult editMaintainDetail(MaintainDetail detail) {
@@ -124,6 +145,12 @@ public class MaintainDetailController {
         }
     }
 
+    /**
+     * 用户签字确认
+     * @param recordId
+     * @param maintainIds
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "confirm", method = RequestMethod.GET)
     public ControllerResult userConfirm(@Param("recordId") String recordId, @Param("maintainIds") String maintainIds) {
@@ -136,7 +163,7 @@ public class MaintainDetailController {
                     if (maintainFixAccs.size() <= 0) {
                         return ControllerResult.getFailResult("用户签字失败，该项目还没有对应的配件");
                     }
-                    List<MaterialList> materialLists = new ArrayList<MaterialList>();
+                    List<MaterialList> materialLists = new ArrayList<>();
                     for (MaintainFixAcc maintainFixAcc : maintainFixAccs) {
                         MaterialList materialList = new MaterialList();
                         materialList.setRecordId(recordId);
@@ -165,6 +192,12 @@ public class MaintainDetailController {
         }
     }
 
+    /**
+     * 查询配件详情
+     * @param recordId
+     * @param maintainId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "query_detail", method = RequestMethod.GET)
     public ControllerResult queryIsDetail(@Param("recordId") String recordId, @Param("maintainId") String maintainId) {
@@ -191,6 +224,11 @@ public class MaintainDetailController {
         }
     }
 
+    /**
+     * 查询配件
+     * @param maintainIds
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "query_acc", method = RequestMethod.GET)
     public ControllerResult queryIsAcc(String maintainIds) {

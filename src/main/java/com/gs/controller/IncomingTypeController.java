@@ -148,7 +148,7 @@ public class IncomingTypeController {
                 pager.setPageSize(Integer.valueOf(pageSize));
                 User user = SessionGetUtil.getUser();
                 List<IncomingType> incomingTypes = null;
-                if (status.equals("Y")) {
+                if ("Y".equals(status)) {
                     incomingTypes = incomingTypeService.queryPagerStatus(status, pager,user);
                     pager.setTotalRecords(incomingTypeService.countStatus(status,user));
                 } else if (status.equals("N")) {

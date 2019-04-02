@@ -39,7 +39,9 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by Administrator on 2017-05-17. 意向公司的控制器
+ *
+ * @author Administrator
+ * @date 2017-05-17
  */
 @Controller
 @RequestMapping("intention")
@@ -50,9 +52,15 @@ public class IntentionCompanyController {
     @Resource
     private IntentionCompanyService intentionCompanyService;
 
-    // 可以看的角色：超级管理员、普通管理员
+    /**
+     * 可以看的角色：超级管理员、普通管理员
+     */
     private String queryRole = Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN;
 
+    /**
+     * 访问意向公司页面
+     * @return
+     */
     @RequestMapping(value = "intention_page", method = RequestMethod.GET)
     public String checkinPage() {
         if (SessionGetUtil.isUser()) {
@@ -68,6 +76,13 @@ public class IntentionCompanyController {
 
     }
 
+    /**
+     * 分页查询意向公司记录
+     * @param pageNumber
+     * @param pageSize
+     * @param status
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "intention_pager", method = RequestMethod.GET)
     public Pager4EasyUI<IntentionCompany> intentionPager(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize, @Param("status") String status) {
@@ -79,15 +94,15 @@ public class IntentionCompanyController {
                     Pager pager = new Pager();
                     pager.setPageNo(Integer.valueOf(pageNumber));
                     pager.setPageSize(Integer.valueOf(pageSize));
-                    List<IntentionCompany> isc = new ArrayList<IntentionCompany>();
-                    if (status.equals("ALL")) {
+                    List<IntentionCompany> isc = new ArrayList<>();
+                    if ("ALL".equals(status)) {
                         pager.setTotalRecords(intentionCompanyService.count(user));
                         isc = intentionCompanyService.queryByPager(pager, user);
                     } else {
                         pager.setTotalRecords(intentionCompanyService.countByStatus(status));
                         isc = intentionCompanyService.queryPagerByStatus(pager, status);
                     }
-                    return new Pager4EasyUI<IntentionCompany>(pager.getTotalRecords(), isc);
+                    return new Pager4EasyUI<>(pager.getTotalRecords(), isc);
                 }
                 return null;
             } catch (Exception e) {
@@ -100,6 +115,15 @@ public class IntentionCompanyController {
         }
     }
 
+    /**
+     * 根据条件分页查询意向公司记录
+     * @param pageNumber
+     * @param pageSize
+     * @param name
+     * @param phone
+     * @param email
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "condition_pager", method = RequestMethod.GET)
     public Pager4EasyUI<IntentionCompany> queryPagerByCondition(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize,
@@ -115,11 +139,11 @@ public class IntentionCompanyController {
                     Pager pager = new Pager();
                     pager.setPageNo(Integer.valueOf(pageNumber));
                     pager.setPageSize(Integer.valueOf(pageSize));
-                    List<IntentionCompany> ics = new ArrayList<IntentionCompany>();
+                    List<IntentionCompany> ics = new ArrayList<>();
                     pager.setTotalRecords(intentionCompanyService.countByCondition(ic));
                     ics = intentionCompanyService.queryPagerByCondition(pager, ic);
 
-                    return new Pager4EasyUI<IntentionCompany>(pager.getTotalRecords(), ics);
+                    return new Pager4EasyUI<>(pager.getTotalRecords(), ics);
                 }
                 return null;
             } catch (Exception e) {
@@ -132,12 +156,18 @@ public class IntentionCompanyController {
         }
     }
 
+    /**
+     * 添加意向公司
+     * @param ic
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public ControllerResult addIntention(IntentionCompany ic) {
         logger.info("添加意向公司");
         ic.setIntentionStatus("Y");
-        if (ic.getEmail() != null && !ic.getEmail().equals("") && ic.getPhone() != null && !ic.getPhone().equals("")) { // 手机和邮箱都不为空
+        // 手机和邮箱都不为空
+        if (ic.getEmail() != null && !"".equals(ic.getEmail()) && ic.getPhone() != null && !"".equals(ic.getPhone())) {
             String to = ic.getPhone();
             String smsContent = "【创意科技】尊敬的" + ic.getName() + "先生/女士,恭喜你成功提交信息,客服将 在一个工作日内与您取得联系,请您保持手机畅通。";
             IndustrySMS is = new IndustrySMS(to, smsContent);
@@ -158,7 +188,8 @@ public class IntentionCompanyController {
             MailSender mailSender = new MailSender();
             mailSender.sendEmailByType(Constants.MAIL_TYPE, mail, Constants.MAIL_SENDER, Constants.MAIL_PASSWORD);
         } else { // 其中一个为空
-            if (ic.getEmail() != null && !ic.getEmail().equals("")) { // 邮箱不为空
+            // 邮箱不为空
+            if (ic.getEmail() != null && !"".equals(ic.getEmail())) {
                 Mail mail = new Mail();
                 mail.setRecipients(ic.getEmail());
                 mail.setSubject("入驻提醒");
@@ -174,7 +205,7 @@ public class IntentionCompanyController {
                 MailSender mailSender = new MailSender();
                 mailSender.sendEmailByType(Constants.MAIL_TYPE, mail, Constants.MAIL_SENDER, Constants.MAIL_PASSWORD);
 
-            } else if (ic.getPhone() != null && !ic.getPhone().equals("")) { // 手机号不为空
+            } else if (ic.getPhone() != null && !"".equals(ic.getPhone())) { // 手机号不为空
                 String to = ic.getPhone();
                 String smsContent = "【创意科技】尊敬的" + ic.getName() + "先生/女士,恭喜你成功提交信息,客服将 在一个工作日内与您取得联系,请您保持手机畅通。";
                 IndustrySMS is = new IndustrySMS(to, smsContent);
@@ -187,14 +218,19 @@ public class IntentionCompanyController {
         return ControllerResult.getSuccessResult("申请成功，我们的管理员会即使和您联系，请保持手机开机哦");
     }
 
-
+    /**
+     * 更新意向公司记录的状态
+     * @param id
+     * @param status
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "update_status", method = RequestMethod.GET)
     public ControllerResult updateIntentionStatus(String id, String status) {
         if (SessionGetUtil.isUser()) {
             try {
                 logger.info("更新意向公司记录的状态");
-                if (status.equals("Y")) {
+                if ("Y".equals(status)) {
                     intentionCompanyService.inactive(id);
                 } else {
                     intentionCompanyService.active(id);

@@ -4,10 +4,13 @@ import com.gs.common.Constants;
 import org.apache.shiro.SecurityUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by Administrator on 2017-05-11.
+ *
+ * @author Administrator
+ * @date 2017-05-11
  */
 public class CheckRoleUtil {
 
@@ -18,13 +21,11 @@ public class CheckRoleUtil {
      */
     public static boolean checkRoles(String roleName) {
         String[] rolesNames = roleName.split(",");
-        List<String> roles = new ArrayList<String>();
-        for (int i = 0, len = rolesNames.length; i < len; i++) {
-            roles.add(rolesNames[i]);
-        }
+        List<String> roles = new ArrayList<>();
+        roles.addAll(Arrays.asList(rolesNames));
         boolean[] isRoles = SecurityUtils.getSubject().hasRoles(roles);
-        for (int j = 0, len = isRoles.length; j < len; j++) {
-            if (isRoles[j]) {
+        for (boolean isRole : isRoles) {
+            if (isRole) {
                 return true;
             }
         }

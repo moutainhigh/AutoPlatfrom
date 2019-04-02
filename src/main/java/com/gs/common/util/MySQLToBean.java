@@ -392,10 +392,10 @@ public class MySQLToBean extends JFrame {
                 methods.append(getMethodStr(fieldName, fieldType));
 
                 if (i == 0) {
-                    classInfo.append("由Wjhsmart技术支持\r\n*");
+                    classInfo.append("\r\n*");
 
                     classInfo.append("\r\n");
-                    classInfo.append("*@author Wjhsmart\r\n");
+                    classInfo.append("*@author qm\r\n");
                     classInfo.append("*@since ");
                     classInfo.append(sdf.format(new Date()));
                     classInfo.append("\r\n*/\r\n");

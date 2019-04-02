@@ -40,8 +40,9 @@ public class MaterialUseController {
 
     private String editRole1 = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_REPERTORY + "," + Constants.COMPANY_ARTIFICER;
 
-
-    // 可以查看的角色：董事长、财务员、超级管理员、普通管理员
+    /**
+     * 可以查看的角色：董事长、财务员、超级管理员、普通管理员
+     */
     private String queryRole1 = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_ACCOUNTING + ","
             + Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN;
 
@@ -64,6 +65,10 @@ public class MaterialUseController {
     @Resource
     private MaterialReturnService materialReturnService;
 
+    /**
+     * 显示领料信息
+     * @return String
+     */
     @RequestMapping(value = "info", method = RequestMethod.GET)
     public String showMaterialUseInfo() {
         if (!SessionGetUtil.isUser()) {
@@ -78,6 +83,13 @@ public class MaterialUseController {
         return "dispatchingPicking/material_use";
     }
 
+    /**
+     * 分页查询当前维修记录领料明细
+     * @param pageNumber
+     * @param pageSize
+     * @param recordId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "query_pager", method = RequestMethod.GET)
     public Pager4EasyUI<MaterialUseInfo> queryBySpeedStatus(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize, @Param("recordId") String recordId) {
@@ -92,9 +104,15 @@ public class MaterialUseController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(muis.countBySpeedStatus(recordId, user));
         List<MaterialUseInfo> materialUseInfos = muis.queryBySpeedStatus(pager, recordId, user);
-        return new Pager4EasyUI<MaterialUseInfo>(pager.getTotalRecords(), materialUseInfos);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), materialUseInfos);
     }
 
+    /**
+     * 更新领料审核状态
+     * @param id
+     * @param status
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "updatePickingStatusById", method = RequestMethod.GET)
     public ControllerResult updatePickingStatus(@Param("id") String id, @Param("status") String status) {
@@ -111,7 +129,7 @@ public class MaterialUseController {
             User user = SessionGetUtil.getUser();
             mrs.updatePickingStatusById(status, id);
             List<MaterialUseInfo> materialUseInfoList = muis.queryAll(id, user);
-            List<Accessories> accessories = new ArrayList<Accessories>();
+            List<Accessories> accessories = new ArrayList<>();
             for (MaterialUseInfo mui : materialUseInfoList) {
                 Accessories a = new Accessories();
                 a.setAccId(mui.getAccId());
@@ -128,6 +146,12 @@ public class MaterialUseController {
         }
     }
 
+    /**
+     * 退料数量验证
+     * @param accCount
+     * @param materialUseId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryIs_CountThan", method = RequestMethod.GET)
     public String queryIsCountThan(@Param("accCount")String accCount, @Param("materialUseId")String materialUseId) {
@@ -135,7 +159,7 @@ public class MaterialUseController {
             int accCount2 = Integer.valueOf(accCount);
             boolean result = true;
             String resultString = "";
-            Map<String, Boolean> map = new HashMap<String, Boolean>();
+            Map<String, Boolean> map = new HashMap<>();
             ObjectMapper mapper = new ObjectMapper();
             MaterialUseInfo mui = muis.queryByIdAccCount(materialUseId);
             int accCount1 = mui.getAccCount();
@@ -155,6 +179,13 @@ public class MaterialUseController {
         }
     }
 
+    /**
+     * 申请领料
+     * @param recordId
+     * @param accIds
+     * @param accCounts
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "add_material", method = RequestMethod.GET)
     public ControllerResult addByRecordIdMu(@Param("recordId") String recordId, @Param("accIds") String[] accIds, @Param("accCounts") int[] accCounts) {
@@ -168,7 +199,7 @@ public class MaterialUseController {
                 return ControllerResult.getFailResult("申请失败，没有该权限操作");
             }
             logger.info("申请领料");
-            List<MaterialUseInfo> materialUseInfos = new ArrayList<MaterialUseInfo>();
+            List<MaterialUseInfo> materialUseInfos = new ArrayList<>();
             for (int i = 0, length = accIds.length; i < length; i++) {
                 MaterialUseInfo mui = new MaterialUseInfo();
                 mui.setRecordId(recordId);
@@ -185,25 +216,31 @@ public class MaterialUseController {
         }
     }
 
+    /**
+     * 默认查询本月配件使用统计
+     * @param companyId
+     * @param quantity
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="query_default",method= RequestMethod.GET)
     public List<LineBasic> queryAll(@Param("companyId")String companyId, @Param("quantity")String quantity){
         if(SessionGetUtil.isUser()) {
 
                 logger.info("默认查询本月配件使用统计");
-                List<LineBasic> lineBasics = new ArrayList<LineBasic>();
+                List<LineBasic> lineBasics = new ArrayList<>();
                 User user = SessionGetUtil.getUser();
-                if(user.getCompanyId() != null && !user.getCompanyId().equals("")){
+                if(user.getCompanyId() != null && !"".equals(user.getCompanyId())){
                     companyId = user.getCompanyId();
                 }
                 List<AccessoriesType> accessoriesTypes = accessoriesTypeService.queryByCompany(companyId);
                 for(AccessoriesType accType: accessoriesTypes){
                     LineBasic lineBasic = new LineBasic();
                     lineBasic.setName(accType.getAccTypeName());
-                    if(quantity.equals("领料数量")) {
+                    if("领料数量".equals(quantity)) {
                         dateDay("one", companyId, accType.getAccTypeId());
                         lineBasic.setData(HighchartsData.doubleDayOne);
-                    }else if(quantity.equals("退料数量")){
+                    }else if("退料数量".equals(quantity)){
                         dateDay("two", companyId, accType.getAccTypeId());
                         lineBasic.setData(HighchartsData.doubleDayTwo);
                     }
@@ -219,6 +256,15 @@ public class MaterialUseController {
 
     }
 
+    /**
+     * 根据年，月，季度，周，日查询配件使用统计
+     * @param start
+     * @param end
+     * @param type
+     * @param companyId
+     * @param quantity
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="query_condition",method= RequestMethod.GET)
     public List<LineBasic> queryCondition(@Param("start")String start,@Param("end")String end,
@@ -227,79 +273,79 @@ public class MaterialUseController {
         if(SessionGetUtil.isUser()) {
 
                 logger.info("根据年，月，季度，周，日查询配件使用统计");
-                List<LineBasic> lineBasics = new ArrayList<LineBasic>();
+                List<LineBasic> lineBasics = new ArrayList<>();
                 User user = SessionGetUtil.getUser();
-                if (user.getCompanyId() != null && !user.getCompanyId().equals("")) {
+                if (user.getCompanyId() != null && !"".equals(user.getCompanyId())) {
                     companyId = user.getCompanyId();
                 }
                 List<AccessoriesType> accessoriesTypes = accessoriesTypeService.queryByCompany(companyId);
-                if (start != null && !start.equals("") && end != null && !end.equals("") && type != null && !type.equals("")) {
-                    if (type.equals("year")) {
+                if (start != null && !"".equals(start) && end != null && !"".equals(end) && type != null && !"".equals(type)) {
+                    if ("year".equals(type)) {
                         HighchartsData.setStrYear(start, end);
                         for(AccessoriesType accType: accessoriesTypes){
                             LineBasic lineBasic = new LineBasic();
                             lineBasic.setName(accType.getAccTypeName());
-                            if(quantity.equals("领料数量")) {
+                            if("领料数量".equals(quantity)) {
                                 dataCondition(start,end,type,"year","one",companyId,accType.getAccTypeId());
                                 lineBasic.setData(HighchartsData.doubleYearOne);
-                            }else if(quantity.equals("退料数量")){
+                            }else if("退料数量".equals(quantity)){
                                 dataCondition(start,end,type,"year","two",companyId,accType.getAccTypeId());
                                 lineBasic.setData(HighchartsData.doubleYearTwo);
                             }
                             lineBasic.setCategories(HighchartsData.strYear);
                             lineBasics.add(lineBasic);
                         }
-                    } else if (type.equals("quarter")) {
+                    } else if ("quarter".equals(type)) {
                         for(AccessoriesType accType: accessoriesTypes){
                             LineBasic lineBasic = new LineBasic();
                             lineBasic.setName(accType.getAccTypeName());
-                            if(quantity.equals("领料数量")) {
+                            if("领料数量".equals(quantity)) {
                                 dataCondition(start,end,type,"quarter","one",companyId,accType.getAccTypeId());
                                 lineBasic.setData(HighchartsData.doubleQuarterOne);
-                            }else if(quantity.equals("退料数量")){
+                            }else if("退料数量".equals(quantity)){
                                 dataCondition(start,end,type,"quarter","two",companyId,accType.getAccTypeId());
                                 lineBasic.setData(HighchartsData.doubleQuarterTwo);
                             }
                             lineBasic.setCategories(HighchartsData.strQuarter);
                             lineBasics.add(lineBasic);
                         }
-                    } else if (type.equals("month")) {
+                    } else if ("month".equals(type)) {
                         for(AccessoriesType accType: accessoriesTypes){
                             LineBasic lineBasic = new LineBasic();
                             lineBasic.setName(accType.getAccTypeName());
-                            if(quantity.equals("领料数量")) {
+                            if("领料数量".equals(quantity)) {
                                 dataCondition(start,end,type,"month","one",companyId,accType.getAccTypeId());
                                 lineBasic.setData(HighchartsData.doubleMonthOne);
-                            }else if(quantity.equals("退料数量")){
+                            }else if("退料数量".equals(quantity)){
                                 dataCondition(start,end,type,"month","two",companyId,accType.getAccTypeId());
                                 lineBasic.setData(HighchartsData.doubleMonthTwo);
                             }
                             lineBasic.setCategories(HighchartsData.strMonth);
                             lineBasics.add(lineBasic);
                         }
-                    } else if (type.equals("week")) {
+                    } else if ("week".equals(type)) {
                         HighchartsData.setStrWeek(start, end);
                         for(AccessoriesType accType: accessoriesTypes){
                             LineBasic lineBasic = new LineBasic();
                             lineBasic.setName(accType.getAccTypeName());
-                            if(quantity.equals("领料数量")) {
+                            if("领料数量".equals(quantity)) {
                                 dataCondition(start,end,type,"week","one",companyId,accType.getAccTypeId());
                                 lineBasic.setData(HighchartsData.doubleWeekOne);
-                            }else if(quantity.equals("退料数量")){
+                            }else if("退料数量".equals(quantity)){
                                 dataCondition(start,end,type,"week","two",companyId,accType.getAccTypeId());;
                                 lineBasic.setData(HighchartsData.doubleWeekTwo);
                             }
                             lineBasic.setCategories(HighchartsData.strWeek);
                             lineBasics.add(lineBasic);
                         }
-                    } else if (type.equals("day")) {
+                    } else if ("day".equals(type)) {
                         for(AccessoriesType accType: accessoriesTypes){
                             LineBasic lineBasic = new LineBasic();
                             lineBasic.setName(accType.getAccTypeName());
-                            if(quantity.equals("领料数量")) {
+                            if("领料数量".equals(quantity)) {
                                 dataCondition(start,end,type,"day","one",companyId,accType.getAccTypeId());
                                 lineBasic.setData(HighchartsData.doubleDayOne);
-                            }else if(quantity.equals("退料数量")){
+                            }else if("退料数量".equals(quantity)){
                                 dataCondition(start,end,type,"day","two",companyId,accType.getAccTypeId());
                                 lineBasic.setData(HighchartsData.doubleDayTwo);
                             }
@@ -316,8 +362,12 @@ public class MaterialUseController {
         }
     }
 
-    /*  默认查询本月的配件使用统计
-  * */
+    /**
+     * 默认查询本月的配件使用统计
+     * @param type
+     * @param companyId
+     * @param accTypeId
+     */
     public void dateDay(String type,String companyId,String accTypeId){
         HighchartsData.doubleDayTwo = new double[31];
         HighchartsData.doubleDayOne = new double[31];
@@ -325,48 +375,61 @@ public class MaterialUseController {
         List<MaterialReturn> materialReturns = null;
         double[] doubles = null;
         String[] strs = null;
-        if(type.equals("one")){
+        if("one".equals(type)){
             materialUses = materialUseService.queryByConditionUse(HighchartsData.stdayDate(),HighchartsData.lastDate(),"day",companyId,accTypeId);
             doubles =  new double[materialUses.size()];
             strs = new String[materialUses.size()];
-        }else if(type.equals("two")){
+        }else if("two".equals(type)){
             materialReturns = materialReturnService.queryByConditionReturn(HighchartsData.stdayDate(),HighchartsData.lastDate(),"day",companyId,accTypeId);
             doubles =  new double[materialReturns.size()];
             strs = new String[materialReturns.size()];
         }
 
-        if(type.equals("one")){
+        if("one".equals(type)){
             int i = 0;
-            for(MaterialUse io: materialUses) {
-                doubles[i] = io.getAccCount();
-                strs[i] = HighchartsData.dateFormat(io.getMuCreatedTime(), "day");
-                i++;
+            if (materialUses != null) {
+                for(MaterialUse io: materialUses) {
+                    doubles[i] = io.getAccCount();
+                    strs[i] = HighchartsData.dateFormat(io.getMuCreatedTime(), "day");
+                    i++;
+                    }
+            }
+        }else if("two".equals(type)){
+            int i = 0;
+            if (materialReturns != null) {
+                for(MaterialReturn io: materialReturns) {
+                    doubles[i] = io.getAccCount();
+                    strs[i] = HighchartsData.dateFormat(io.getMrCreatedDate(), "day");
+                    i++;
                 }
-        }else if(type.equals("two")){
-            int i = 0;
-            for(MaterialReturn io: materialReturns) {
-                doubles[i] = io.getAccCount();
-                strs[i] = HighchartsData.dateFormat(io.getMrCreatedDate(), "day");
-                i++;
             }
         }
         for(int j = 0,len = HighchartsData.strDay.length; j <len ; j++){
-            for(int k = 0; k < strs.length; k++){
-                if(HighchartsData.strDay[j].equals(strs[k])){
-                    if(type.equals("two")){
-                        HighchartsData.doubleDayTwo[j] = doubles[k];
-                    }else if(type.equals("one")){
-                        HighchartsData.doubleDayOne[j] = doubles[k];
-                    }
+            if (strs != null) {
+                for(int k = 0; k < strs.length; k++){
+                    if(HighchartsData.strDay[j].equals(strs[k])){
+                        if("two".equals(type)){
+                            HighchartsData.doubleDayTwo[j] = doubles[k];
+                        }else if("one".equals(type)){
+                            HighchartsData.doubleDayOne[j] = doubles[k];
+                        }
 
+                    }
                 }
             }
         }
     }
 
-    /*
-  *  按年，季度，月，周，日，查询 配件使用统计
-  * */
+    /**
+     * 按年，季度，月，周，日，查询 配件使用统计
+     * @param start
+     * @param end
+     * @param type
+     * @param date
+     * @param species
+     * @param companyId
+     * @param accTypeId
+     */
     public void dataCondition(String start,String end,String type,String date,String species,String companyId,String accTypeId){
         HighchartsData.doubleDayTwo = new double[31];
         HighchartsData.doubleDayOne = new double[31];
@@ -382,80 +445,84 @@ public class MaterialUseController {
         List<MaterialReturn> materialReturns = null;
         double[] doubles = null;
         String[] strs = null;
-        if(species.equals("one")){
+        if("one".equals(species)){
             materialUses = materialUseService.queryByConditionUse(start,end,type,companyId,accTypeId);
             doubles =  new double[materialUses.size()];
             strs = new String[materialUses.size()];
-        }else if(species.equals("two")){
+        }else if("two".equals(species)){
             materialReturns = materialReturnService.queryByConditionReturn(start,end,type,companyId,accTypeId);
             doubles =  new double[materialReturns.size()];
             strs = new String[materialReturns.size()];
         }
-        if(species.equals("one")){
+        if("one".equals(species)){
             int i = 0;
             HighchartsData.len = 0;
-            for(MaterialUse io: materialUses) {
-                if(date.equals("month")) {
-                    doubles[i] = io.getAccCount();
-                    strs[i] = HighchartsData.dateFormat(io.getMuCreatedTime(),"month");
-                    HighchartsData.len = HighchartsData.strMonth.length;
-                }else if(date.equals("day")){
-                    doubles[i] = io.getAccCount();
-                    strs[i] = HighchartsData.dateFormat(io.getMuCreatedTime(),"day");
-                    HighchartsData.len = HighchartsData.strDay.length;
-                }else if(date.equals("quarter")){
-                    doubles[i] = io.getAccCount();
-                    strs[i] = HighchartsData.dateFormat(io.getMuCreatedTime(),"quarter");
-                    HighchartsData.len = HighchartsData.strQuarter.length;
-                }else if(date.equals("year")){
-                    doubles[i] = io.getAccCount();
-                    strs[i] = HighchartsData.dateFormat(io.getMuCreatedTime(),"year");
-                    HighchartsData.len = HighchartsData.strYear.length;
-                }else if(date.equals("week")){
-                    doubles[i] = io.getAccCount();
-                    strs[i] = "第"+String.valueOf(HighchartsData.getWeek(HighchartsData.dateFormat(io.getMuCreatedTime())))+"周";
-                    HighchartsData.len = HighchartsData.strWeek.length;
+            if (materialUses != null) {
+                for(MaterialUse io: materialUses) {
+                    if("month".equals(date)) {
+                        doubles[i] = io.getAccCount();
+                        strs[i] = HighchartsData.dateFormat(io.getMuCreatedTime(),"month");
+                        HighchartsData.len = HighchartsData.strMonth.length;
+                    }else if("day".equals(date)){
+                        doubles[i] = io.getAccCount();
+                        strs[i] = HighchartsData.dateFormat(io.getMuCreatedTime(),"day");
+                        HighchartsData.len = HighchartsData.strDay.length;
+                    }else if("quarter".equals(date)){
+                        doubles[i] = io.getAccCount();
+                        strs[i] = HighchartsData.dateFormat(io.getMuCreatedTime(),"quarter");
+                        HighchartsData.len = HighchartsData.strQuarter.length;
+                    }else if("year".equals(date)){
+                        doubles[i] = io.getAccCount();
+                        strs[i] = HighchartsData.dateFormat(io.getMuCreatedTime(),"year");
+                        HighchartsData.len = HighchartsData.strYear.length;
+                    }else if("week".equals(date)){
+                        doubles[i] = io.getAccCount();
+                        strs[i] = "第"+String.valueOf(HighchartsData.getWeek(HighchartsData.dateFormat(io.getMuCreatedTime())))+"周";
+                        HighchartsData.len = HighchartsData.strWeek.length;
+                    }
+                    i++;
                 }
-                i++;
             }
-        }else if(species.equals("two")){
+        }else if("two".equals(species)){
             int i = 0;
             HighchartsData.len = 0;
-            for(MaterialReturn io: materialReturns) {
-                if(date.equals("month")) {
-                    doubles[i] = io.getAccCount();
-                    strs[i] = HighchartsData.dateFormat(io.getMrCreatedDate(),"month");
-                    HighchartsData.len = HighchartsData.strMonth.length;
-                }else if(date.equals("day")){
-                    doubles[i] = io.getAccCount();
-                    strs[i] = HighchartsData.dateFormat(io.getMrCreatedDate(),"day");
-                    HighchartsData.len = HighchartsData.strDay.length;
-                }else if(date.equals("quarter")){
-                    doubles[i] = io.getAccCount();
-                    strs[i] = HighchartsData.dateFormat(io.getMrCreatedDate(),"quarter");
-                    HighchartsData.len = HighchartsData.strQuarter.length;
-                }else if(date.equals("year")){
-                    doubles[i] = io.getAccCount();
-                    strs[i] = HighchartsData.dateFormat(io.getMrCreatedDate(),"year");
-                    HighchartsData.len = HighchartsData.strYear.length;
-                }else if(date.equals("week")){
-                    doubles[i] = io.getAccCount();
-                    strs[i] = "第"+String.valueOf(HighchartsData.getWeek(HighchartsData.dateFormat(io.getMrCreatedDate())))+"周";
-                    HighchartsData.len = HighchartsData.strWeek.length;
+            if (materialReturns != null) {
+                for(MaterialReturn io: materialReturns) {
+                    if("month".equals(date)) {
+                        doubles[i] = io.getAccCount();
+                        strs[i] = HighchartsData.dateFormat(io.getMrCreatedDate(),"month");
+                        HighchartsData.len = HighchartsData.strMonth.length;
+                    }else if("day".equals(date)){
+                        doubles[i] = io.getAccCount();
+                        strs[i] = HighchartsData.dateFormat(io.getMrCreatedDate(),"day");
+                        HighchartsData.len = HighchartsData.strDay.length;
+                    }else if("quarter".equals(date)){
+                        doubles[i] = io.getAccCount();
+                        strs[i] = HighchartsData.dateFormat(io.getMrCreatedDate(),"quarter");
+                        HighchartsData.len = HighchartsData.strQuarter.length;
+                    }else if("year".equals(date)){
+                        doubles[i] = io.getAccCount();
+                        strs[i] = HighchartsData.dateFormat(io.getMrCreatedDate(),"year");
+                        HighchartsData.len = HighchartsData.strYear.length;
+                    }else if("week".equals(date)){
+                        doubles[i] = io.getAccCount();
+                        strs[i] = "第"+String.valueOf(HighchartsData.getWeek(HighchartsData.dateFormat(io.getMrCreatedDate())))+"周";
+                        HighchartsData.len = HighchartsData.strWeek.length;
+                    }
+                    i++;
                 }
-                i++;
             }
         }
 
-        if(date.equals("quarter")) {
+        if("quarter".equals(date)) {
             HighchartsData.getQuarter(strs,doubles,species);
-        }else if(date.equals("month")){
+        }else if("month".equals(date)){
             HighchartsData.getMonth(strs,doubles,species);
-        }else if(date.equals("day")){
+        }else if("day".equals(date)){
             HighchartsData.getDay(strs,doubles,species);
-        }else if(date.equals("year")){
+        }else if("year".equals(date)){
             HighchartsData. getYear(strs,doubles,species);
-        }else if(date.equals("week")){
+        }else if("week".equals(date)){
             HighchartsData.getWeek(strs,doubles,species);
         }
     }

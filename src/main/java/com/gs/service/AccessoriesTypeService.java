@@ -8,9 +8,9 @@ import com.gs.common.bean.Pager;
 import java.util.List;
 
 /**
-*由Wjhsmart技术支持
 *
-*@author Wjhsmart
+*
+*@author qm
 *@since 2017-04-14 16:36:51
 */
 public interface AccessoriesTypeService extends BaseService<String, AccessoriesType>{

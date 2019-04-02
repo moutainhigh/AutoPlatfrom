@@ -15,6 +15,10 @@ public class ProcessController {
 
     private Logger logger = (Logger) LoggerFactory.getLogger(ProcessController.class);
 
+    /**
+     * 显示流程信息
+     * @return String
+     */
     @RequestMapping(value = "info", method = RequestMethod.GET)
     private String showProcessInfo() {
         logger.info("显示流程信息");

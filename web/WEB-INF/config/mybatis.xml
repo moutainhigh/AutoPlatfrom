@@ -3,12 +3,50 @@
 <configuration>
     <settings>
         <setting name="cacheEnabled" value="false"/>
-        <!--
-        <setting name="logImpl" value="STDOUT_LOGGING" />
-        -->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="aggressiveLazyLoading" value="false"/>
     </settings>
 
     <typeAliases>
+        <typeAlias alias="accessories" type="com.gs.bean.Accessories"/>
+        <typeAlias alias="accessoriesBuy" type="com.gs.bean.AccessoriesBuy"/>
+        <typeAlias alias="accessoriesSale" type="com.gs.bean.AccessoriesSale"/>
+        <typeAlias alias="accessoriesSaleInfo" type="com.gs.bean.AccessoriesSaleInfo"/>
+        <typeAlias alias="accessoriesType" type="com.gs.bean.AccessoriesType"/>
+        <typeAlias alias="appointment" type="com.gs.bean.Appointment"/>
+        <typeAlias alias="carBrand" type="com.gs.bean.CarBrand"/>
+        <typeAlias alias="carColor" type="com.gs.bean.CarColor"/>
+        <typeAlias alias="carModel" type="com.gs.bean.CarModel"/>
+        <typeAlias alias="carPlate" type="com.gs.bean.CarPlate"/>
+        <typeAlias alias="chargeBill" type="com.gs.bean.ChargeBill"/>
+        <typeAlias alias="checkin" type="com.gs.bean.Checkin"/>
+        <typeAlias alias="company" type="com.gs.bean.Company"/>
+        <typeAlias alias="complaint" type="com.gs.bean.Complaint"/>
+        <typeAlias alias="incomingOutgoing" type="com.gs.bean.IncomingOutgoing"/>
+        <typeAlias alias="incomingType" type="com.gs.bean.IncomingType"/>
+        <typeAlias alias="intentionCompany" type="com.gs.bean.IntentionCompany"/>
+        <typeAlias alias="workInfo" type="com.gs.bean.WorkInfo"/>
+        <typeAlias alias="maintainDetail" type="com.gs.bean.MaintainDetail"/>
+        <typeAlias alias="maintainFix" type="com.gs.bean.MaintainFix"/>
+        <typeAlias alias="maintainFixAcc" type="com.gs.bean.MaintainFixAcc"/>
+        <typeAlias alias="maintainDetail" type="com.gs.bean.MaintainDetail"/>
+        <typeAlias alias="maintainRecord" type="com.gs.bean.MaintainRecord"/>
+        <typeAlias alias="maintainRemind" type="com.gs.bean.MaintainRemind"/>
+        <typeAlias alias="materialList" type="com.gs.bean.MaterialList"/>
+        <typeAlias alias="materialReturn" type="com.gs.bean.MaterialReturn"/>
+        <typeAlias alias="materialUse" type="com.gs.bean.MaterialUse"/>
+        <typeAlias alias="messageSend" type="com.gs.bean.MessageSend"/>
+        <typeAlias alias="module" type="com.gs.bean.Module"/>
+        <typeAlias alias="outgoingType" type="com.gs.bean.OutgoingType"/>
+        <typeAlias alias="permission" type="com.gs.bean.Permission"/>
+        <typeAlias alias="permissionInfo" type="com.gs.bean.PermissionInfo"/>
+        <typeAlias alias="role" type="com.gs.bean.Role"/>
+        <typeAlias alias="rolePermission" type="com.gs.bean.RolePermission"/>
+        <typeAlias alias="salary" type="com.gs.bean.Salary"/>
+        <typeAlias alias="supply" type="com.gs.bean.Supply"/>
+        <typeAlias alias="supplyType" type="com.gs.bean.SupplyType"/>
+        <typeAlias alias="user" type="com.gs.bean.User"/>
+        <typeAlias alias="userRole" type="com.gs.bean.UserRole"/>
         <package name="com.gs.bean"/>
     </typeAliases>
 

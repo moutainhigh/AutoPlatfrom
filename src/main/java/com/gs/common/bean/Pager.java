@@ -1,7 +1,9 @@
 package com.gs.common.bean;
 
 /**
- * Created by WangGenshen on 5/16/16.
+ *
+ * @author WangGenshen
+ * @date 5/16/16
  */
 public class Pager {
     private int pageSize;

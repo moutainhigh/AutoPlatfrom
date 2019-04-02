@@ -17,8 +17,7 @@ public class SessionGetUtil {
     public static User getUser() {
         Subject subject = SecurityUtils.getSubject();
         Session session = subject.getSession();
-        User user = (User) session.getAttribute("user");
-        return user;
+        return (User) session.getAttribute("user");
     }
 
     /**

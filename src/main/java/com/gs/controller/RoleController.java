@@ -48,6 +48,10 @@ public class RoleController {
     private String queryRole = Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN;
     private String editRole = Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN;
 
+    /**
+     * 人员角色管理页面
+     * @return
+     */
     @RequestMapping(value = "info", method = RequestMethod.GET)
     private String showRoleInfo() {
         if (!SessionGetUtil.isUser()) {
@@ -62,6 +66,11 @@ public class RoleController {
         return "system/role";
     }
 
+    /**
+     * 角色添加
+     * @param role
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "add_role", method = RequestMethod.POST)
     public ControllerResult addRole(Role role) {
@@ -83,7 +92,12 @@ public class RoleController {
         }
     }
 
-
+    /**
+     * 分页查询所有角色
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "query_pager", method = RequestMethod.GET)
     public Pager4EasyUI<Role> queryPager(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -101,6 +115,11 @@ public class RoleController {
         return new Pager4EasyUI<Role>(pager.getTotalRecords(), roles);
     }
 
+    /**
+     * 角色修改
+     * @param role
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "update_role", method = RequestMethod.POST)
     public ControllerResult updateRole(Role role) {
@@ -122,6 +141,12 @@ public class RoleController {
         }
     }
 
+    /**
+     * 状态修改
+     * @param id
+     * @param status
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "update_status", method = RequestMethod.GET)
     public ControllerResult updateStatus(@Param("id") String id, @Param("status") String status) {
@@ -135,9 +160,9 @@ public class RoleController {
                 return ControllerResult.getFailResult("修改状态失败，没有该权限操作");
             }
             logger.info("状态修改");
-            if (status.equals("Y")) {
+            if ("Y".equals(status)) {
                 roleService.inactive(id);
-            } else if (status.equals("N")) {
+            } else if ("N".equals(status)) {
                 roleService.active(id);
             }
             return ControllerResult.getSuccessResult(" 修改成功");
@@ -148,6 +173,10 @@ public class RoleController {
 
     }
 
+    /**
+     * 查询添加管理员时需要的下拉条件
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "query_cAdminAndSOAdmin", method = RequestMethod.GET)
     public List<ComboBox4EasyUI> queryCAdminAndSOAdmin() {
@@ -158,17 +187,21 @@ public class RoleController {
         try {
             logger.info("查询添加管理员时需要的下拉条件");
             List<Role> roles = roleService.queryCAdminAndSOAdmin();
-            List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<ComboBox4EasyUI>();
-            for (Role r : roles) {
-                ComboBox4EasyUI comboBox4EasyUI = new ComboBox4EasyUI();
-                comboBox4EasyUI.setId(r.getRoleId());
-                comboBox4EasyUI.setText(r.getRoleDes());
-                comboBox4EasyUIs.add(comboBox4EasyUI);
-            }
+            List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<>();
+            listRoles(roles, comboBox4EasyUIs);
             return comboBox4EasyUIs;
         } catch (Exception e) {
             logger.info("发生异常，获取中断！");
             return null;
+        }
+    }
+
+    private void listRoles(List<Role> roles, List<ComboBox4EasyUI> comboBox4EasyUIs) {
+        for (Role r : roles) {
+            ComboBox4EasyUI comboBox4EasyUI = new ComboBox4EasyUI();
+            comboBox4EasyUI.setId(r.getRoleId());
+            comboBox4EasyUI.setText(r.getRoleDes());
+            comboBox4EasyUIs.add(comboBox4EasyUI);
         }
     }
 }

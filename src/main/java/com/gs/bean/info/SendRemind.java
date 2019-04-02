@@ -1,7 +1,9 @@
 package com.gs.bean.info;
 
 /**
- * Created by Administrator on 2017-05-04.
+ *
+ * @author Administrator
+ * @date 2017-05-04
  */
 public class SendRemind {
     private String userId;

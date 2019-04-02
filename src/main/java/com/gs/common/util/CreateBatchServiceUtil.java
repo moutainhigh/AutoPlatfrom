@@ -12,9 +12,9 @@ import java.util.Date;
 import java.util.Properties;
 
 /**
- *由Wjhsmart技术支持
  *
- *@author Wjhsmart
+ *
+ *@author qm
  *@since 2017-04-12 08:08:20
  */
 public class CreateBatchServiceUtil extends JFrame {
@@ -67,9 +67,9 @@ public class CreateBatchServiceUtil extends JFrame {
         lbl3.setBounds(345, 42, 350, 15);
         panel.add(lbl3);
 
-        JLabel label_1 = new JLabel("输出目录:");
-        label_1.setBounds(80, 71, 100, 15);
-        panel.add(label_1);
+        JLabel label1 = new JLabel("输出目录:");
+        label1.setBounds(80, 71, 100, 15);
+        panel.add(label1);
 
         txtFilePath = new JTextField();
         txtFilePath.setBounds(190, 68, 147, 21);
@@ -81,9 +81,9 @@ public class CreateBatchServiceUtil extends JFrame {
         lbl5.setBounds(345, 71, 350, 15);
         panel.add(lbl5);
 
-        JLabel label_2 = new JLabel("生成包结构目录:");
-        label_2.setBounds(79, 100, 100, 15);
-        panel.add(label_2);
+        JLabel label2 = new JLabel("生成包结构目录:");
+        label2.setBounds(79, 100, 100, 15);
+        panel.add(label2);
 
         txtPackage = new JTextField();
         txtPackage.setBounds(190, 97, 147, 21);
@@ -115,11 +115,7 @@ public class CreateBatchServiceUtil extends JFrame {
         panel.add(checkBox);
 
         JButton button = new JButton("执行");
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                go();
-            }
-        });
+        button.addActionListener(e -> go());
         button.setBounds(190, 190, 93, 23);
         panel.add(button);
 
@@ -130,6 +126,7 @@ public class CreateBatchServiceUtil extends JFrame {
 
         addWindowListener(new WindowAdapter() {
 
+            @Override
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
                 export();
@@ -157,12 +154,12 @@ public class CreateBatchServiceUtil extends JFrame {
         String beanPackageName = txtBeanPackageName.getText();
         boolean createPackage = checkBox.getSelectedObjects() != null;
 
-        if (clazz.equals("") || packageName.equals("") || packages.equals("") || beanPackageName.equals("")) {
+        if ("".equals(clazz) || "".equals(packageName) || "".equals(packages) || "".equals(beanPackageName)) {
             setTips("所有都必须输入");
             return;
         }
 
-        if (filePath.equals("")) {
+        if ("".equals(filePath)) {
             filePath = getProjSrcPath();
         }
 
@@ -199,9 +196,6 @@ public class CreateBatchServiceUtil extends JFrame {
         try {
             OutputStream out = new FileOutputStream(configFile);
             p.store(out, "退出保存文件," + sdf.format(new Date()));
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -217,9 +211,6 @@ public class CreateBatchServiceUtil extends JFrame {
                 p.load(is);
                 is.close();
                 setUIVal();
-            } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -260,21 +251,19 @@ public class CreateBatchServiceUtil extends JFrame {
      */
     public void createService(String filePath, String packageName, String clazz, String beanPackageName) {
         String[] beanNames = clazz.split(",");
-        for (int i = 0, len = beanNames.length; i < len; i++) {
-            String beanName = beanNames[i];
+        for (String beanName : beanNames) {
             String packageinfo = "package " + packageName
                     + ";\r\n\r\n";
             StringBuilder classInfo = new StringBuilder("/**\r\n*");
             String importBean = "import " + beanPackageName + "." + beanName + ";\r\n\r\n";
-            classInfo.append("由Wjhsmart技术支持\r\n*");
+            classInfo.append("\r\n*");
             classInfo.append("\r\n");
-            classInfo.append("*@author Wjhsmart\r\n");
+            classInfo.append("*@author qm\r\n");
             classInfo.append("*@since ");
             classInfo.append(sdf.format(new Date()));
             classInfo.append("\r\n*/\r\n");
 
-            classInfo.append("public interface ")
-                    .append(beanName + "Service extends BaseService<String, " + beanName + ">").append("{\r\n");
+            classInfo.append("public interface ").append(beanName).append("Service extends BaseService<String, ").append(beanName).append(">").append("{\r\n");
             classInfo.append("\r\n");
             classInfo.append("}");
 
@@ -294,15 +283,13 @@ public class CreateBatchServiceUtil extends JFrame {
     }
 
     public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    CreateBatchServiceUtil frame = new CreateBatchServiceUtil();
-                    frame.setLocationRelativeTo(null);
-                    frame.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        EventQueue.invokeLater(() -> {
+            try {
+                CreateBatchServiceUtil frame = new CreateBatchServiceUtil();
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
     }

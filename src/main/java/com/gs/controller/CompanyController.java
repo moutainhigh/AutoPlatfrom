@@ -68,9 +68,14 @@ public class CompanyController {
     @Resource
     private IntentionCompanyService intentionCompanyService;
 
-    private String CompanyQueryRole = Constants.SYSTEM_SUPER_ADMIN + "," + Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.COMPANY_ADMIN;
-    private String CompanyEditRole = Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN + "," + Constants.COMPANY_ADMIN;
+    private String companyQueryRole = Constants.SYSTEM_SUPER_ADMIN + "," + Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.COMPANY_ADMIN;
+    private String companyEditRole = Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN + "," + Constants.COMPANY_ADMIN;
     private String carCommonRole = Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN + "," + Constants.COMPANY_ADMIN + "," + Constants.COMPANY_RECEIVE + "," + Constants.COMPANY_ARTIFICER;
+
+    /**
+     * 访问公司的主页
+     * @return
+     */
     @RequestMapping(value = "home", method = RequestMethod.GET)
     private ModelAndView home() {
         ModelAndView mav = new ModelAndView();
@@ -97,6 +102,10 @@ public class CompanyController {
         return mav;
     }
 
+    /**
+     * 访问公司基本信息页面
+     * @return String
+     */
     @RequestMapping(value = "info", method = RequestMethod.GET)
     private String showCompanyInfo() {
         if (!SessionGetUtil.isUser()) {
@@ -109,6 +118,10 @@ public class CompanyController {
 
     }
 
+    /**
+     * 访问汽车品牌页面
+     * @return String
+     */
     @RequestMapping(value = "brand", method = RequestMethod.GET)
     private String showCarBrand() {
         if (!SessionGetUtil.isUser()) {
@@ -124,6 +137,10 @@ public class CompanyController {
 
     }
 
+    /**
+     * 访问汽车颜色页面
+     * @return
+     */
     @RequestMapping(value = "color", method = RequestMethod.GET)
     private String showCarColor() {
         if (!SessionGetUtil.isUser()) {
@@ -140,6 +157,10 @@ public class CompanyController {
 
     }
 
+    /**
+     * 访问汽车车型页面
+     * @return
+     */
     @RequestMapping(value = "model", method = RequestMethod.GET)
     private String showCarModel() {
         if (!SessionGetUtil.isUser()) {
@@ -156,6 +177,10 @@ public class CompanyController {
 
     }
 
+    /**
+     * 访问车牌页面
+     * @return
+     */
     @RequestMapping(value = "plate", method = RequestMethod.GET)
     private String showCarPlate() {
         if (!SessionGetUtil.isUser()) {
@@ -172,6 +197,10 @@ public class CompanyController {
 
     }
 
+    /**
+     * 访问维修项目页面
+     * @return
+     */
     @RequestMapping(value = "maintainItem", method = RequestMethod.GET)
     private String showMaintainItem() {
         if (!SessionGetUtil.isUser()) {
@@ -188,6 +217,10 @@ public class CompanyController {
 
     }
 
+    /**
+     * 访问保养项目页面
+     * @return
+     */
     @RequestMapping(value = "maintenanceItem", method = RequestMethod.GET)
     private String showMaintainFix() {
         if (!SessionGetUtil.isUser()) {
@@ -204,6 +237,13 @@ public class CompanyController {
 
     }
 
+    /**
+     * 添加公司
+     * @param company
+     * @param file
+     * @param session
+     * @return ControllerResult
+     */
     @ResponseBody
     @RequestMapping(value = "InsertCompany", method = RequestMethod.POST)
     public ControllerResult InsetCompany(Company company,MultipartFile file,HttpSession session) {
@@ -212,7 +252,7 @@ public class CompanyController {
             return ControllerResult.getNotLoginResult("登入信息已失效，请重新登入");
         }else{
             try {
-                if(CheckRoleUtil.checkRoles(CompanyEditRole)){
+                if(CheckRoleUtil.checkRoles(companyEditRole)){
                     logger.info("添加公司");
                     company.setCompanyLogo("/img/logo.jpg");
                     String fileName = UUID.randomUUID().toString() + file.getOriginalFilename();
@@ -266,8 +306,7 @@ public class CompanyController {
             logger.info("Session已失效，请重新登入");
             return ControllerResult.getNotLoginResult("登入信息已失效，请重新登入");
         }
-        if (CheckRoleUtil.checkRoles(CompanyEditRole)) {
-//            try {
+        if (CheckRoleUtil.checkRoles(companyEditRole)) {
                 logger.info("更新公司成功");
                     String fileName = UUIDUtil.uuid() + file.getOriginalFilename();
                      System.out.println(fileName);
@@ -295,15 +334,17 @@ public class CompanyController {
                     System.out.println(company);
                     companyService.update(company);
                     return ControllerResult.getSuccessResult("更新公司成功");
-//            } catch (Exception e) {
-//                logger.info("更新失败，出现了一个错误");
-//                return ControllerResult.getFailResult("更新失败，出现了一个错误");
-//            }
         }else{
             return ControllerResult.getFailResult("您没有权限修改");
         }
     }
 
+    /**
+     * 分页查询所有公司
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryByPager", method = RequestMethod.GET)
     public Pager4EasyUI<Company> queryByPager(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -318,9 +359,15 @@ public class CompanyController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(companyService.count(user));
         List<Company> companyList = companyService.queryByPager(pager,user);
-        return new Pager4EasyUI<Company>(pager.getTotalRecords(), companyList);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), companyList);
     }
 
+    /**
+     * 公司状态修改
+     * @param id
+     * @param status
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "companyStatusModify", method = RequestMethod.GET)
     public ControllerResult companyStatusModify(@Param("id") String id, @Param("status") String status) {
@@ -329,11 +376,11 @@ public class CompanyController {
             return ControllerResult.getNotLoginResult("登入信息已失效，请重新登入");
         }
         try {
-            if(CheckRoleUtil.checkRoles(CompanyQueryRole)){
-                if (status.equals("Y")) {
+            if(CheckRoleUtil.checkRoles(companyQueryRole)){
+                if ("Y".equals(status)) {
                     logger.info("公司冻结");
                     companyService.inactive(id);
-                } else if (status.equals("N")) {
+                } else if ("N".equals(status)) {
                     logger.info("公司激活");
                     companyService.active(id);
                 }
@@ -355,6 +402,10 @@ public class CompanyController {
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
     }
 
+    /**
+     *查询所有公司
+     * @return List<ComboBox4EasyUI>
+     */
     @ResponseBody
     @RequestMapping(value = "company_all", method = RequestMethod.GET)
     public List<ComboBox4EasyUI> queryUserAll() {
@@ -362,7 +413,7 @@ public class CompanyController {
             User user = SessionGetUtil.getUser();
             logger.info("查询所有公司");
             List<Company> companyList = companyService.queryAll(user);
-            List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<ComboBox4EasyUI>();
+            List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<>();
             for (Company companys : companyList) {
                 ComboBox4EasyUI comboBox4EasyUI = new ComboBox4EasyUI();
                 comboBox4EasyUI.setId(companys.getCompanyId());
@@ -377,6 +428,13 @@ public class CompanyController {
 
     }
 
+    /**
+     * 分页查询公司状态
+     * @param status
+     * @param pageNumber
+     * @param pageSize
+     * @return Pager4EasyUI<Company>
+     */
     @ResponseBody
     @RequestMapping(value = "queryStatusPager", method = RequestMethod.GET)
     public Pager4EasyUI<Company> companyStatus(@Param("status") String status, @Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -393,6 +451,14 @@ public class CompanyController {
         return new Pager4EasyUI<Company>(pager.getTotalRecords(), companys);
     }
 
+    /**
+     * 搜索
+     * @param companyName
+     * @param userName
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "search", method = RequestMethod.GET)
     public Pager4EasyUI<Company> companySearch(@Param("companyName")String companyName, @Param("userName")String userName, @Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -406,11 +472,11 @@ public class CompanyController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(companyService.searchCount(companyName, userName));
         List<Company> companyList = companyService.searchByPager(companyName,userName,pager);
-        return new Pager4EasyUI<Company>(pager.getTotalRecords(), companyList);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), companyList);
     }
 
     public static String getCharAndNumr(int length) {
-        String val = "";
+        StringBuilder val = new StringBuilder();
         Random random = new Random();
         for (int i = 0; i < length; i++) {
             // 输出字母还是数字
@@ -419,12 +485,13 @@ public class CompanyController {
             if ("char".equalsIgnoreCase(charOrNum)) {
                 // 取得大写字母还是小写字母
                 int choice = random.nextInt(2) % 2 == 0 ? 65 : 97;
-                val += (char) (choice + random.nextInt(26));
-            } else if ("num".equalsIgnoreCase(charOrNum)) { // 数字
-                val += String.valueOf(random.nextInt(10));
+                val.append((char) (choice + random.nextInt(26)));
+                // 数字
+            } else {
+                val.append(String.valueOf(random.nextInt(10)));
             }
         }
-        return val;
+        return val.toString();
     }
 
 }

@@ -8,9 +8,9 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
-*由Wjhsmart技术支持
 *
-*@author Wjhsmart
+*
+*@author qm
 *@since 2017-04-14 16:36:52
 */
 public interface SupplyTypeService extends BaseService<String, SupplyType>{
@@ -20,7 +20,7 @@ public interface SupplyTypeService extends BaseService<String, SupplyType>{
      * @param status
      * @return
      */
-    public int countByStatus(String status, User user);
+     int countByStatus(String status, User user);
 
     /**
      * 根据状态分页查询
@@ -28,14 +28,14 @@ public interface SupplyTypeService extends BaseService<String, SupplyType>{
      * @param status
      * @return
      */
-    public List<SupplyType> queryPagerByStatus(Pager pager, String status, User user);
+     List<SupplyType> queryPagerByStatus(Pager pager, String status, User user);
 
     /**
      * 根据查询条件计数
      * @param supplyType
      * @return
      */
-    public int countByCondition(SupplyType supplyType, User user);
+     int countByCondition(SupplyType supplyType, User user);
 
     /**
      * 根据查询条件分页查询
@@ -43,6 +43,6 @@ public interface SupplyTypeService extends BaseService<String, SupplyType>{
      * @param supplyType
      * @return
      */
-    public List<SupplyType> queryPagerByCondition(Pager pager, SupplyType supplyType, User user);
+     List<SupplyType> queryPagerByCondition(Pager pager, SupplyType supplyType, User user);
 
 }

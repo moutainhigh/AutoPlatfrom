@@ -44,14 +44,18 @@ public class CarPlateController {
     @Resource
     private CarPlateService carPlateService;
 
+    /**
+     * 查询汽车车型
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "car_plate_all", method = RequestMethod.GET)
     public List<ComboBox4EasyUI> queryCarModelAll() {
         logger.info("查询汽车车型");
         User user = SessionGetUtil.getUser();
-        List<CarPlate> CarModels = carPlateService.queryAll(user);
-        List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<ComboBox4EasyUI>();
-        for (CarPlate carPlatel : CarModels) {
+        List<CarPlate> carModels = carPlateService.queryAll(user);
+        List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<>();
+        for (CarPlate carPlatel : carModels) {
             ComboBox4EasyUI comboBox4EasyUI = new ComboBox4EasyUI();
             comboBox4EasyUI.setId(carPlatel.getPlateId());
             comboBox4EasyUI.setText(carPlatel.getPlateName());
@@ -60,6 +64,11 @@ public class CarPlateController {
         return comboBox4EasyUIs;
     }
 
+    /**
+     * 添加车牌
+     * @param carPlate
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "insertCarPlate", method = RequestMethod.POST)
     public ControllerResult insertCarModel(CarPlate carPlate) {
@@ -85,6 +94,11 @@ public class CarPlateController {
 
     }
 
+    /**
+     * 更新车牌
+     * @param carPlate
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "uploadCarPlate", method = RequestMethod.POST)
     public ControllerResult uploadCarModel(CarPlate carPlate) {
@@ -109,6 +123,12 @@ public class CarPlateController {
 
     }
 
+    /**
+     * 分页查询所有车牌
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryByPager", method = RequestMethod.GET)
     public Pager4EasyUI<CarPlate> queryByPager(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -123,9 +143,15 @@ public class CarPlateController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(carPlateService.count(user));
         List<CarPlate> carModelList = carPlateService.queryByPager(pager, user);
-        return new Pager4EasyUI<CarPlate>(pager.getTotalRecords(), carModelList);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), carModelList);
     }
 
+    /**
+     * 车牌激活
+     * @param id
+     * @param status
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "plateStatusModify", method = RequestMethod.GET)
     public ControllerResult colorStatusModify(@Param("id") String id, @Param("status") String status) {
@@ -135,10 +161,10 @@ public class CarPlateController {
         } else {
             try {
                 if (CheckRoleUtil.checkRoles(editRole)) {
-                    if (status.equals("Y")) {
+                    if ("Y".equals(status)) {
                         logger.info("车牌冻结");
                         carPlateService.inactive(id);
-                    } else if (status.equals("N")) {
+                    } else if ("N".equals(status)) {
                         logger.info("车牌激活");
                         carPlateService.active(id);
                     }
@@ -156,6 +182,13 @@ public class CarPlateController {
 
     }
 
+    /**
+     * 分页查询车牌状态
+     * @param status
+     * @param pageNumber
+     * @param pageSize
+     * @return Pager4EasyUI<CarPlate>
+     */
     @ResponseBody
     @RequestMapping(value = "statusPager", method = RequestMethod.GET)
     public Pager4EasyUI<CarPlate> statusPager(@Param("status") String status, @Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -168,9 +201,16 @@ public class CarPlateController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(carPlateService.countStatus(status));
         List<CarPlate> carPlates = carPlateService.byStatusPager(status, pager);
-        return new Pager4EasyUI<CarPlate>(pager.getTotalRecords(), carPlates);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), carPlates);
     }
 
+    /**
+     * 搜索车牌
+     * @param plateName
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "searchPager", method = RequestMethod.GET)
     public Pager4EasyUI<CarPlate> searchPager(@Param("plateName") String plateName, @Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -183,6 +223,6 @@ public class CarPlateController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(carPlateService.searchCount(plateName));
         List<CarPlate> carPlates = carPlateService.searchByPager(plateName, pager);
-        return new Pager4EasyUI<CarPlate>(pager.getTotalRecords(), carPlates);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), carPlates);
     }
 }

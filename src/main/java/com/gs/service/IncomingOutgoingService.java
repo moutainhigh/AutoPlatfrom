@@ -7,24 +7,24 @@ import com.gs.common.bean.Pager;
 import java.util.List;
 
 /**
-*由Wjhsmart技术支持
 *
-*@author Wjhsmart
+*
+*@author qm
 *@since 2017-04-14 16:36:51
 */
 public interface IncomingOutgoingService extends BaseService<String, IncomingOutgoing>{
 
-    public List<IncomingOutgoing> queryByInOutType(Pager pager, IncomingOutgoing incomingOutgoing,User user);
+     List<IncomingOutgoing> queryByInOutType(Pager pager, IncomingOutgoing incomingOutgoing,User user);
 
-    public int countByInOutType(IncomingOutgoing incomingOutgoing,User user);
+     int countByInOutType(IncomingOutgoing incomingOutgoing,User user);
 
-    public List<IncomingOutgoing> queryByDefault(int inOutType,String companyId);
+     List<IncomingOutgoing> queryByDefault(int inOutType,String companyId);
 
-    public List<IncomingOutgoing> queryByCondition(String startTime,String endTime,
+     List<IncomingOutgoing> queryByCondition(String startTime,String endTime,
                                                    int inOutType,String type,String companyId);
 
-    public void addInsert(List<IncomingOutgoing> incomingOutgoings);
+     void addInsert(List<IncomingOutgoing> incomingOutgoings);
 
-    public List<IncomingOutgoing> queryPagerStatus(String status,Pager pager,User user);
-    public int countStatus(String status,User user);
+     List<IncomingOutgoing> queryPagerStatus(String status,Pager pager,User user);
+     int countStatus(String status,User user);
 }

@@ -10,9 +10,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
-*由Wjhsmart技术支持
 *
-*@author Wjhsmart
+*
+*@author qm
 *@since 2017-05-17 20:40:15
 *@des 意向公司的dao
 */
@@ -23,7 +23,7 @@ public interface IntentionCompanyDAO extends BaseDAO<String, IntentionCompany>{
      * @param status
      * @return
      */
-    public int countByStatus(@Param("status") String status);
+     int countByStatus(@Param("status") String status);
 
     /**
      * 根据状态分页查询
@@ -31,14 +31,14 @@ public interface IntentionCompanyDAO extends BaseDAO<String, IntentionCompany>{
      * @param status
      * @return
      */
-    public List<IntentionCompany> queryPagerByStatus(@Param("pager") Pager pager, @Param("status") String status);
+     List<IntentionCompany> queryPagerByStatus(@Param("pager") Pager pager, @Param("status") String status);
 
     /**
      * 根据查询条件计数
      * @param intention
      * @return
      */
-    public int countByCondition(@Param("intention") IntentionCompany intention);
+     int countByCondition(@Param("intention") IntentionCompany intention);
 
     /**
      * 根据查询条件分页查询
@@ -46,12 +46,12 @@ public interface IntentionCompanyDAO extends BaseDAO<String, IntentionCompany>{
      * @param intention
      * @return
      */
-    public List<IntentionCompany> queryPagerByCondition(@Param("pager") Pager pager, @Param("intention") IntentionCompany intention);
+     List<IntentionCompany> queryPagerByCondition(@Param("pager") Pager pager, @Param("intention") IntentionCompany intention);
 
     /**
      * 根据指定的{top}查询前{top}条数据
      * @param top
      * @return
      */
-    public List<IntentionCompany> queryByTop(@Param("top") int top);
+     List<IntentionCompany> queryByTop(@Param("top") int top);
 }

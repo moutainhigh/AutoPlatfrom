@@ -8,14 +8,14 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
-*由Wjhsmart技术支持
 *
-*@author Wjhsmart
+*
+*@author qm
 *@since 2017-04-14 16:36:51
 */
 public interface ComplaintService extends BaseService<String, Complaint>{
 
-    public void updateReply(Complaint complaint);
+     void updateReply(Complaint complaint);
 
     /**
      * 根据指定的{top}查询前{top}条数据
@@ -23,13 +23,13 @@ public interface ComplaintService extends BaseService<String, Complaint>{
      * @param user
      * @return
      */
-    public List<Complaint> queryByTop(int top, User user);
+     List<Complaint> queryByTop(int top, User user);
 
      /*
     * 车主查询自己的投诉
     * */
 
-    public List<Complaint> queryByPagerUser(User user,Pager pager);
-    public int countByUser(User user);
+     List<Complaint> queryByPagerUser(User user,Pager pager);
+     int countByUser(User user);
 
 }

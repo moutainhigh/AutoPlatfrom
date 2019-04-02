@@ -21,7 +21,9 @@ import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
- * Created by Asa on 2017/5/10.
+ *
+ * @author Asa
+ * @date 2017/5/10
  */
 @Controller
 @RequestMapping("customerClient")
@@ -29,24 +31,41 @@ public class CustomerClientController {
 
     private Logger logger = (Logger) LoggerFactory.getLogger(CustomerClientController.class);
 
+    /**
+     * 进入车主后台
+     * @return
+     */
     @RequestMapping("/home")
     public String supplierInfo() {
             logger.info("进入车主后台");
             return "customerClient/home";
     }
 
+    /**
+     * 我的维修保养进度
+     * @return
+     */
     @RequestMapping(value = "progress", method = RequestMethod.GET)
     public String progress(){
         logger.info("我的维修保养进度");
         return "customerClient/progress";
     }
 
+    /**
+     * 我的维修保养记录
+     * @return
+     */
     @RequestMapping(value = "record", method = RequestMethod.GET)
     public String record(){
         logger.info("我的维修保养记录");
         return "customerClient/record";
     }
 
+    /**
+     * 我要预约
+     * @param session
+     * @return
+     */
     @RequestMapping(value = "app", method = RequestMethod.GET)
     public String app(HttpSession session){
         if (!SessionGetUtil.isUser()) {
@@ -54,7 +73,7 @@ public class CustomerClientController {
             return "index/notLogin";
         }
         User user = (User) session.getAttribute("user");
-        if (user.getUserName() != null && !user.getUserName().equals("") && user.getUserPhone() != null && !user.getUserPhone().equals("")) {
+        if (user.getUserName() != null && !"".equals(user.getUserName()) && user.getUserPhone() != null && !"".equals(user.getUserPhone())) {
             logger.info("我要预约");
             return "customerClient/app";
         } else {

@@ -12,9 +12,9 @@ import java.util.Date;
 import java.util.Properties;
 
 /**
- *由Wjhsmart技术支持
  *
- *@author Wjhsmart
+ *
+ *@author qm
  *@since 2017-04-12 08:08:20
  */
 public class CreateCommonUtil extends JFrame {
@@ -95,9 +95,9 @@ public class CreateCommonUtil extends JFrame {
         lbl4.setBounds(430, 103, 350, 15);
         panel.add(lbl4);
 
-        JLabel label_1 = new JLabel("输出目录:");
-        label_1.setBounds(80, 133, 180, 15);
-        panel.add(label_1);
+        JLabel labelOne = new JLabel("输出目录:");
+        labelOne.setBounds(80, 133, 180, 15);
+        panel.add(labelOne);
 
         txtFilePath = new JTextField();
         txtFilePath.setBounds(240, 130, 180, 21);
@@ -109,9 +109,9 @@ public class CreateCommonUtil extends JFrame {
         lbl5.setBounds(430, 133, 350, 15);
         panel.add(lbl5);
 
-        JLabel label_2 = new JLabel("生成DAO结构目录:");
-        label_2.setBounds(79, 163, 180, 15);
-        panel.add(label_2);
+        JLabel labelTwo = new JLabel("生成DAO结构目录:");
+        labelTwo.setBounds(79, 163, 180, 15);
+        panel.add(labelTwo);
 
         txtDaoPackage = new JTextField();
         txtDaoPackage.setBounds(240, 160, 180, 21);
@@ -123,9 +123,9 @@ public class CreateCommonUtil extends JFrame {
         lbl6.setBounds(430, 163, 350, 15);
         panel.add(lbl6);
 
-        JLabel label_3 = new JLabel("生成Service结构目录:");
-        label_3.setBounds(79, 193, 180, 15);
-        panel.add(label_3);
+        JLabel labelThree = new JLabel("生成Service结构目录:");
+        labelThree.setBounds(79, 193, 180, 15);
+        panel.add(labelThree);
 
         txtServicePackage = new JTextField();
         txtServicePackage.setBounds(240, 190, 180, 21);
@@ -137,9 +137,9 @@ public class CreateCommonUtil extends JFrame {
         lbl7.setBounds(430, 193, 350, 15);
         panel.add(lbl7);
 
-        JLabel label_4 = new JLabel("生成ServiceImp结构目录:");
-        label_4.setBounds(79, 223, 180, 15);
-        panel.add(label_4);
+        JLabel labelFour = new JLabel("生成ServiceImp结构目录:");
+        labelFour.setBounds(79, 223, 180, 15);
+        panel.add(labelFour);
 
         txtServiceImplPackage = new JTextField();
         txtServiceImplPackage.setBounds(240, 220, 180, 21);
@@ -151,9 +151,9 @@ public class CreateCommonUtil extends JFrame {
         lbl8.setBounds(430, 223, 350, 15);
         panel.add(lbl8);
 
-        JLabel label_5 = new JLabel("生成Mapper结构目录:");
-        label_5.setBounds(79, 250, 180, 15);
-        panel.add(label_5);
+        JLabel labelFive = new JLabel("生成Mapper结构目录:");
+        labelFive.setBounds(79, 250, 180, 15);
+        panel.add(labelFive);
 
         txtMapperPackage = new JTextField();
         txtMapperPackage.setBounds(240, 250, 180, 21);
@@ -255,11 +255,7 @@ public class CreateCommonUtil extends JFrame {
         panel.add(checkBox);
 
         JButton button = new JButton("执行");
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                go();
-            }
-        });
+        button.addActionListener(e -> go());
         button.setBounds(240, 493, 93, 23);
         panel.add(button);
 
@@ -270,6 +266,7 @@ public class CreateCommonUtil extends JFrame {
 
         addWindowListener(new WindowAdapter() {
 
+            @Override
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
                 export();
@@ -317,15 +314,15 @@ public class CreateCommonUtil extends JFrame {
         String serviceImplDes = txtServiceImplDes.getText();
         boolean createPackage = checkBox.getSelectedObjects() != null;
 
-        if (clazz.equals("") || daoPackageName.equals("") || filePath.equals("")
-                || daoPackage.equals("") || daoClazz.equals("") || serviceClazz.equals("") || pageClazz.equals("")
-                || servicePackageName.equals("") || serviceImplPackageName.equals("") || servicePackage.equals("")
-                || servicePackage.equals("") || mapperPackage.equals("") || serviceImplPackage.equals("")) {
+        if ("".equals(clazz) || "".equals(daoPackageName) || "".equals(filePath)
+                || "".equals(daoPackage) || "".equals(daoClazz) || "".equals(serviceClazz) || "".equals(pageClazz)
+                || "".equals(servicePackageName) || "".equals(serviceImplPackageName) || "".equals(servicePackage)
+                ||   "".equals(mapperPackage) || "".equals(serviceImplPackage)) {
             setTips("所有都必须输入");
             return;
         }
 
-        if (filePath != null && !filePath.isEmpty()) {
+        if (!filePath.isEmpty()) {
             if (!filePath.endsWith("/")) {
                 filePath += "/";
             }
@@ -400,9 +397,6 @@ public class CreateCommonUtil extends JFrame {
         try {
             OutputStream out = new FileOutputStream(configFile);
             p.store(out, "退出保存文件," + sdf.format(new Date()));
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -418,9 +412,6 @@ public class CreateCommonUtil extends JFrame {
                 p.load(is);
                 is.close();
                 setUIVal();
-            } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -472,9 +463,9 @@ public class CreateCommonUtil extends JFrame {
         StringBuilder classInfo = new StringBuilder("/**\r\n*");
         StringBuilder importBean = new StringBuilder("import " + clazz + ";\r\n");
         importBean.append("import org.springframework.stereotype.Repository;\r\n");
-        classInfo.append("由Wjhsmart技术支持\r\n*");
+        classInfo.append("\r\n*");
         classInfo.append("\r\n");
-        classInfo.append("*@author Wjhsmart\r\n");
+        classInfo.append("*@author qm\r\n");
         classInfo.append("*@since ");
         classInfo.append(sdf.format(new Date()));
         classInfo.append("\r\n");
@@ -514,9 +505,9 @@ public class CreateCommonUtil extends JFrame {
                 + ";\r\n\r\n";
         StringBuilder classInfo = new StringBuilder("/**\r\n*");
         String importBean = "import " + clazz + ";\r\n\r\n";
-        classInfo.append("由Wjhsmart技术支持\r\n*");
+        classInfo.append("\r\n*");
         classInfo.append("\r\n");
-        classInfo.append("*@author Wjhsmart\r\n");
+        classInfo.append("*@author qm\r\n");
         classInfo.append("*@since ");
         classInfo.append(sdf.format(new Date()));
         classInfo.append("\r\n");
@@ -569,9 +560,9 @@ public class CreateCommonUtil extends JFrame {
         importBean.append("import " + serviceClazz + ";\r\n");
         importBean.append("import " + pageClazz + ";\r\n");
 
-        classInfo.append("由Wjhsmart技术支持\r\n*");
+        classInfo.append("\r\n*");
         classInfo.append("\r\n");
-        classInfo.append("*@author Wjhsmart\r\n");
+        classInfo.append("*@author qm\r\n");
         classInfo.append("*@since ");
         classInfo.append(sdf.format(new Date()));
         classInfo.append("\r\n");

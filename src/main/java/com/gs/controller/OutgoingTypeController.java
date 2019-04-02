@@ -36,14 +36,21 @@ public class OutgoingTypeController {
     private OutgoingTypeService outgoingTypeService;
 
 
-    // 可以查看的角色：董事长、财务员、超级管理员、普通管理员
+    /**
+     * 可以查看的角色：董事长、财务员、超级管理员、普通管理员
+     */
     private String queryRole = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_ACCOUNTING + ","
             + Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN;
 
-    // 可以修改的角色：董事长、财务员
+    /**
+     * 可以修改的角色：董事长、财务员
+     */
     private String editRole = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_ACCOUNTING;
 
-
+    /**
+     * 显示支出类型页面
+     * @return String
+     */
     @RequestMapping(value = "show_outgoingType", method = RequestMethod.GET)
     public String outgoingType() {
         if(SessionGetUtil.isUser()) {
@@ -58,6 +65,12 @@ public class OutgoingTypeController {
         }
     }
 
+    /**
+     * 分页查询所有支出类型
+     * @param pageNumber
+     * @param pageSize
+     * @return Pager4EasyUI<OutgoingType>
+     */
     @ResponseBody
     @RequestMapping(value="query_pager",method= RequestMethod.GET)
     public Pager4EasyUI<OutgoingType> queryPager(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize) {
@@ -70,7 +83,7 @@ public class OutgoingTypeController {
                 pager.setPageSize(Integer.valueOf(pageSize));
                 pager.setTotalRecords(outgoingTypeService.count(user));
                 List<OutgoingType> outgoingTypes = outgoingTypeService.queryByPager(pager,user);
-                return new Pager4EasyUI<OutgoingType>(pager.getTotalRecords(), outgoingTypes);
+                return new Pager4EasyUI<>(pager.getTotalRecords(), outgoingTypes);
             }
             return null;
         } else {
@@ -79,6 +92,14 @@ public class OutgoingTypeController {
         }
     }
 
+    /**
+     * 根据条件分页查询所有支出类型
+     * @param pageNumber
+     * @param pageSize
+     * @param inTypeName
+     * @param companyId
+     * @return Pager4EasyUI<OutgoingType>
+     */
     @ResponseBody
     @RequestMapping(value="query_condition",method= RequestMethod.GET)
     public Pager4EasyUI<OutgoingType> queryPagerCondition(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize
@@ -88,14 +109,14 @@ public class OutgoingTypeController {
                 logger.info("根据条件分页查询所有支出类型");
                 Pager pager = new Pager();
                 User user = SessionGetUtil.getUser();
-                if(user.getCompanyId() != null && !user.getCompanyId().equals("")){
+                if(user.getCompanyId() != null && !"".equals(user.getCompanyId())){
                     companyId = user.getCompanyId();
                 }
                 pager.setPageNo(Integer.valueOf(pageNumber));
                 pager.setPageSize(Integer.valueOf(pageSize));
                 pager.setTotalRecords(outgoingTypeService.countCondition(companyId,inTypeName));
                 List<OutgoingType> outgoingTypes = outgoingTypeService.queryByPagerCondition(companyId,inTypeName,pager);
-                return new Pager4EasyUI<OutgoingType>(pager.getTotalRecords(), outgoingTypes);
+                return new Pager4EasyUI<>(pager.getTotalRecords(), outgoingTypes);
             }
             return null;
         } else {
@@ -104,6 +125,11 @@ public class OutgoingTypeController {
         }
     }
 
+    /**
+     * 添加支出类型
+     * @param outgoingType
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="add_outgoingType", method=RequestMethod.POST)
     public ControllerResult outgoingTypeAdd(OutgoingType outgoingType){
@@ -122,6 +148,11 @@ public class OutgoingTypeController {
         }
     }
 
+    /**
+     * 更新支出类型
+     * @param outgoingType
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="update_outgoingType", method=RequestMethod.POST)
     public ControllerResult outgoingUpdate(OutgoingType outgoingType){
@@ -140,6 +171,12 @@ public class OutgoingTypeController {
         }
     }
 
+    /**
+     * 更新支出类型状态
+     * @param id
+     * @param status
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="update_status", method=RequestMethod.GET)
     public ControllerResult updateStatus(@Param("id") String id, @Param("status")String status){
@@ -148,9 +185,9 @@ public class OutgoingTypeController {
                 User user = SessionGetUtil.getUser();
                 user.setCompanyId(user.getCompanyId());
                 logger.info("更新支出类型状态");
-                if (status.equals("Y")) {
+                if ("Y".equals(status)) {
                     outgoingTypeService.active(id);
-                } else if (status.equals("N")) {
+                } else if ("N".equals(status)) {
                     outgoingTypeService.inactive(id);
                 }
                 return ControllerResult.getSuccessResult("更新支出类型状态成功");
@@ -162,6 +199,13 @@ public class OutgoingTypeController {
         }
     }
 
+    /**
+     *根据支出类型状态查询
+     * @param pageNumber
+     * @param pageSize
+     * @param status
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="query_status", method=RequestMethod.GET)
     public Pager4EasyUI<OutgoingType> queryPager(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize,@Param("status")String status){
@@ -173,17 +217,17 @@ public class OutgoingTypeController {
                 pager.setPageNo(Integer.valueOf(pageNumber));
                 pager.setPageSize(Integer.valueOf(pageSize));
                 List<OutgoingType> outgoingTypes = null;
-                if (status.equals("Y")) {
+                if ("Y".equals(status)) {
                     outgoingTypes = outgoingTypeService.queryPagerStatus(status, pager,user);
                     pager.setTotalRecords(outgoingTypeService.countStatus(status,user));
-                } else if (status.equals("N")) {
+                } else if ("N".equals(status)) {
                     outgoingTypes = outgoingTypeService.queryPagerStatus(status, pager,user);
                     pager.setTotalRecords(outgoingTypeService.countStatus(status,user));
-                } else if (status.equals("ALL")) {
+                } else if ("ALL".equals(status)) {
                     pager.setTotalRecords(outgoingTypeService.count(user));
                     outgoingTypes = outgoingTypeService.queryByPager(pager,user);
                 }
-                return new Pager4EasyUI<OutgoingType>(pager.getTotalRecords(), outgoingTypes);
+                return new Pager4EasyUI<>(pager.getTotalRecords(), outgoingTypes);
             }
             return  null;
         } else{
@@ -192,7 +236,10 @@ public class OutgoingTypeController {
         }
     }
 
-
+    /**
+     * 查询所有支出类型
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "outType_all", method = RequestMethod.GET)
     public List<ComboBox4EasyUI> queryUserAll() {
@@ -200,7 +247,7 @@ public class OutgoingTypeController {
             logger.info("查询所有支出类型");
             User user = SessionGetUtil.getUser();
             List<OutgoingType> outgoingTypes = outgoingTypeService.queryAll(user);
-            List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<ComboBox4EasyUI>();
+            List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<>();
             for (OutgoingType out : outgoingTypes) {
                 ComboBox4EasyUI comboBox4EasyUI = new ComboBox4EasyUI();
                 comboBox4EasyUI.setId(out.getOutTypeId());

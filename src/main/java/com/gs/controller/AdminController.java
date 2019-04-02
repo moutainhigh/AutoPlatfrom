@@ -51,6 +51,10 @@ public class AdminController {
     private String queryRole = Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN;
     private String editRole = Constants.SYSTEM_SUPER_ADMIN;
 
+    /**
+     * 显示管理员信息
+     * @return
+     */
     @RequestMapping(value = "info", method = RequestMethod.GET)
     public String showAdminInfo() {
         if (!SessionGetUtil.isUser()) {
@@ -65,6 +69,12 @@ public class AdminController {
         return "system/admin";
     }
 
+    /**
+     * 分页查询所有管理员
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "query_pager", method = RequestMethod.GET)
     public Pager4EasyUI<User> queryAdminPager(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -78,9 +88,15 @@ public class AdminController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(userService.countAdmin());
         List<User> users = userService.queryByAdminPager(pager);
-        return new Pager4EasyUI<User>(pager.getTotalRecords(), users);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), users);
     }
 
+    /**
+     * 分页查询汽修公司管理员
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "company_pager", method = RequestMethod.GET)
     public Pager4EasyUI<User> queryCompanyAdminPager(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -94,9 +110,15 @@ public class AdminController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(userService.countCompanyAdmin());
         List<User> users = userService.queryByCompanyAdminPager(pager);
-        return new Pager4EasyUI<User>(pager.getTotalRecords(), users);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), users);
     }
 
+    /**
+     * 分页查询系统管理员
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "system_pager", method = RequestMethod.GET)
     public Pager4EasyUI<User> querySystemAdminPager(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -110,9 +132,18 @@ public class AdminController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(userService.countSystemAdmin());
         List<User> users = userService.queryBySystemAdminPager(pager);
-        return new Pager4EasyUI<User>(pager.getTotalRecords(), users);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), users);
     }
 
+    /**
+     * 条件查询管理员
+     * @param pageNumber
+     * @param pageSize
+     * @param userName
+     * @param userPhone
+     * @param userEmail
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "select_query", method = RequestMethod.GET)
     public Pager4EasyUI<User> selectQuery(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize, @Param("userName") String userName, @Param("userPhone") String userPhone, @Param("userEmail") String userEmail) {
@@ -126,9 +157,14 @@ public class AdminController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(userService.countSelectAdmin(userName, userPhone, userEmail));
         List<User> users = userService.selectQuery(pager, userName, userPhone, userEmail);
-        return new Pager4EasyUI<User>(pager.getTotalRecords(), users);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), users);
     }
 
+    /**
+     * 添加管理员
+     * @param user
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "add_admin", method = RequestMethod.POST)
     public ControllerResult addAdmin(User user) {
@@ -158,6 +194,14 @@ public class AdminController {
         }
     }
 
+    /**
+     * 更新管理员
+     * @param uIcon
+     * @param user
+     * @param file
+     * @param session
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "update_admin", method = RequestMethod.POST)
     public ControllerResult updateAdmin(@Param("uIcon") String uIcon, @Param("user") User user, @Param("file") MultipartFile file, @Param("session") HttpSession session) {
@@ -192,6 +236,12 @@ public class AdminController {
         }
     }
 
+    /**
+     * 更新状态
+     * @param id
+     * @param status
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "update_status", method = RequestMethod.GET)
     public ControllerResult updateStatus(@Param("id") String id, @Param("status") String status) {
@@ -204,10 +254,10 @@ public class AdminController {
             return ControllerResult.getFailResult("更新状态失败，没有该权限操作");
         }
         try {
-            if (status.equals("Y")) {
+            if ("Y".equals(status)) {
                 logger.info("激活管理员状态");
                 userService.active(id);
-            } else if (status.equals("N")) {
+            } else if ("N".equals(status)) {
                 logger.info("冻结管理员状态");
                 userService.inactive(id);
             }
@@ -225,15 +275,4 @@ public class AdminController {
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
     }
 
-/*    @ResponseBody
-    @RequestMapping(value = "queryRoleByUserId", method = RequestMethod.GET)
-    public String queryRoleByUserId() {
-        Role role = roleService.queryByUserId(SessionGetUtil.getUser().getUserId());
-        if (role.getRoleName().equals("systemSuperAdmin")) {
-            return "1";
-        } else {
-            return "0";
-        }
-
-    }*/
 }

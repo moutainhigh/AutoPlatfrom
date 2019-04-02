@@ -22,7 +22,9 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * Created by root on 2017/5/2.
+ *
+ * @author root
+ * @date 2017/5/2
  */
 @Controller()
 @RequestMapping("/maintainFixAcc")
@@ -45,10 +47,17 @@ public class MaintainFixAccController {
 
     private String editRole = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_ARTIFICER;
 
-    // 可以查看的角色：董事长、财务员、超级管理员、普通管理员
+    /**
+     * 可以查看的角色：董事长、财务员、超级管理员、普通管理员
+     */
     private String queryRole1 = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_ACCOUNTING + ","
             + Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN;
 
+    /**
+     * 添加项目基础配件
+     * @param maintainFixAccList
+     * @return
+     */
     @RequestMapping(value = "insertList", method = RequestMethod.POST)
     public ControllerResult insertList(List<MaintainFixAcc> maintainFixAccList) {
         if (!SessionGetUtil.isUser()) {
@@ -68,6 +77,13 @@ public class MaintainFixAccController {
         }
     }
 
+    /**
+     * 添加配件成功
+     * @param AccessoriesId
+     * @param maintenanceltemId
+     * @param count
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "insert", method = RequestMethod.GET)
     public ControllerResult insertAcc(@Param("AccessoriesId")String AccessoriesId,@Param("maintenanceltemId")String maintenanceltemId,@Param("count")String count){
@@ -89,6 +105,13 @@ public class MaintainFixAccController {
         }
     }
 
+    /**
+     * 查询项目下所有配件
+     * @param id
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "accPager", method = RequestMethod.GET)
     public Pager4EasyUI<MaintainFixAcc> searchRepair(@Param("id")String id, @Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -103,7 +126,7 @@ public class MaintainFixAccController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(maintainFixAccService.queryAllByCount(id,user));
         List<MaintainFixAcc> maintainFixList = maintainFixAccService.queryAllByPager(id,user,pager);
-        return new Pager4EasyUI<MaintainFixAcc>(pager.getTotalRecords(), maintainFixList);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), maintainFixList);
     }
 
 }

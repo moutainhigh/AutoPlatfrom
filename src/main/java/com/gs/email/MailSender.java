@@ -60,9 +60,7 @@ public class MailSender {
 				msg.setRecipients(RecipientType.BCC, mail.getBccRecipients());
 			}
 			// 发送邮件
-			transport.send(msg);
-		} catch (NoSuchProviderException e) {
-			e.printStackTrace();
+			Transport.send(msg);
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		}
@@ -112,9 +110,7 @@ public class MailSender {
 				msg.setRecipients(RecipientType.BCC, mail.getBccRecipients());
 			}
 			// 发送邮件
-			transport.send(msg);
-		} catch (NoSuchProviderException e) {
-			e.printStackTrace();
+			Transport.send(msg);
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		}

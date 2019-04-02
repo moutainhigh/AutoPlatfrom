@@ -3,7 +3,9 @@ package com.gs.common.bean;
 import java.util.List;
 
 /**
- * Created by WangGenshen on 19/5/16.
+ *
+ * @author WangGenshen
+ * @date 19/5/16
  */
 public class Pager4EasyUI<T> {
     private int total;

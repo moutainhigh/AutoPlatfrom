@@ -10,9 +10,9 @@ import com.gs.dao.SupplyTypeDAO;
 import com.gs.service.SupplyTypeService;
 import com.gs.common.bean.Pager;
 /**
-*由Wjhsmart技术支持
 *
-*@author Wjhsmart
+*
+*@author qm
 *@since 2017-04-14 16:58:54
 */
 @Service

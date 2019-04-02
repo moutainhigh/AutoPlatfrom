@@ -8,17 +8,17 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
-*由Wjhsmart技术支持
 *
-*@author Wjhsmart
+*
+*@author qm
 *@since 2017-04-14 16:35:15
 */
 @Repository
 public interface CarModelDAO extends BaseDAO<String, CarModel>{
 
-    public List<CarModel> queryByBrandId(String brandId);
-    public List<CarModel> queryByModelStatusPager(@Param("status")String status, @Param("pager")Pager pager);
-    public int statusCount(String status);
-    public List<CarModel> searchByPager(@Param("brandId")String brandId,@Param("pager")Pager pager);
-    public int searchCount(@Param("brandId")String brandId);
+     List<CarModel> queryByBrandId(String brandId);
+     List<CarModel> queryByModelStatusPager(@Param("status")String status, @Param("pager")Pager pager);
+     int statusCount(String status);
+     List<CarModel> searchByPager(@Param("brandId")String brandId,@Param("pager")Pager pager);
+     int searchCount(@Param("brandId")String brandId);
 }

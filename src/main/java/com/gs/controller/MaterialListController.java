@@ -24,7 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Xiao-Qiang on 2017/4/17.
+ *
+ * @author Xiao-Qiang
+ * @date 2017/4/17
  */
 @Controller
 @RequestMapping("materialList")
@@ -51,6 +53,10 @@ public class MaterialListController {
 
     private String editRole1 = Constants.COMPANY_ARTIFICER + "," + Constants.COMPANY_ADMIN + "," + Constants.COMPANY_REPERTORY;
 
+    /**
+     * 显示物料清单信息
+     * @return
+     */
     @RequestMapping(value = "info", method = RequestMethod.GET)
     private String showMaterialListInfo() {
         if (!SessionGetUtil.isUser()) {
@@ -65,6 +71,13 @@ public class MaterialListController {
         return "dispatchingPicking/material_list";
     }
 
+    /**
+     * 分页查询当前维修记录物料清单
+     * @param pageNumber
+     * @param pageSize
+     * @param recordId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "query_pager", method = RequestMethod.GET)
     public Pager4EasyUI<MaterialListInfo> queryBySpeedStatus(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize, @Param("recordId") String recordId) {
@@ -82,6 +95,14 @@ public class MaterialListController {
         return new Pager4EasyUI<MaterialListInfo>(pager.getTotalRecords(), materialListInfos);
     }
 
+    /**
+     * 分页查询物料清单
+     * @param pageNumber
+     * @param pageSize
+     * @param status
+     * @param recordId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryByStatus_materialList", method = RequestMethod.GET)
     public Pager4EasyUI<MaterialListInfo> queryByStatus(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize, @Param("status") String status, @Param("recordId") String recordId) {
@@ -90,7 +111,7 @@ public class MaterialListController {
             return null;
         }
         User user = SessionGetUtil.getUser();
-        if (status.equals("Y")) {
+        if ("Y".equals(status)) {
             logger.info("分页查询可用的物料清单");
         } else {
             logger.info("分页查询不可用的物料清单");
@@ -100,9 +121,18 @@ public class MaterialListController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(materialListInfoService.statusCount(recordId, status, user));
         List<MaterialListInfo> materialListInfos = materialListInfoService.queryBySpeedStatusAndStatus(pager, recordId, status, user);
-        return new Pager4EasyUI<MaterialListInfo>(pager.getTotalRecords(), materialListInfos);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), materialListInfos);
     }
 
+    /**
+     * 条件分页查询物料清单
+     * @param pageNumber
+     * @param pageSize
+     * @param userName
+     * @param startTime
+     * @param endTime
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "select_query", method = RequestMethod.GET)
     public Pager4EasyUI<MaterialListInfo> selectQueryPager(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize, @Param("userName") String userName, @Param("startTime") String startTime, @Param("endTime") String endTime) {
@@ -117,9 +147,14 @@ public class MaterialListController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(materialListInfoService.termCount(userName, startTime, endTime, user));
         List<MaterialListInfo> materialListInfos = materialListInfoService.termQueryPager(pager, userName, startTime, endTime, user);
-        return new Pager4EasyUI<MaterialListInfo>(pager.getTotalRecords(), materialListInfos);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), materialListInfos);
     }
 
+    /**
+     * 更新数量
+     * @param materialListInfo
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "update_count", method = RequestMethod.POST)
     public ControllerResult updateCount(MaterialListInfo materialListInfo) {
@@ -141,6 +176,12 @@ public class MaterialListController {
         }
     }
 
+    /**
+     * 修改物料清单状态
+     * @param id
+     * @param status
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "update_status", method = RequestMethod.GET)
     public ControllerResult updateStatus(@Param("id") String id, @Param("status") String status) {
@@ -153,10 +194,10 @@ public class MaterialListController {
                 logger.info("修改状态失败");
                 return ControllerResult.getFailResult("修改状态失败，没有该权限操作");
             }
-            if (status.equals("Y")) {
+            if ("Y".equals(status)) {
                 logger.info("激活物料清单状态");
                 materialListInfoService.active(id);
-            } else if (status.equals("N")) {
+            } else if ("N".equals(status)) {
                 logger.info("冻结物料清单状态");
                 materialListInfoService.inactive(id);
             }
@@ -171,7 +212,7 @@ public class MaterialListController {
     @RequestMapping(value = "query_isUse", method = RequestMethod.GET)
     public String queryIsUse(String recordId) {
         WorkInfo wi = wis.queryByRocordIdUserId(recordId);
-        if (wi.getUserId() != null && !wi.getUserId().equals("")) {
+        if (wi.getUserId() != null && !"".equals(wi.getUserId())) {
             return "1";
         }
         return "0";

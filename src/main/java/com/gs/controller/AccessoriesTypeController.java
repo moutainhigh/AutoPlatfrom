@@ -39,6 +39,10 @@ public class AccessoriesTypeController {
 
     private String editRole = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_REPERTORY;
 
+    /**
+     * 显示配件分类
+     * @return
+     */
     @RequestMapping(value = "type", method = RequestMethod.GET)
     private String type() {
         if (!SessionGetUtil.isUser()) {
@@ -53,6 +57,12 @@ public class AccessoriesTypeController {
         return "accessories/accessories_type";
     }
 
+    /**
+     * 分页查询
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "pager", method = RequestMethod.GET)
     public Pager4EasyUI<AccessoriesType> queryPager(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -70,6 +80,11 @@ public class AccessoriesTypeController {
         return new Pager4EasyUI<AccessoriesType>(pager.getTotalRecords(), accessoriesTypes);
     }
 
+    /**
+     * 添加配件类型
+     * @param accessoriesType
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public ControllerResult addAccType(AccessoriesType accessoriesType) {
@@ -96,6 +111,11 @@ public class AccessoriesTypeController {
         }
     }
 
+    /**
+     * 添加配件类型
+     * @param accessoriesType
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "update", method = RequestMethod.POST)
     public ControllerResult updateAccType(AccessoriesType accessoriesType) {
@@ -121,6 +141,12 @@ public class AccessoriesTypeController {
         }
     }
 
+    /**
+     * 更新状态
+     * @param id
+     * @param status
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "update_status", method = RequestMethod.GET)
     public ControllerResult updateStatus(@Param("id") String id, @Param("status") String status) {
@@ -134,9 +160,9 @@ public class AccessoriesTypeController {
                 return ControllerResult.getFailResult("更新状态失败,没有该权限的操作");
             }
             logger.info("更新状态");
-            if (status.equals("Y")) {
+            if ("Y".equals(status)) {
                 accessoriesTypeService.active(id);
-            } else if (status.equals("N")) {
+            } else if ("N".equals(status)) {
                 accessoriesTypeService.inactive(id);
             }
             return ControllerResult.getSuccessResult("更新成功");
@@ -146,6 +172,10 @@ public class AccessoriesTypeController {
         }
     }
 
+    /**
+     * 查询配件分类
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "accessoriesType_All", method = RequestMethod.GET)
     public List<ComboBox4EasyUI> queryUserAll() {
@@ -156,7 +186,7 @@ public class AccessoriesTypeController {
         logger.info("查询配件分类");
         User user = SessionGetUtil.getUser();
         List<AccessoriesType> accessoriesTypeList = accessoriesTypeService.queryAll(user);
-        List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<ComboBox4EasyUI>();
+        List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<>();
         for (AccessoriesType accessoriesTypes : accessoriesTypeList) {
             ComboBox4EasyUI comboBox4EasyUI = new ComboBox4EasyUI();
             comboBox4EasyUI.setId(accessoriesTypes.getAccTypeId());
@@ -166,6 +196,13 @@ public class AccessoriesTypeController {
         return comboBox4EasyUIs;
     }
 
+    /**
+     * 分页查询可用的配件分类
+     * @param status
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryByStatus_AccType", method = RequestMethod.GET)
     public Pager4EasyUI<AccessoriesType> queryByStatusAccType(@Param("status") String status, @Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -173,7 +210,7 @@ public class AccessoriesTypeController {
             logger.info("Session已失效，请重新登入");
             return null;
         }
-        if (status.equals("Y")) {
+        if ("Y".equals(status)) {
             logger.info("分页查询可用的配件分类");
         } else {
             logger.info("分页查询不可用的配件分类");
@@ -184,9 +221,17 @@ public class AccessoriesTypeController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(accessoriesTypeService.countByStatus(status, user));
         List<AccessoriesType> accessoriesTypes = accessoriesTypeService.queryByStatusPager(status, pager, user);
-        return new Pager4EasyUI<AccessoriesType>(pager.getTotalRecords(), accessoriesTypes);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), accessoriesTypes);
     }
 
+    /**
+     * 条件查询配件分类
+     * @param pageNumber
+     * @param pageSize
+     * @param accTypeName
+     * @param companyId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryByCondition", method = RequestMethod.GET)
     public Pager4EasyUI<AccessoriesType> queryByCondition(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize,
@@ -203,10 +248,10 @@ public class AccessoriesTypeController {
         Pager pager = new Pager();
         pager.setPageNo(Integer.valueOf(pageNumber));
         pager.setPageSize(Integer.valueOf(pageSize));
-        List<AccessoriesType> accessoriesTypes = new ArrayList<AccessoriesType>();
+        List<AccessoriesType> accessoriesTypes = new ArrayList<>();
         pager.setTotalRecords(accessoriesTypeService.countByCondition(accessoriesType, user));
         accessoriesTypes = accessoriesTypeService.queryByCondition(pager, accessoriesType, user);
 
-        return new Pager4EasyUI<AccessoriesType>(pager.getTotalRecords(), accessoriesTypes);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), accessoriesTypes);
     }
 }

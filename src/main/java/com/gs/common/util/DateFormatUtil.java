@@ -9,7 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by WangGenshen on 5/16/16.
+ *
+ * @author WangGenshen
+ * @date 5/16/16
  */
 public class DateFormatUtil {
 

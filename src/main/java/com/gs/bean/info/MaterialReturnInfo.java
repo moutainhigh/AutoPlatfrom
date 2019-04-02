@@ -3,7 +3,9 @@ package com.gs.bean.info;
 import java.util.Date;
 
 /**
- * Created by Xiao-Qiang on 2017/5/16.
+ *
+ * @author Xiao-Qiang
+ * @date 2017/5/16
  */
 public class MaterialReturnInfo {
 

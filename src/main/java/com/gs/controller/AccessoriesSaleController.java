@@ -79,6 +79,12 @@ public class AccessoriesSaleController {
         return "index/notLogin";
     }
 
+    /**
+     * 分页查询采购信息
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "pager", method = RequestMethod.GET)
     private Pager4EasyUI<AccessoriesSale> queryByPager(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -92,7 +98,7 @@ public class AccessoriesSaleController {
                     pager.setPageSize(Integer.valueOf(pageSize));
                     pager.setTotalRecords(accessoriesSaleService.count(user));
                     List<AccessoriesSale> accessoriesSales = accessoriesSaleService.queryByPager(pager, user);
-                    return new Pager4EasyUI<AccessoriesSale>(pager.getTotalRecords(), accessoriesSales);
+                    return new Pager4EasyUI<>(pager.getTotalRecords(), accessoriesSales);
                 }
                 return null;
             } catch (Exception e) {
@@ -105,7 +111,12 @@ public class AccessoriesSaleController {
         }
     }
 
-
+    /**
+     * 更新收入类型状态
+     * @param id
+     * @param status
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "updateStatus", method = RequestMethod.GET)
     public ControllerResult updateStatus(@Param("id") String id, @Param("status") String status) {
@@ -113,9 +124,9 @@ public class AccessoriesSaleController {
             try {
                 if (CheckRoleUtil.checkRoles(queryRole)) {
                     logger.info("更新收入类型状态");
-                    if (status.equals("Y")) {
+                    if ("Y".equals(status)) {
                         accessoriesSaleService.active(id);
-                    } else if (status.equals("N")) {
+                    } else if ("N".equals(status)) {
                         accessoriesSaleService.inactive(id);
                     }
                     return ControllerResult.getSuccessResult("更新成功");
@@ -133,7 +144,6 @@ public class AccessoriesSaleController {
 
     /**
      * 冻结
-     *
      * @param id
      * @return
      */
@@ -161,6 +171,11 @@ public class AccessoriesSaleController {
 
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "enable", method = RequestMethod.GET)
     public ControllerResult enable(@Param("id") String id) {
@@ -168,7 +183,6 @@ public class AccessoriesSaleController {
         if (SessionGetUtil.isUser()) {
             try {
                 if (CheckRoleUtil.checkRoles(queryRole)) {
-
                     accessoriesSaleService.active(id);
                     return ControllerResult.getSuccessResult("操作成功");
                 }
@@ -183,7 +197,12 @@ public class AccessoriesSaleController {
         }
     }
 
-
+    /**
+     *
+     * @param accessoriesSale
+     * @param lastCount
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "addSale", method = RequestMethod.POST)
     public ControllerResult addSale(AccessoriesSale accessoriesSale, @Param("lastCount") String lastCount) {
@@ -223,7 +242,12 @@ public class AccessoriesSaleController {
         }
     }
 
-
+    /**
+     *
+     * @param userId
+     * @param userName
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "isReAdd", method = RequestMethod.GET)
     public ControllerResult isRerAdd(@Param("userId") String userId, @Param("userName") String userName) {
@@ -236,7 +260,9 @@ public class AccessoriesSaleController {
                     System.out.println(ass);
                     if (ass != 0) {
                         return ControllerResult.getSuccessResult("可用");
-                    } else return ControllerResult.getFailResult("重复用户");
+                    } else {
+                        return ControllerResult.getFailResult("重复用户");
+                    }
                 }
                 return ControllerResult.getFailResult("没有此权限访问");
             } catch (Exception e) {
@@ -249,7 +275,12 @@ public class AccessoriesSaleController {
         }
     }
 
-
+    /**
+     * 分页查询只销售信息
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "onlySale", method = RequestMethod.GET)
     private Pager4EasyUI<AccessoriesSale> onlySale(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -264,7 +295,7 @@ public class AccessoriesSaleController {
                     pager.setPageSize(Integer.valueOf(pageSize));
                     pager.setTotalRecords(accessoriesSaleService.onlySaleCount(user));
                     List<AccessoriesSale> accessoriesSales = accessoriesSaleService.queryOnlySale(pager, user);
-                    return new Pager4EasyUI<AccessoriesSale>(pager.getTotalRecords(), accessoriesSales);
+                    return new Pager4EasyUI<>(pager.getTotalRecords(), accessoriesSales);
                 }
                 return null;
             } catch (Exception e) {
@@ -277,6 +308,16 @@ public class AccessoriesSaleController {
         }
     }
 
+    /**
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param accName
+     * @param userName
+     * @param buyTimeStart
+     * @param buyTimeEnd
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "search", method = RequestMethod.GET)
     public Pager4EasyUI<AccessoriesSale> search(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize, @Param("accName") String accName, @Param("userName") String userName, @Param("buyTimeStart") String buyTimeStart, @Param("buyTimeEnd") String buyTimeEnd) {
@@ -290,7 +331,7 @@ public class AccessoriesSaleController {
                     pager.setPageSize(Integer.valueOf(pageSize));
                     pager.setTotalRecords(accessoriesSaleService.bySaleTimeScopeCount(accName, userName, buyTimeStart, buyTimeEnd, user));
                     List<AccessoriesSale> accessoriesSales = accessoriesSaleService.queryBySaleTimeScopeByAccNamePager(pager, accName, userName, buyTimeStart, buyTimeEnd, user);
-                    return new Pager4EasyUI<AccessoriesSale>(pager.getTotalRecords(), accessoriesSales);
+                    return new Pager4EasyUI<>(pager.getTotalRecords(), accessoriesSales);
                 }
                 return null;
             } catch (Exception e) {
@@ -303,6 +344,12 @@ public class AccessoriesSaleController {
         }
     }
 
+    /**
+     *
+     * @param accessoriesSale
+     * @param lastCount
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "update", method = RequestMethod.GET)
     public ControllerResult update(AccessoriesSale accessoriesSale, @Param("lastCount") String lastCount) {

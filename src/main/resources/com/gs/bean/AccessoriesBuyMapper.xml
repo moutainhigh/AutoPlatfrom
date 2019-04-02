@@ -26,19 +26,9 @@
             <result property="accCommodityCode" column="accCommodityCode"/>
             <result property="accDes" column="accDes"/>
 
-            <association property="accessoriesType" javaType="com.gs.bean.AccessoriesType">
-                <id property="accTypeId" column="accTypeId"/>
-                <result property="accTypeName" column="accTypeName"/>
-            </association>
-
             <association property="company" javaType="com.gs.bean.Company">
                 <id property="companyId" column="companyId"/>
                 <result property="companyName" column="companyName"/>
-            </association>
-
-            <association property="supply" javaType="com.gs.bean.Supply">
-                <id property="supplyId" column="supplyId"/>
-                <result property="supplyName" column="supplyName"/>
             </association>
 
         </association>

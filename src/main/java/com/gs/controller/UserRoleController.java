@@ -24,6 +24,11 @@ public class UserRoleController {
     @Resource
     private UserRoleService userRoleService;
 
+    /**
+     * 添加用户角色
+     * @param userRole
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "add_userRole", method = RequestMethod.POST)
     public ControllerResult addModule(UserRole userRole) {

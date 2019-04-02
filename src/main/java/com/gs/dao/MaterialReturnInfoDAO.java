@@ -15,14 +15,14 @@ import java.util.List;
 public interface MaterialReturnInfoDAO {
 
     /**添加退料信息*/
-    public void insertReturn(MaterialReturnInfo materialReturnInfo);
+     void insertReturn(MaterialReturnInfo materialReturnInfo);
 
     /**通过维修记录编号查询是否存在有这条记录*/
-    public int isRecordExist(@Param("recordId") String recordId, @Param("accId") String accId);
+     int isRecordExist(@Param("recordId") String recordId, @Param("accId") String accId);
 
     /**根据维修记录编号分页*/
-    public List<MaterialReturnInfo> queryBySpeedStatus(@Param("pager") Pager pager, @Param("recordId") String recordId, @Param("user") User user);
+     List<MaterialReturnInfo> queryBySpeedStatus(@Param("pager") Pager pager, @Param("recordId") String recordId, @Param("user") User user);
 
     /**根据维修记录编号统计*/
-    public int countBySpeedStatus(@Param("recordId") String recordId, @Param("user") User user);
+     int countBySpeedStatus(@Param("recordId") String recordId, @Param("user") User user);
 }

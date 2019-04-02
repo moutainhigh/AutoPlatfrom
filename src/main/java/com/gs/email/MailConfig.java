@@ -26,9 +26,9 @@ public class MailConfig {
 	public static Properties readProperties(String type, String userEmail, String password) {
 		properties = new Properties();
 		try {
-			if (type.equals("163")) {
+			if ("163".equals(type)) {
 				properties.load(MailConfig.class.getResourceAsStream("163Email.properties"));
-			} else if (type.equals("126")) {
+			} else if ("126".equals(type)) {
 				properties.load(MailConfig.class.getResourceAsStream("126Email.properties"));
 			} else {
 				properties.load(MailConfig.class.getResourceAsStream("QQEmail.properties"));

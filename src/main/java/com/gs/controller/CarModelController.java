@@ -44,13 +44,18 @@ public class CarModelController {
     @Resource
     private CarModelService carModelService;
 
+    /**
+     * 查询汽车车型
+     * @param brandId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "car_model_all", method = RequestMethod.GET)
     public List<ComboBox4EasyUI> queryCarModelAll(String brandId) {
         logger.info("查询汽车车型");
-        List<CarModel> CarModels = carModelService.queryByBrandId(brandId);
-        List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<ComboBox4EasyUI>();
-        for (CarModel carModel : CarModels) {
+        List<CarModel> carModels = carModelService.queryByBrandId(brandId);
+        List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<>();
+        for (CarModel carModel : carModels) {
             ComboBox4EasyUI comboBox4EasyUI = new ComboBox4EasyUI();
             comboBox4EasyUI.setId(carModel.getModelId());
             comboBox4EasyUI.setText(carModel.getModelName());
@@ -59,13 +64,17 @@ public class CarModelController {
         return comboBox4EasyUIs;
     }
 
+    /**
+     * 查询全部汽车车型
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "carModel_all", method = RequestMethod.GET)
     public List<ComboBox4EasyUI> queryCarModelAlls() {
         logger.info("查询全部汽车车型");
         User user = SessionGetUtil.getUser();
         List<CarModel> CarModels = carModelService.queryAll(user);
-        List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<ComboBox4EasyUI>();
+        List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<>();
         for (CarModel carModel : CarModels) {
             ComboBox4EasyUI comboBox4EasyUI = new ComboBox4EasyUI();
             comboBox4EasyUI.setId(carModel.getModelId());
@@ -75,6 +84,11 @@ public class CarModelController {
         return comboBox4EasyUIs;
     }
 
+    /**
+     * 添加汽车车型成功
+     * @param carmodel
+     * @return ControllerResult
+     */
     @ResponseBody
     @RequestMapping(value = "insertCarModel", method = RequestMethod.POST)
     public ControllerResult insertCarModel(CarModel carmodel) {
@@ -101,6 +115,11 @@ public class CarModelController {
 
     }
 
+    /**
+     * 更新汽车车型
+     * @param carmodel
+     * @return ControllerResult
+     */
     @ResponseBody
     @RequestMapping(value = "uploadCarModel", method = RequestMethod.POST)
     public ControllerResult uploadCarModel(CarModel carmodel) {
@@ -125,6 +144,12 @@ public class CarModelController {
 
     }
 
+    /**
+     * 分页查询所有车型
+     * @param pageNumber
+     * @param pageSize
+     * @return Pager4EasyUI<CarModel>
+     */
     @ResponseBody
     @RequestMapping(value = "queryByPager", method = RequestMethod.GET)
     public Pager4EasyUI<CarModel> queryByPager(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -139,9 +164,16 @@ public class CarModelController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(carModelService.count(user));
         List<CarModel> carModelList = carModelService.queryByPager(pager, user);
-        return new Pager4EasyUI<CarModel>(pager.getTotalRecords(), carModelList);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), carModelList);
     }
 
+    /**
+     * 模糊查询所有车型
+     * @param brandId
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "searchPager", method = RequestMethod.GET)
     public Pager4EasyUI<CarModel> search(@Param("brandId") String brandId, @Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -155,9 +187,15 @@ public class CarModelController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(carModelService.searchCount(brandId));
         List<CarModel> carModelList = carModelService.searchByPager(brandId, pager);
-        return new Pager4EasyUI<CarModel>(pager.getTotalRecords(), carModelList);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), carModelList);
     }
 
+    /**
+     * 车型状态修改
+     * @param id
+     * @param status
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "modelStatusModify", method = RequestMethod.GET)
     public ControllerResult modelStatusModify(@Param("id") String id, @Param("status") String status) {
@@ -167,10 +205,10 @@ public class CarModelController {
         } else {
             try {
                 if (CheckRoleUtil.checkRoles(editRole)) {
-                    if (status.equals("Y")) {
+                    if ("Y".equals(status)) {
                         logger.info("冻结汽车车型");
                         carModelService.inactive(id);
-                    } else if (status.equals("N")) {
+                    } else if ("N".equals(status)) {
                         logger.info("激活汽车车型");
                         carModelService.active(id);
                     }
@@ -187,6 +225,13 @@ public class CarModelController {
 
     }
 
+    /**
+     * 分页查询车型
+     * @param status
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryByModelPager", method = RequestMethod.GET)
     public Pager4EasyUI<CarModel> queryByModelPager(@Param("status") String status, @Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -199,7 +244,7 @@ public class CarModelController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(carModelService.statusCount(status));
         List<CarModel> carModelList = carModelService.queryByModelStatusPager(status, pager);
-        return new Pager4EasyUI<CarModel>(pager.getTotalRecords(), carModelList);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), carModelList);
     }
 
 }

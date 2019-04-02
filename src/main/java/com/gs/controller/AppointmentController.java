@@ -53,12 +53,20 @@ public class AppointmentController {
 
     @Resource
     private RoleService roleService;
-    //可擦看： 董事长、接待员、超级管理员、普通管理员,车主
+    /**
+     * 可擦看： 董事长、接待员、超级管理员、普通管理员,车主
+     */
     private String queryRole = Constants.CAR_OWNER + "," + Constants.COMPANY_RECEIVE + ","
-            + Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN+","+Constants.COMPANY_ADMIN;
-    //可操作：董事长、接待员，车主
-    private String editRole = Constants.COMPANY_RECEIVE+ ","+Constants.COMPANY_ADMIN;
-//跳转页面
+            + Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN + "," + Constants.COMPANY_ADMIN;
+    /**
+     * 可操作：董事长、接待员，车主
+     */
+    private String editRole = Constants.COMPANY_RECEIVE + "," + Constants.COMPANY_ADMIN;
+
+    /**
+     * 跳转预约管理页面
+     * @return
+     */
     @RequestMapping(value = "appointment", method = RequestMethod.GET)
     public String appointment() {
         if (SessionGetUtil.isUser()) {
@@ -72,7 +80,11 @@ public class AppointmentController {
             return "index/notLogin";
         }
     }
-//擦看个人预约
+
+    /**
+     * 查看个人预约
+     * @return
+     */
     @RequestMapping(value = "my_app", method = RequestMethod.GET)
     private ModelAndView carOwerAppointment() {
         ModelAndView mav = new ModelAndView();
@@ -86,7 +98,14 @@ public class AppointmentController {
         mav.addObject("apps", appointmentService.queryMyName(user));
         return mav;
     }
-//分页查询
+
+    /**
+     * 分页查询预约
+     * @param pageNumber
+     * @param pageSize
+     * @param status
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "query_pager", method = RequestMethod.GET)
     public Pager4EasyUI<Appointment> queryPager(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize, @Param("status") String status) {
@@ -98,18 +117,18 @@ public class AppointmentController {
                     Pager pager = new Pager();
                     pager.setPageNo(Integer.valueOf(pageNumber));
                     pager.setPageSize(Integer.valueOf(pageSize));
-                    List<Appointment> appointments = new ArrayList<Appointment>();
-                    if (status.equals("ALL")) {
+                    List<Appointment> appointments = new ArrayList<>();
+                    if ("ALL".equals(status)) {
                         pager.setTotalRecords(appointmentService.count(user));
                         appointments = appointmentService.queryByPager(pager, user);
-                    } else if (status.equals("P")) {
+                    } else if ("P".equals(status)) {
                         pager.setTotalRecords(appointmentService.count(user));
                         appointments = appointmentService.querySpeedStatus(pager, user);
                     } else {
                         pager.setTotalRecords(appointmentService.countByStatus(status, user));
                         appointments = appointmentService.queryPagerByStatus(pager, status, user);
                     }
-                    return new Pager4EasyUI<Appointment>(pager.getTotalRecords(), appointments);
+                    return new Pager4EasyUI<>(pager.getTotalRecords(), appointments);
                 }
                 return null;
             } catch (Exception e) {
@@ -121,7 +140,18 @@ public class AppointmentController {
             return null;
         }
     }
-//条件查询
+
+    /**
+     * 根据条件分页查询预约记录
+     * @param pageNumber
+     * @param pageSize
+     * @param userName
+     * @param userPhone
+     * @param carPlate
+     * @param maintainOrFix
+     * @param companyId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "appointment_pager", method = RequestMethod.GET)
     public Pager4EasyUI<Appointment> queryPagerByAppointment(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize,
@@ -142,11 +172,11 @@ public class AppointmentController {
                     Pager pager = new Pager();
                     pager.setPageNo(Integer.valueOf(pageNumber));
                     pager.setPageSize(Integer.valueOf(pageSize));
-                    List<Appointment> appointments = new ArrayList<Appointment>();
+                    List<Appointment> appointments = new ArrayList<>();
                     pager.setTotalRecords(appointmentService.countByCondition(appointment, user));
                     appointments = appointmentService.queryPagerByCondition(pager, appointment, user);
 
-                    return new Pager4EasyUI<Appointment>(pager.getTotalRecords(), appointments);
+                    return new Pager4EasyUI<>(pager.getTotalRecords(), appointments);
                 }
                 return null;
             } catch (Exception e) {
@@ -158,12 +188,17 @@ public class AppointmentController {
             return null;
         }
     }
-//添加
+
+    /**
+     * 添加预约
+     * @param appointment
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public ControllerResult appointmentAdd(Appointment appointment) {
         if (SessionGetUtil.isUser()) {
-            if(CheckRoleUtil.checkRoles(editRole)) {
+            if (CheckRoleUtil.checkRoles(editRole)) {
                 try {
                     User loginUser = SessionGetUtil.getUser();
                     if (appointmentService.queryByPhone(appointment.getUserPhone(), loginUser) == 0) {
@@ -181,57 +216,71 @@ public class AppointmentController {
                 }
             }
             return ControllerResult.getFailResult("添加预约记入失败");
-        }else {
+        } else {
             logger.info("Session已失效，请重新登入");
             return ControllerResult.getNotLoginResult("登入信息已失效，请重新登入");
         }
     }
 
+    /**
+     * 车主预约
+     * @param appointment
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "addCustomer", method = RequestMethod.POST)
     public ControllerResult appointmentAddCustomer(Appointment appointment) {
         if (SessionGetUtil.isUser()) {
 
+            User loginUser = SessionGetUtil.getUser();
+            logger.info("车主预约");
 
-                    User loginUser = SessionGetUtil.getUser();
-                    logger.info("车主预约");
-
-                    appointment.setSpeedStatus(Constants.APPOINTMENT);
-                    appointment.setUserId(loginUser.getUserId());
-                    appointmentService.insert(appointment);
-                    return ControllerResult.getSuccessResult("成功预约");
+            appointment.setSpeedStatus(Constants.APPOINTMENT);
+            appointment.setUserId(loginUser.getUserId());
+            appointmentService.insert(appointment);
+            return ControllerResult.getSuccessResult("成功预约");
 
 
-        }else {
+        } else {
             logger.info("Session已失效，请重新登入");
             return ControllerResult.getNotLoginResult("登入信息已失效，请重新登入");
         }
     }
 
-//更新
+    /**
+     * 更新预约
+     * @param appointment
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "update", method = RequestMethod.POST)
     public ControllerResult appointmentUpdate(Appointment appointment) {
-            if (SessionGetUtil.isUser()) {
-                if(CheckRoleUtil.checkRoles(editRole)) {
-                    logger.info("更新预约");
-                    appointmentService.update(appointment);
-                    return ControllerResult.getSuccessResult("更新成功");
-                }
-                return ControllerResult.getFailResult("添加预约记录失败，你没有权限");
-            } else {
-                logger.info("Session已失效，请重新登入");
-                return null;
+        if (SessionGetUtil.isUser()) {
+            if (CheckRoleUtil.checkRoles(editRole)) {
+                logger.info("更新预约");
+                appointmentService.update(appointment);
+                return ControllerResult.getSuccessResult("更新成功");
             }
+            return ControllerResult.getFailResult("添加预约记录失败，你没有权限");
+        } else {
+            logger.info("Session已失效，请重新登入");
+            return null;
+        }
     }
-//更新状态
+
+    /**
+     * 更新预约状态
+     * @param appointmentId
+     * @param status
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "update_status", method = RequestMethod.GET)
     public ControllerResult updateAppointmentStatus(String appointmentId, String status) {
         if (SessionGetUtil.isUser()) {
-            if(CheckRoleUtil.checkRoles(editRole)) {
+            if (CheckRoleUtil.checkRoles(editRole)) {
                 logger.info("更新预约状态");
-                if (status.equals("Y")) {
+                if ("Y".equals(status)) {
                     appointmentService.inactive(appointmentId);
                 } else {
                     appointmentService.active(appointmentId);
@@ -244,26 +293,30 @@ public class AppointmentController {
             return null;
         }
     }
-//查询全部
+
+    /**
+     * 查询所有预约信息
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "appointment_all", method = RequestMethod.GET)
     public List<ComboBox4EasyUI> queryMaintenanceAppointmentAll() {
-                if (SessionGetUtil.isUser()) {
-                    logger.info("查询所有预约信息");
-                    User user = SessionGetUtil.getUser();
-                    List<Appointment> appointments = appointmentService.queryAll(user);
-                    List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<ComboBox4EasyUI>();
-                    for (Appointment appointment : appointments) {
-                        ComboBox4EasyUI comboBox4EasyUI = new ComboBox4EasyUI();
-                        comboBox4EasyUI.setId(appointment.getAppointmentId());
-                        comboBox4EasyUI.setText(appointment.getUserName());
-                        comboBox4EasyUIs.add(comboBox4EasyUI);
-                    }
-                    return comboBox4EasyUIs;
-                } else {
-                    logger.info("Session已失效，请重新登入");
-                    return null;
-                }
+        if (SessionGetUtil.isUser()) {
+            logger.info("查询所有预约信息");
+            User user = SessionGetUtil.getUser();
+            List<Appointment> appointments = appointmentService.queryAll(user);
+            List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<>();
+            for (Appointment appointment : appointments) {
+                ComboBox4EasyUI comboBox4EasyUI = new ComboBox4EasyUI();
+                comboBox4EasyUI.setId(appointment.getAppointmentId());
+                comboBox4EasyUI.setText(appointment.getUserName());
+                comboBox4EasyUIs.add(comboBox4EasyUI);
+            }
+            return comboBox4EasyUIs;
+        } else {
+            logger.info("Session已失效，请重新登入");
+            return null;
+        }
     }
 
     @InitBinder

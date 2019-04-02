@@ -27,9 +27,8 @@ public class ServletContextUtil {
      *
      * @return
      */
-    @SuppressWarnings("unchecked")
     public static String getServerIp() {
-        String SERVER_IP = null;
+        String serverIP = null;
         Enumeration allNetInterfaces = null;
         try {
             allNetInterfaces = NetworkInterface.getNetworkInterfaces();
@@ -37,16 +36,18 @@ public class ServletContextUtil {
             e.printStackTrace();
         }
         InetAddress ip = null;
-        while (allNetInterfaces.hasMoreElements()) {
-            NetworkInterface netInterface = (NetworkInterface) allNetInterfaces.nextElement();
-            Enumeration addresses = netInterface.getInetAddresses();
-            while (addresses.hasMoreElements()) {
-                ip = (InetAddress) addresses.nextElement();
-                if (ip != null && ip instanceof Inet4Address) {
-                    SERVER_IP = ip.getHostAddress();
+        if (allNetInterfaces != null) {
+            while (allNetInterfaces.hasMoreElements()) {
+                NetworkInterface netInterface = (NetworkInterface) allNetInterfaces.nextElement();
+                Enumeration addresses = netInterface.getInetAddresses();
+                while (addresses.hasMoreElements()) {
+                    ip = (InetAddress) addresses.nextElement();
+                    if (ip instanceof Inet4Address) {
+                        serverIP = ip.getHostAddress();
+                    }
                 }
             }
         }
-        return SERVER_IP;
+        return serverIP;
     }
 }

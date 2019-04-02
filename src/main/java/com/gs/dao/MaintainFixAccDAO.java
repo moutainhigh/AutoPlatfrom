@@ -9,16 +9,16 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
-*由Wjhsmart技术支持
 *
-*@author Wjhsmart
+*
+*@author qm
 *@since 2017-04-14 16:35:15
 */
 @Repository
 public interface MaintainFixAccDAO extends BaseDAO<String, MaintainFixAcc>{
 
-    public List<MaintainFixAcc> queryAllByMaintainId(String[] ids);
+     List<MaintainFixAcc> queryAllByMaintainId(String[] ids);
 
-    public List<MaintainFixAcc> queryAllByPager(@Param("id") String id, @Param("user") User user, @Param("pager")Pager pager);
-    public int queryAllByCount(@Param("id") String id,@Param("user") User user);
+     List<MaintainFixAcc> queryAllByPager(@Param("id") String id, @Param("user") User user, @Param("pager")Pager pager);
+     int queryAllByCount(@Param("id") String id,@Param("user") User user);
 }

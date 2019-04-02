@@ -29,7 +29,9 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by JanGo on 2017/5/10.
+ *
+ * @author JanGo
+ * @date 2017/5/10
  */
 @Controller
 @RequestMapping("customerClientWeb")
@@ -37,16 +39,26 @@ public class CustomerClientWebController {
 
     private Logger logger = (Logger) LoggerFactory.getLogger(CustomerClientWebController.class);
 
-
+    /**
+     * 保养
+     */
     @Resource
-    private MaintainRecordService maintainRecordService;  //保养
-
+    private MaintainRecordService maintainRecordService;
+    /**
+     * 预约
+     */
     @Resource
-    private AppointmentService appointmentService;  //预约
-
+    private AppointmentService appointmentService;
+    /**
+     * 用户
+     */
     @Resource
-    private UserService userService;  //用户
+    private UserService userService;
 
+    /**
+     * 进入公司前台显示
+     * @return
+     */
     @RequestMapping("/index")
     public String supplierInfo() {
             logger.info("进入公司前台显示");
@@ -54,6 +66,10 @@ public class CustomerClientWebController {
 
     }
 
+    /**
+     * 进入功能特性页面
+     * @return
+     */
     @RequestMapping("/features")
     public String webFeatures() {
         logger.info("进入功能特性页面");
@@ -61,6 +77,10 @@ public class CustomerClientWebController {
 
     }
 
+    /**
+     * 进入联系我们页面
+     * @return
+     */
     @RequestMapping("/contact")
     public String webContact() {
         logger.info("进入联系我们页面");
@@ -68,6 +88,10 @@ public class CustomerClientWebController {
 
     }
 
+    /**
+     * 进入平台特性
+     * @return
+     */
     @RequestMapping("/tour")
     public String webTour() {
         logger.info("进入平台特性");
@@ -75,6 +99,10 @@ public class CustomerClientWebController {
 
     }
 
+    /**
+     * 进入平台收费
+     * @return
+     */
     @RequestMapping("/pricing")
     public String webPricing() {
         logger.info("进入平台收费");
@@ -82,6 +110,10 @@ public class CustomerClientWebController {
 
     }
 
+    /**
+     * 进入用户进度查询
+     * @return
+     */
     @RequestMapping("/customerCar")
     public String webCustomerCar() {
         logger.info("进入用户进度查询");
@@ -89,6 +121,10 @@ public class CustomerClientWebController {
 
     }
 
+    /**
+     * 进入用户预约
+     * @return
+     */
     @RequestMapping("/appointment")
     public String webAppointment() {
         logger.info("进入用户预约");
@@ -96,6 +132,11 @@ public class CustomerClientWebController {
 
     }
 
+    /**
+     * 车主预约
+     * @param appointment
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "addCustomer", method = RequestMethod.POST)
     public ControllerResult appointmentAddCustomer(Appointment appointment) {
@@ -111,7 +152,7 @@ public class CustomerClientWebController {
     @RequestMapping(value = "userPage", method = RequestMethod.GET)
     public ModelAndView queryPagerByCondition(String phone) {
         ModelAndView md = new ModelAndView("index/iframeTable");
-        if (phone != null || !phone.equals("")) {
+        if (phone != null || !"".equals(phone)) {
             List<MaintainRecord> maintainRecords  = maintainRecordService.queryCustomerCar(phone);
             md.addObject("records",maintainRecords);
             return md;
@@ -122,21 +163,30 @@ public class CustomerClientWebController {
 
     private String phone;
 
+    /**
+     * 获取短信验证码
+     * @param userPhone
+     * @param session
+     * @return
+     */
     @ResponseBody
     @RequestMapping("sendCode")
     public ControllerResult sendCode(@Param("userPhone") String userPhone, HttpSession session) {
         logger.info("获取短信验证码");
-        String to = userPhone;
         String code = GetCodeUtil.getCode(6,0);
         phone = userPhone;
         session.setAttribute(userPhone,code);
         String smsContent = "【创意科技】您的验证码为" + code + "，请于30分钟内正确输入，如非本人操作，请忽略此短信。";
-        IndustrySMS is = new IndustrySMS(to, smsContent);
+        IndustrySMS is = new IndustrySMS(userPhone, smsContent);
         is.execute();
         return ControllerResult.getSuccessResult("验证码发送成功，请注意查收");
     }
 
-
+    /**
+     * 返回验证码
+     * @param session
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "code", method = RequestMethod.GET)
     public String getCode(HttpSession session){

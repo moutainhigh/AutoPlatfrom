@@ -44,13 +44,23 @@ public class MaterialReturnController {
 
     private String editRole = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_REPERTORY + "," + Constants.COMPANY_ARTIFICER;
 
-
+    /**
+     * 显示退料信息
+     * @return
+     */
     @RequestMapping(value = "info", method = RequestMethod.GET)
     private String showMaterialReturnInfo() {
         logger.info("显示退料信息");
         return "dispatchingPicking/material_return";
     }
 
+    /**
+     * 分页查询当前维修记录领料明细
+     * @param pageNumber
+     * @param pageSize
+     * @param recordId
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "query_pager", method = RequestMethod.GET)
     public Pager4EasyUI<MaterialReturnInfo> queryBySpeedStatus(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize, @Param("recordId") String recordId) {
@@ -65,9 +75,14 @@ public class MaterialReturnController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(mris.countBySpeedStatus(recordId, user));
         List<MaterialReturnInfo> materialReturnInfos = mris.queryBySpeedStatus(pager, recordId, user);
-        return new Pager4EasyUI<MaterialReturnInfo>(pager.getTotalRecords(), materialReturnInfos);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), materialReturnInfos);
     }
 
+    /**
+     * 添加退料并增加配件库存
+     * @param mrStr
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "add_return", method = RequestMethod.GET)
     public ControllerResult addReturn(String[] mrStr) {
@@ -86,7 +101,7 @@ public class MaterialReturnController {
             materialReturnInfo.setAccId(mrStr[1]);
             materialReturnInfo.setAccCount(Integer.valueOf(mrStr[2]));
             mris.insertReturn(materialReturnInfo);
-            List<Accessories> accessories = new ArrayList<Accessories>();
+            List<Accessories> accessories = new ArrayList<>();
             Accessories a = new Accessories();
             a.setAccId(mrStr[1]);
             Accessories a2 = as.queryByIdTotalAndIdle(a.getAccId());

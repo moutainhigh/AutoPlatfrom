@@ -23,7 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by root on 2017/4/21.
+ *
+ * @author root
+ * @date 2017/4/21
  */
 @Controller
 @RequestMapping("/maintainFix")
@@ -49,13 +51,15 @@ public class MaintainFixController {
 
     private String editRole = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_ARTIFICER + "," + Constants.COMPANY_RECEIVE;
 
-    // 可以查看的角色：董事长、财务员、超级管理员、普通管理员
+    /**
+     * 可以查看的角色：董事长、财务员、超级管理员、普通管理员
+     */
     private String queryRole1 = Constants.COMPANY_ADMIN + "," + Constants.COMPANY_ACCOUNTING + ","
             + Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN;
 
     @ResponseBody
     @RequestMapping(value = "InsertMaintainItem", method = RequestMethod.POST)
-    public ControllerResult InsertMaintainFix(MaintainFix maintainFix) {
+    public ControllerResult insertMaintainFix(MaintainFix maintainFix) {
         if (!SessionGetUtil.isUser()) {
             logger.info("Session已失效，请重新登入");
             return ControllerResult.getNotLoginResult("登入信息已失效，请重新登入");
@@ -82,7 +86,7 @@ public class MaintainFixController {
 
     @ResponseBody
     @RequestMapping(value = "InsertMaintain", method = RequestMethod.POST)
-    public ControllerResult InsertMaintain(MaintainFix maintainFix) {
+    public ControllerResult insertMaintain(MaintainFix maintainFix) {
         if (!SessionGetUtil.isUser()) {
             logger.info("Session已失效，请重新登入");
             return ControllerResult.getNotLoginResult("登入信息已失效，请重新登入");
@@ -109,7 +113,7 @@ public class MaintainFixController {
 
     @ResponseBody
     @RequestMapping(value = "update", method = RequestMethod.POST)
-    public ControllerResult UpdateMaintainFix(MaintainFix maintainFix) {
+    public ControllerResult updateMaintainFix(MaintainFix maintainFix) {
         if (!SessionGetUtil.isUser()) {
             logger.info("Session已失效，请重新登入");
             return ControllerResult.getNotLoginResult("登入信息已失效，请重新登入");
@@ -131,6 +135,12 @@ public class MaintainFixController {
 
     }
 
+    /**
+     * 公司状态修改
+     * @param id
+     * @param status
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "StatusModify", method = RequestMethod.GET)
     public ControllerResult companyStatusModify(@Param("id") String id, @Param("status") String status) {
@@ -139,10 +149,10 @@ public class MaintainFixController {
             return ControllerResult.getNotLoginResult("登入信息已失效，请重新登入");
         }else{
             if(CheckRoleUtil.checkRoles(editRole)){
-                if (status.equals("Y")) {
+                if ("Y".equals(status)) {
                     logger.info("冻结项目");
                     maintainFixService.inactive(id);
-                } else if (status.equals("N")) {
+                } else if ("N".equals(status)) {
                     logger.info("激活项目");
                     maintainFixService.active(id);
                 }
@@ -154,6 +164,12 @@ public class MaintainFixController {
 
     }
 
+    /**
+     * 分页查询所有维修项目
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryByPager", method = RequestMethod.GET)
     public Pager4EasyUI<MaintainFix> queryByPager(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -168,9 +184,15 @@ public class MaintainFixController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(maintainFixService.count(user));
         List<MaintainFix> maintainFixList = maintainFixService.queryByPager(pager,user);
-        return new Pager4EasyUI<MaintainFix>(pager.getTotalRecords(), maintainFixList);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), maintainFixList);
     }
 
+    /**
+     * 分页查询所有保养项目
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "queryByMaintenanceItemPager", method = RequestMethod.GET)
     public Pager4EasyUI<MaintainFix> queryByMaintenanceItemPager(@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -185,9 +207,16 @@ public class MaintainFixController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(maintainFixService.MaintainCont(user));
         List<MaintainFix> maintainFixList = maintainFixService.queryBymaintainPager(pager,user);
-        return new Pager4EasyUI<MaintainFix>(pager.getTotalRecords(), maintainFixList);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), maintainFixList);
     }
 
+    /**
+     * 模糊查询所有保养项目
+     * @param name
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "search", method = RequestMethod.GET)
     public Pager4EasyUI<MaintainFix> search(@Param("name")String name,@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -202,10 +231,16 @@ public class MaintainFixController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(maintainFixService.searCount(name,user));
         List<MaintainFix> maintainFixList = maintainFixService.searchByPager(name,pager,user);
-        return new Pager4EasyUI<MaintainFix>(pager.getTotalRecords(), maintainFixList);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), maintainFixList);
     }
 
-
+    /**
+     * 根据状态查询保养项目
+     * @param status
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "statusPager", method = RequestMethod.GET)
     public Pager4EasyUI<MaintainFix> queryByStatus(@Param("status")String status,@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -220,10 +255,16 @@ public class MaintainFixController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(maintainFixService.countStatus(status,user));
         List<MaintainFix> maintainFixList = maintainFixService.byStatusPager(status,pager,user);
-        return new Pager4EasyUI<MaintainFix>(pager.getTotalRecords(), maintainFixList);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), maintainFixList);
     }
 
-
+    /**
+     * 根据状态查询维修项目
+     * @param status
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "statusRepairPager", method = RequestMethod.GET)
     public Pager4EasyUI<MaintainFix> queryByRepairStatus(@Param("status")String status,@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -238,10 +279,16 @@ public class MaintainFixController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(maintainFixService.repairCountStatus(status,user));
         List<MaintainFix> maintainFixList = maintainFixService.repairByStatusPager(status,pager,user);
-        return new Pager4EasyUI<MaintainFix>(pager.getTotalRecords(), maintainFixList);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), maintainFixList);
     }
 
-
+    /**
+     * 模糊查询所有维修项目
+     * @param name
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "searchRepair", method = RequestMethod.GET)
     public Pager4EasyUI<MaintainFix> searchRepair(@Param("name")String name,@Param("pageNumber") String pageNumber, @Param("pageSize") String pageSize) {
@@ -256,10 +303,13 @@ public class MaintainFixController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(maintainFixService.searRepairCount(name,user));
         List<MaintainFix> maintainFixList = maintainFixService.searchByRepairPager(name,pager,user);
-        return new Pager4EasyUI<MaintainFix>(pager.getTotalRecords(), maintainFixList);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), maintainFixList);
     }
 
-
+    /**
+     * 查询所有维修保养项目，封装成ComboBox
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "maintain_all", method = RequestMethod.GET)
     public List<ComboBox4EasyUI> queryUserAll() {
@@ -270,7 +320,7 @@ public class MaintainFixController {
         logger.info("查询所有维修保养项目，封装成ComboBox");
         User user = SessionGetUtil.getUser();
         List<MaintainFix> maintainFices = maintainFixService.queryAll(user);
-        List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<ComboBox4EasyUI>();
+        List<ComboBox4EasyUI> comboBox4EasyUIs = new ArrayList<>();
         for (MaintainFix maintainFix : maintainFices) {
             ComboBox4EasyUI comboBox4EasyUI = new ComboBox4EasyUI();
             comboBox4EasyUI.setId(maintainFix.getMaintainId());
@@ -280,6 +330,12 @@ public class MaintainFixController {
         return comboBox4EasyUIs;
     }
 
+    /**
+     * 默认查询本月维修保养项目次数统计
+     * @param companyId
+     * @param maintain
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="query_default",method= RequestMethod.GET)
     public List<LineBasic> queryDefault(@Param("companyId")String companyId,@Param("maintain")String maintain){
@@ -288,8 +344,8 @@ public class MaintainFixController {
                 logger.info("默认查询本月维修保养项目次数统计");
                 User user = SessionGetUtil.getUser();
 
-                List<LineBasic> lineBasics = new ArrayList<LineBasic>();
-                if(user.getCompanyId() != null && !user.getCompanyId().equals("")){
+                List<LineBasic> lineBasics = new ArrayList<>();
+                if(user.getCompanyId() != null && !"".equals(user.getCompanyId())){
                     companyId = user.getCompanyId();
                 }
                 List<MaintainFix> maintainFices = maintainFixService.queryByType(companyId,maintain);
@@ -310,6 +366,15 @@ public class MaintainFixController {
         }
     }
 
+    /**
+     * 根据年，月，季度，周，日查询维修保养项目次数统计
+     * @param start
+     * @param end
+     * @param type
+     * @param companyId
+     * @param maintain
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="query_condition",method= RequestMethod.GET)
     public List<LineBasic> queryCondition(@Param("start")String start,@Param("end")String end,
@@ -318,14 +383,14 @@ public class MaintainFixController {
         if(SessionGetUtil.isUser()) {
             if(CheckRoleUtil.checkRoles(queryRole1)) {
                 logger.info("根据年，月，季度，周，日查询维修保养项目次数统计");
-                List<LineBasic> lineBasics = new ArrayList<LineBasic>();
+                List<LineBasic> lineBasics = new ArrayList<>();
                 User user = SessionGetUtil.getUser();
-                if (user.getCompanyId() != null && !user.getCompanyId().equals("")) {
+                if (user.getCompanyId() != null && !"".equals(user.getCompanyId())) {
                     companyId = user.getCompanyId();
                 }
                 List<MaintainFix> maintainFices = maintainFixService.queryByType(companyId,maintain);
-                if (start != null && !start.equals("") && end != null && !end.equals("") && type != null && !type.equals("")) {
-                    if (type.equals("year")) {
+                if (start != null && !"".equals(start) && end != null && !"".equals(end) && type != null && !"".equals(type)) {
+                    if ("year".equals(type)) {
                         HighchartsData.setStrYear(start, end);
                         for(MaintainFix m: maintainFices){
                             LineBasic lineBasic = new LineBasic();
@@ -336,7 +401,7 @@ public class MaintainFixController {
                             lineBasic.setData(HighchartsData.doubleYearOne);
                             lineBasics.add(lineBasic);
                         }
-                    } else if (type.equals("quarter")) {
+                    } else if ("quarter".equals(type)) {
                         for(MaintainFix m: maintainFices){
                             LineBasic lineBasic = new LineBasic();
                             lineBasic.setName(m.getMaintainName());
@@ -345,7 +410,7 @@ public class MaintainFixController {
                             lineBasic.setData(HighchartsData.doubleQuarterOne);
                             lineBasics.add(lineBasic);
                         }
-                    } else if (type.equals("month")) {
+                    } else if ("month".equals(type)) {
                         for(MaintainFix m: maintainFices){
                             LineBasic lineBasic = new LineBasic();
                             lineBasic.setName(m.getMaintainName());
@@ -354,7 +419,7 @@ public class MaintainFixController {
                             lineBasic.setData(HighchartsData.doubleMonthOne);
                             lineBasics.add(lineBasic);
                         }
-                    } else if (type.equals("week")) {
+                    } else if ("week".equals(type)) {
                         HighchartsData.setStrWeek(start, end);
                         for(MaintainFix m: maintainFices){
                             LineBasic lineBasic = new LineBasic();
@@ -364,7 +429,7 @@ public class MaintainFixController {
                             lineBasic.setData(HighchartsData.doubleWeekOne);
                             lineBasics.add(lineBasic);
                         }
-                    } else if (type.equals("day")) {
+                    } else if ("day".equals(type)) {
                         for(MaintainFix m: maintainFices){
                             LineBasic lineBasic = new LineBasic();
                             lineBasic.setName(m.getMaintainName());
@@ -384,8 +449,12 @@ public class MaintainFixController {
         }
     }
 
-    /*  默认查询本月的维修保养次数统计
-     * */
+    /**
+     * 默认查询本月的维修保养次数统计
+     * @param type
+     * @param companyId
+     * @param maintainId
+     */
     public void dateDay(String type,String companyId,String maintainId){
         HighchartsData.doubleDayOne = new double[31];
         List<MaintainDetail> maintainDetails =  maintainDetailService.queryByDefault(type,companyId,maintainId);
@@ -406,9 +475,17 @@ public class MaintainFixController {
         }
     }
 
-    /*
-    *  按年，季度，月，周，日，查询 维修保养次数统计
-    * */
+    /**
+     * 按年，季度，月，周，日，查询 维修保养次数统计
+     * @param start
+     * @param end
+     * @param maintainOrFix
+     * @param type
+     * @param date
+     * @param species
+     * @param companyId
+     * @param maintainId
+     */
     public void dataCondition(String start,String end,String maintainOrFix,String type,String date,String species,String companyId,String maintainId){
         HighchartsData.doubleDayOne = new double[31];
         HighchartsData.doubleMonthOne = new double[12];
@@ -422,33 +499,33 @@ public class MaintainFixController {
         HighchartsData.len = 0;
         for(MaintainDetail io: maintainDetails) {
             doubles[i] = io.getCoont();
-            if(date.equals("month")) {
+            if("month".equals(date)) {
                 strs[i] = HighchartsData.dateFormat(io.getDetailCreatedTime(), "month");
                 HighchartsData.len = HighchartsData.strMonth.length;
-            }else if(date.equals("day")){
+            }else if("day".equals(date)){
                 strs[i] = HighchartsData.dateFormat(io.getDetailCreatedTime(), "day");
                 HighchartsData.len = HighchartsData.strDay.length;
-            }else if(date.equals("quarter")){
+            }else if("quarter".equals(date)){
                 strs[i] = HighchartsData.dateFormat(io.getDetailCreatedTime(), "quarter");
                 HighchartsData.len = HighchartsData.strQuarter.length;
-            }else if(date.equals("year")){
+            }else if("year".equals(date)){
                 strs[i] = HighchartsData.dateFormat(io.getDetailCreatedTime(),"year");
                 HighchartsData.len = HighchartsData.strYear.length;
-            }else if(date.equals("week")){
+            }else if("week".equals(date)){
                 strs[i] = "第"+String.valueOf(HighchartsData.getWeek(HighchartsData.dateFormat(io.getDetailCreatedTime())))+"周";
                 HighchartsData.len = HighchartsData.strWeek.length;
             }
             i++;
         }
-        if(date.equals("quarter")) {
+        if("quarter".equals(date)) {
             HighchartsData.getQuarter(strs,doubles,species);
-        }else if(date.equals("month")){
+        }else if("month".equals(date)){
             HighchartsData.getMonth(strs,doubles,species);
-        }else if(date.equals("day")){
+        }else if("day".equals(date)){
             HighchartsData.getDay(strs,doubles,species);
-        }else if(date.equals("year")){
+        }else if("year".equals(date)){
             HighchartsData. getYear(strs,doubles,species);
-        }else if(date.equals("week")){
+        }else if("week".equals(date)){
             HighchartsData.getWeek(strs,doubles,species);
         }
     }

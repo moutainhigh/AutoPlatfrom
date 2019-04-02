@@ -11,9 +11,9 @@ public class GetCodeUtil {
 
     public static String getCode(int passLength, int type){
         StringBuffer buffer = null;
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         Random r = new Random();
-        r.setSeed(new Date().getTime());
+        r.setSeed(System.currentTimeMillis());
         switch (type)
         {
             case 0:
@@ -37,17 +37,21 @@ public class GetCodeUtil {
                 break;
             case 5:
                 String s = UUID.randomUUID().toString();
-                sb.append(s.substring(0, 8) + s.substring(9, 13)
-                        + s.substring(14, 18) + s.substring(19, 23)
-                        + s.substring(24));
+                sb.append(s, 0, 8).append(s, 9, 13).append(s, 14, 18).append(s, 19, 23).append(s.substring(24));
+            default:
         }
 
         if (type != 5)
         {
-            int range = buffer.length();
+            int range = 0;
+            if (buffer != null) {
+                range = buffer.length();
+            }
             for (int i = 0; i < passLength; ++i)
             {
-                sb.append(buffer.charAt(r.nextInt(range)));
+                if (buffer != null) {
+                    sb.append(buffer.charAt(r.nextInt(range)));
+                }
             }
         }
         return sb.toString();

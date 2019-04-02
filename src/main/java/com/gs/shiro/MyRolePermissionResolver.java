@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 
 import com.gs.service.RolePermissionService;
 
+/**
+ * @author Administrator
+ */
 @Component(value = "rolePermissionRelover")
 public class MyRolePermissionResolver implements RolePermissionResolver{
 	

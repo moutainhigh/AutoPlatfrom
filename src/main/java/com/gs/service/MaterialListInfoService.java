@@ -12,26 +12,26 @@ import java.util.List;
  */
 public interface MaterialListInfoService extends BaseService<String, MaterialListInfo>{
     /**根据状态分页*/
-    public List<MaterialListInfo> queryByStatus(Pager pager, String status, User user);
+     List<MaterialListInfo> queryByStatus(Pager pager, String status, User user);
 
     /**根据物料清单条件统计*/
-    public int termCount(@Param("userName") String userName, String startTime, String endTime, User user);
+     int termCount(@Param("userName") String userName, String startTime, String endTime, User user);
 
     /**根据条件分页*/
-    public List<MaterialListInfo> termQueryPager(Pager pager,String userName, String startTime, String endTime, User user);
+     List<MaterialListInfo> termQueryPager(Pager pager,String userName, String startTime, String endTime, User user);
 
     /**根据维修记录编号分页*/
-    public List<MaterialListInfo> queryBySpeedStatus(Pager pager, String recordId, User user);
+     List<MaterialListInfo> queryBySpeedStatus(Pager pager, String recordId, User user);
 
     /**根据维修记录编号统计*/
-    public int countBySpeedStatus(String recordId, User user);
+     int countBySpeedStatus(String recordId, User user);
 
     /**根据维修记录编号和状态分页*/
-    public List<MaterialListInfo> queryBySpeedStatusAndStatus(Pager pager, String recordId, String materialStatus, User user);
+     List<MaterialListInfo> queryBySpeedStatusAndStatus(Pager pager, String recordId, String materialStatus, User user);
 
     /**根据维修记录编号和状态统计物料清单*/
-    public int statusCount(String recordId, String materialStatus, User user);
+     int statusCount(String recordId, String materialStatus, User user);
 
     /**根据物料清单编号更新物料清单数量*/
-    public void updateCount(MaterialListInfo materialListInfo);
+     void updateCount(MaterialListInfo materialListInfo);
 }

@@ -21,7 +21,9 @@ import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
- * Created by JangoGuo on 2017/4/18.
+ *
+ * @author JangoGuo
+ * @date 2017/4/18
  */
 @Controller
 @RequestMapping("/trackVisit")
@@ -46,6 +48,10 @@ public class TrackVisitController {
             + Constants.SYSTEM_ORDINARY_ADMIN + "," + Constants.SYSTEM_SUPER_ADMIN;;
     private String editRole = Constants.COMPANY_ADMIN + ","+ Constants.COMPANY_RECEIVE;
 
+    /**
+     * 显示追踪访问页面
+     * @return
+     */
     @RequestMapping(value = "show_trackVisit", method = RequestMethod.GET)
     public String messageSend() {
         if (!SessionGetUtil.isUser()) {
@@ -59,6 +65,12 @@ public class TrackVisitController {
         return "customer/track_visit";
     }
 
+    /**
+     * 分页查询所有追踪访问
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="query_pager",method= RequestMethod.GET)
     public Pager4EasyUI<TrackList> queryPager(@Param("pageNumber")String pageNumber, @Param("pageSize")String pageSize){
@@ -73,9 +85,15 @@ public class TrackVisitController {
         pager.setPageSize(Integer.valueOf(pageSize));
         pager.setTotalRecords(trackListService.count(LoginUser));
         List<TrackList> trackListList = trackListService.queryByPager(pager,LoginUser);
-        return new Pager4EasyUI<TrackList>(pager.getTotalRecords(), trackListList);
+        return new Pager4EasyUI<>(pager.getTotalRecords(), trackListList);
     }
 
+    /**
+     * 添加回访
+     * @param trackList
+     * @param session
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="add_track", method=RequestMethod.POST)
     public ControllerResult trackAdd(TrackList trackList,HttpSession session) {
@@ -100,7 +118,6 @@ public class TrackVisitController {
             logger.info("添加失败，出现了一个错误");
             return ControllerResult.getFailResult("添加失败，出现了一个错误");
         }
-
     }
 }
 

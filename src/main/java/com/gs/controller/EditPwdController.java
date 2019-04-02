@@ -32,6 +32,8 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.util.regex.Pattern.*;
+
 /**
  * Created by Star on 2017/5/19.
  */
@@ -50,6 +52,11 @@ public class EditPwdController {
     @Resource
     private VilidateService vilidateService;
 
+    /**
+     * 个人密码修改页面
+     *
+     * @return
+     */
     @RequestMapping(value = "personal_pwd", method = RequestMethod.GET)
     private String personalPwd() {
         if (SessionGetUtil.isUser()) {
@@ -61,6 +68,13 @@ public class EditPwdController {
         }
     }
 
+    /**
+     * 修改密码
+     *
+     * @param oldPwd
+     * @param rePwd
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "selfPwd", method = RequestMethod.GET)
     public ControllerResult querySelf(@Param("oldPwd") String oldPwd, @Param("rePwd") String rePwd) {
@@ -88,18 +102,23 @@ public class EditPwdController {
             return ControllerResult.getNotLoginResult("登录信息已失效，请重新登录");
         }
     }
+
+    /**
+     * 获取验证码
+     */
     private String phone;
+
     @ResponseBody
     @RequestMapping("sendCode")
     public ControllerResult sendCode(@Param("number") String number, HttpSession session) {
         logger.info("获取验证码");
-        Pattern p = Pattern.compile("^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\\.([a-zA-Z0-9_-])+)+$");
+        Pattern p = compile("^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\\.([a-zA-Z0-9_-])+)+$");
         Matcher m = p.matcher(number);
         boolean email = m.matches();
-        String code = GetCodeUtil.getCode(6,0);
+        String code = GetCodeUtil.getCode(6, 0);
         phone = number;
-        session.setAttribute(number,code);
-        if(email){
+        session.setAttribute(number, code);
+        if (email) {
             Mail mail = new Mail();
             mail.setRecipients(number);
             mail.setSubject("修改密码提醒");
@@ -114,48 +133,62 @@ public class EditPwdController {
             }
             MailSender mailSender = new MailSender();
             mailSender.sendEmailByType(Constants.MAIL_TYPE, mail, Constants.MAIL_SENDER, Constants.MAIL_PASSWORD);
-        }else{
-            String to = number;
+        } else {
             String smsContent = "【创意科技】您的验证码为" + code + "，请于30分钟内正确输入，如非本人操作，请忽略此短信。";
-            IndustrySMS is = new IndustrySMS(to, smsContent);
+            IndustrySMS is = new IndustrySMS(number, smsContent);
             is.execute();
         }
         return ControllerResult.getSuccessResult("验证码发送成功，请注意查收");
     }
 
+    /**
+     * 判断是否存在该用户
+     *
+     * @param number
+     * @return
+     */
     @ResponseBody
     @RequestMapping("checkPhone")
     public String checkPhone(@Param("number") String number) {
         logger.info("判断是否存在该用户");
-        Pattern p = Pattern.compile("^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\\.([a-zA-Z0-9_-])+)+$");
+        Pattern p = compile("^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\\.([a-zA-Z0-9_-])+)+$");
         Matcher m = p.matcher(number);
         boolean email = m.matches();
-        if(email){
-            if(vilidateService.queryDataIsExistUserEmail(number) >= 1){
+        if (email) {
+            if (vilidateService.queryDataIsExistUserEmail(number) >= 1) {
                 return "true";
-            }else{
+            } else {
                 return "false";
             }
-        }else{
-            if(vilidateService.queryDataIsExistUserPhone(number) >= 1){
+        } else {
+            if (vilidateService.queryDataIsExistUserPhone(number) >= 1) {
                 return "true";
-            }else{
+            } else {
                 return "false";
             }
         }
     }
+
+    /**
+     * 根据手机或邮箱修改密码
+     *
+     * @param number
+     * @param pwd
+     * @param session
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "editPwd", method = RequestMethod.GET)
-    public ControllerResult editPwd(@Param("number")String number,@Param("pwd")String pwd,HttpSession session){
+    public ControllerResult editPwd(@Param("number") String number, @Param("pwd") String pwd, HttpSession session) {
         logger.info("根据手机或邮箱修改密码");
-        Pattern p = Pattern.compile("^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\\.([a-zA-Z0-9_-])+)+$");
+        Pattern p = compile("^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\\.([a-zA-Z0-9_-])+)+$");
         Matcher m = p.matcher(number);
         boolean email = m.matches();
         User user = new User();
-        String pwd1 =  EncryptUtil.md5Encrypt(pwd);
-        if(email){
+        String pwd1 = EncryptUtil.md5Encrypt(pwd);
+        if (email) {
             user.setUserEmail(number);
-        }else{
+        } else {
             user.setUserPhone(number);
         }
         user.setUserPwd(pwd1);
@@ -164,46 +197,66 @@ public class EditPwdController {
         return ControllerResult.getSuccessResult("密码修改成功");
     }
 
-
+    /**
+     * 返回找回密码验证码
+     *
+     * @param session
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "code", method = RequestMethod.GET)
-    public String getCode(HttpSession session){
+    public String getCode(HttpSession session) {
         logger.info("返回找回密码验证码");
-        String code = (String)session.getAttribute(phone);
+        String code = (String) session.getAttribute(phone);
         return Base64Util.getBase64(code);
     }
 
+    /**
+     * 手机号动态登录获取验证码
+     */
     private String phone1;
+
     @ResponseBody
     @RequestMapping("sendCode1")
     public ControllerResult sendCode1(@Param("number") String number, HttpSession session) {
         logger.info("手机号码动态登入，获取验证码");
-        String code = GetCodeUtil.getCode(6,0);
+        String code = GetCodeUtil.getCode(6, 0);
         phone1 = number;
-        session.setAttribute(number,code);
-        String to = number;
+        session.setAttribute(number, code);
         String smsContent = "【创意科技】您的验证码为" + code + "，请于30分钟内正确输入，如非本人操作，请忽略此短信。";
-        IndustrySMS is = new IndustrySMS(to, smsContent);
+        IndustrySMS is = new IndustrySMS(number, smsContent);
         is.execute();
         return ControllerResult.getSuccessResult("验证码发送成功，请注意查收");
     }
 
+    /**
+     * 返回动态登录验证码
+     *
+     * @param session
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "code1", method = RequestMethod.GET)
-    public String getCode1(HttpSession session){
+    public String getCode1(HttpSession session) {
         logger.info("返回动态登入验证码");
-        String code = (String)session.getAttribute(phone1);
+        String code = (String) session.getAttribute(phone1);
         return Base64Util.getBase64(code);
     }
 
+    /**
+     * 用户手机号动态登录
+     *
+     * @param phone
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "login", method = RequestMethod.GET)
     public ControllerResult login(String phone) {
-        logger.info("用户" + phone + "使用手机动态登入");
+        logger.info("用户" + phone + "使用手机动态登录");
         Subject subject = SecurityUtils.getSubject();
         User user = userService.queryByPhone(phone);
         if (user != null) {
-            if (user.getUserStatus().equals("Y")) {
+            if ("Y".equals(user.getUserStatus())) {
                 Role role = roleService.queryByUserId(user.getUserId());
                 if (!role.getRoleName().equals(Constants.CAR_OWNER)) {
                     userService.updateLoginTime(user.getUserId());

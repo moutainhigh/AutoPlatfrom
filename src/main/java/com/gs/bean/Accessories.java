@@ -4,9 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 由Wjhsmart技术支持
  *
- * @author Wjhsmart
+ *
+ * @author qm
  * @since 2017-04-14 16:16:20
  */
 public class Accessories {

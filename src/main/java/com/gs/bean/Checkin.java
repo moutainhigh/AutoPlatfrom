@@ -5,9 +5,9 @@ import com.gs.common.util.DateParseUtil;
 import java.util.Date;
 
 /**
- * 由Wjhsmart技术支持
  *
- * @author Wjhsmart
+ *
+ * @author qm
  * @since 2017-04-14 16:16:21 维修保养登记表
  */
 public class Checkin {

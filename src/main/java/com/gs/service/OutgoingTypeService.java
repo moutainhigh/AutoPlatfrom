@@ -8,21 +8,19 @@ import com.gs.common.bean.Pager;
 import java.util.List;
 
 /**
-*由Wjhsmart技术支持
 *
-*@author Wjhsmart
+*
+*@author qm
 *@since 2017-04-14 16:36:52
 */
 public interface OutgoingTypeService extends BaseService<String, OutgoingType>{
 
-    public OutgoingType queryByName(String outTypeName);
+     OutgoingType queryByName(String outTypeName);
 
-    public List<OutgoingType> queryPagerStatus(String status,Pager pager,User user);
-    public int countStatus(String status,User user);
+     List<OutgoingType> queryPagerStatus(String status,Pager pager,User user);
+     int countStatus(String status,User user);
 
-    public List<OutgoingType> queryByPagerCondition(String companyId,
-                                                    String inTypeName,
-                                                    Pager pager);
+     List<OutgoingType> queryByPagerCondition(String companyId,String inTypeName,Pager pager);
 
-    public int countCondition(String companyId,String inTypeName);
+     int countCondition(String companyId,String inTypeName);
 }
