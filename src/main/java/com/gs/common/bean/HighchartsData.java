@@ -31,7 +31,6 @@ public class HighchartsData {
     public  static double[] doubleYearOne;
     public  static double[] doubleYearTwo;
 
-
     public  static double[] doubleWeekOne;
     public  static double[] doubleWeekTwo;
 
